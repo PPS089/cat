@@ -1,0 +1,912 @@
+<template>
+      <!-- 左侧导航栏 -->
+      <aside class="sidebar">
+        <nav class="nav-menu">
+          <div class="nav-item">
+            <router-link to="/user" class="nav-link" :class="{ active: isRouteActive('/user') }">
+              <el-icon><House /></el-icon>
+              <span>{{ t('nav.home') }}</span>
+            </router-link>
+          </div>
+          <div class="nav-section">
+            <div class="nav-section-title">{{ t('nav.petManagement') }}</div>
+            <div class="nav-item">
+              <router-link to="/user/pets" class="nav-link" :class="{ active: isRouteActive('/user/pets') }">
+                <el-icon><Grid /></el-icon>
+                <span>{{ t('nav.myPets') }}</span>
+                <span class="nav-badge" v-if="petCount > 0">{{ petCount }}</span>
+              </router-link>
+            </div>
+            <div class="nav-item">
+              <router-link to="/user/adoption-pets" class="nav-link" :class="{ active: isRouteActive('/user/adoption-pets') }">
+                <el-icon><Plus /></el-icon>
+                <span>{{ t('nav.addPet') }}</span>
+              </router-link>
+            </div>
+            <div class="nav-item">
+              <router-link to="/user/adoptions" class="nav-link" :class="{ active: isRouteActive('/user/adoptions') }">
+                <el-icon><Star /></el-icon>
+                <span>{{ t('nav.adoptionRecords') }}</span>
+                <span class="nav-badge" v-if="petCount > 0">{{ adoptionCount }}</span>
+              </router-link>
+            </div>
+            <div class="nav-item">
+              <router-link to="/user/fosters" class="nav-link" :class="{ active: isRouteActive('/user/fosters') }">
+                <el-icon><OfficeBuilding /></el-icon>
+                <span>{{ t('nav.fosteringRecords') }}</span>
+                <span class="nav-badge" v-if="petCount > 0">{{ fosterCount }}</span>
+              </router-link>
+            </div>
+          </div>
+          <div class="nav-section">
+            <div class="nav-section-title">{{ t('nav.healthCenter') }}</div>
+            <div class="nav-item">
+              <router-link to="/user/health-alerts" class="nav-link" :class="{ active: isRouteActive('/user/health-alerts') }">
+                <el-icon><Warning /></el-icon>
+                <span>{{ t('nav.healthAlerts') }}</span>
+                <span class="nav-badge warning" v-if="petCount > 0">{{ healthAlertCount }}</span>
+              </router-link>
+            </div>
+            <div class="nav-item">
+              <router-link to="/user/events" class="nav-link" :class="{ active: isRouteActive('/user/events') }">
+                <el-icon><Calendar /></el-icon>
+                <span>{{ t('nav.regularEvents') }}</span>
+              </router-link>
+            </div>
+          </div>
+          <div class="nav-section">
+            <div class="nav-section-title">{{ t('nav.userCenter') }}</div>
+            <div class="nav-item">
+              <router-link to="/user/profile" class="nav-link" :class="{ active: isRouteActive('/user/profile') }">
+                <el-icon><User /></el-icon>
+                <span>{{ t('nav.profile') }}</span>
+              </router-link>
+            </div>
+            <div class="nav-item">
+              <router-link to="/user/settings" class="nav-link" :class="{ active: isRouteActive('/user/settings') }">
+                <el-icon><Setting /></el-icon>
+                <span>{{ t('nav.settings') }}</span>
+              </router-link>
+            </div>
+          </div>
+        </nav>
+      </aside>
+
+</template>
+
+
+
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { useRoute } from 'vue-router'
+import { useThemeStore } from '@/stores/theme'
+import {House, Grid, Star, OfficeBuilding, Warning, Calendar, User, Setting,} from '@element-plus/icons-vue'
+import { useI18n } from 'vue-i18n'
+
+const userStore = useUserStore()
+const route = useRoute()
+const { t } = useI18n()
+const themeStore = useThemeStore()
+
+
+
+// 统计数据
+const petCount = ref(0)
+const adoptionCount = ref(0)
+const fosterCount = ref(0)
+const healthAlertCount = ref(0)
+
+// 路由激活状态判断 - 使用完全精确匹配
+const isRouteActive = (path: string) => {
+  const currentPath = route.path
+  
+  
+  // 通用精确匹配
+  return currentPath === path
+}
+
+// 强制重新计算导航状态
+const forceUpdateNavState = () => {
+  // 只需要确保主题正确应用，不需要强制重新渲染
+  themeStore.applyTheme()
+}
+
+
+onMounted(async () => {
+  // 加载用户数据
+  await userStore.fetchProfile()
+  
+  // 应用主题
+  themeStore.applyTheme()
+  
+  // 监听主题变化事件，重新应用主题
+  window.addEventListener('app-rerender', () => {
+    forceUpdateNavState()
+  })
+  
+  // 路由变化时重新应用主题和导航状态
+  watch(() => route.path, () => {
+    forceUpdateNavState()
+  }, { immediate: true })
+})
+</script>
+
+<style scoped>
+.user-layout {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease, background-image 0.3s ease;
+}
+
+/* 顶部导航栏 */
+.top-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.header-left .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-left .logo img {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  transition: transform 0.3s;
+}
+
+.header-left .logo:hover img {
+  transform: rotate(10deg) scale(1.1);
+}
+
+/* 用户信息中心 - 玻璃拟态风格 */
+.user-dashboard {
+  display: flex;
+  align-items: center;
+}
+
+.user-info-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.user-info-trigger:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.user-info .username {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.user-info .user-role {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+.dropdown-icon {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+}
+
+.el-dropdown__popper .el-dropdown__list .el-dropdown__item:hover .dropdown-icon {
+  transform: rotate(180deg);
+}
+
+/* 用户下拉菜单 - 现代卡片设计 */
+.user-dropdown-menu {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+  min-width: 280px;
+}
+
+.user-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-avatar-large {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.user-avatar-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.user-details .username {
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.user-details .user-email {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* 下拉菜单项 */
+.user-dropdown-menu .el-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #495057;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 0.25rem 0.5rem;
+}
+
+.user-dropdown-menu .el-dropdown-item:hover {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  color: #667eea;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.user-dropdown-menu .el-dropdown-item .el-icon {
+  font-size: 1.1rem;
+  color: #667eea;
+}
+
+.user-dropdown-menu .el-dropdown-item:hover .el-icon {
+  color: #764ba2;
+}
+
+.user-dropdown-menu .el-dropdown-item.divided {
+  border-top: 1px solid #e9ecef;
+  margin-top: 0.5rem;
+  padding-top: 1.25rem;
+}
+
+.user-dropdown-menu .el-dropdown-item.divided:hover {
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
+  color: #f56c6c;
+}
+
+.user-dropdown-menu .el-dropdown-item.divided .el-icon {
+  color: #f56c6c;
+}
+
+/* 主容器 */
+.main-container {
+  display: flex;
+  flex: 1;
+  margin-top: 80px;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+  width: 100%;
+}
+
+/* 侧边栏 */
+.sidebar {
+  width: 280px;
+  background: var(--el-bg-color, linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%));
+  box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+  padding: 1.5rem 0;
+  position: fixed;
+  left: 0;
+  top: 80px;
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 999;
+  border-right: 1px solid var(--el-border-color-light, #e4e7ed);
+  backdrop-filter: blur(10px);
+}
+
+.nav-menu {
+  padding: 0 1rem;
+}
+
+/* 导航区域标题 */
+.nav-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #909399;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  padding: 0 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.nav-section {
+  margin-bottom: 2rem;
+}
+
+.nav-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--el-text-color-secondary, #909399);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.nav-item {
+  margin-bottom: 0.25rem;
+  position: relative;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  color: var(--el-text-color-regular, #606266);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease-out;
+  position: relative;
+  font-weight: 500;
+  margin: 0 0.5rem;
+  border: 1px solid transparent;
+  background: transparent;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform, background-color, color;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* 防止任何悬停状态残留 */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* 完全移除悬停效果，使用更精确的状态控制 */
+.nav-link:hover:not(.active):not(:focus):not(:active) {
+  background: var(--el-bg-color-page, #f5f7fa) !important;
+  color: var(--el-color-primary, #409eff) !important;
+  transform: translateX(4px) !important;
+  box-shadow: 0 4px 12px rgba(var(--el-color-primary-rgb, 64, 158, 255), 0.15) !important;
+  border-color: rgba(var(--el-color-primary-rgb, 64, 158, 255), 0.2) !important;
+  transition: all 0.1s ease-out !important;
+}
+
+/* 确保激活状态不受任何其他状态影响 */
+.nav-link.active:hover,
+.nav-link.active:focus,
+.nav-link.active:active {
+  background: var(--el-color-primary, #409eff) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(var(--el-color-primary-rgb, 64, 158, 255), 0.25) !important;
+  transform: translateX(4px) !important;
+  border-color: rgba(var(--el-color-primary-rgb, 64, 158, 255), 0.3) !important;
+}
+
+/* 严格隔离每个导航项的状态 */
+.nav-item .nav-link.active {
+  background: var(--el-color-primary, #409eff) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(var(--el-color-primary-rgb, 64, 158, 255), 0.25) !important;
+  transform: translateX(4px) !important;
+  border-color: rgba(var(--el-color-primary-rgb, 64, 158, 255), 0.3) !important;
+  font-weight: 600 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+/* 为激活状态添加简单的左侧边框指示器 */
+.nav-item .nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: white;
+  border-radius: 0 2px 2px 0;
+}
+
+.nav-item .nav-link:not(.active) {
+  background: transparent !important;
+  color: var(--el-text-color-primary, #303133) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  border-color: transparent !important;
+  font-weight: normal !important;
+  pointer-events: auto !important;
+}
+
+.nav-link.active {
+  background: var(--el-color-primary, #409eff) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(var(--el-color-primary-rgb, 64, 158, 255), 0.25) !important;
+  transform: translateX(4px) !important;
+  border-color: rgba(var(--el-color-primary-rgb, 64, 158, 255), 0.3) !important;
+  font-weight: 600 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+.nav-link.active .el-icon {
+  color: white !important;
+  transform: scale(1.1) !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
+}
+
+/* 完全移除图标悬停效果 */
+.nav-link:hover:not(.active):not(:focus):not(:active) .el-icon {
+  color: var(--el-color-primary, #409eff) !important;
+  transform: scale(1.1) !important;
+  transition: all 0.1s ease-out !important;
+}
+
+/* 确保激活状态的图标不受任何影响 */
+.nav-link.active:hover .el-icon,
+.nav-link.active:focus .el-icon,
+.nav-link.active:active .el-icon {
+  color: white !important;
+  transform: scale(1.1) !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
+}
+
+/* 覆盖Vue Router默认激活类样式，防止干扰 */
+.nav-link.router-link-active:not(.active),
+.nav-link.router-link-exact-active:not(.active) {
+  background: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  transform: none !important;
+  border-color: transparent !important;
+  font-weight: normal !important;
+}
+
+.nav-link.router-link-active:not(.active) .el-icon,
+.nav-link.router-link-exact-active:not(.active) .el-icon {
+  color: inherit !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+.nav-link .el-icon {
+  transition: all 0.2s ease-out;
+  font-size: 1.1rem;
+}
+
+.nav-badge {
+  margin-left: auto;
+  background: linear-gradient(135deg, #f56c6c 0%, #f78989 100%);
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  min-width: 20px;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(245, 108, 108, 0.3);
+  transition: all 0.2s ease-out;
+}
+
+.nav-badge.warning {
+  background: linear-gradient(135deg, #e6a23c 0%, #eebe77 100%);
+  box-shadow: 0 2px 6px rgba(230, 162, 60, 0.3);
+}
+
+.nav-link.active .nav-badge {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--el-color-primary, #409eff);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  font-weight: 700;
+}
+
+.nav-link.active .nav-badge.warning {
+  background: rgba(255, 255, 255, 0.9);
+  color: #e6a23c;
+}
+
+/* 内容区域 */
+.content-area {
+  flex: 1;
+  padding: 0;
+  overflow-y: auto;
+  margin-left: 280px;
+  animation: fadeIn 0.6s ease-out;
+  width: calc(100% - 280px);
+  height: calc(100vh - 80px);
+  transition: background-color 0.3s ease, background-image 0.3s ease;
+  position: relative;
+}
+
+.content-area > * {
+  min-height: 100%;
+}
+
+.content-area > router-view {
+  display: block;
+  height: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 欢迎区域 */
+.welcome-section {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.welcome-info h1 {
+  margin: 0 0 0.5rem 0;
+  color: #303133;
+  font-size: 1.5rem;
+}
+
+.welcome-subtitle {
+  color: #909399;
+  margin: 0;
+}
+
+.quick-stats .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f5f7fa;
+  border-radius: 8px;
+}
+
+.stat-icon {
+  font-size: 1.5rem;
+  color: #409eff;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #909399;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #303133;
+}
+
+/* 统计卡片 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+.stat-card .stat-icon {
+  font-size: 2.5rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #f5f7fa;
+}
+
+.pet-card .stat-icon {
+  color: #409eff;
+  background: #ecf5ff;
+}
+
+.adoption-card .stat-icon {
+  color: #f56c6c;
+  background: #fef0f0;
+}
+
+.foster-card .stat-icon {
+  color: #e6a23c;
+  background: #fdf6ec;
+}
+
+.alert-card .stat-icon {
+  color: #67c23a;
+  background: #f0f9ff;
+}
+
+.stat-content h3 {
+  margin: 0 0 0.5rem 0;
+  color: #909399;
+  font-size: 0.875rem;
+  font-weight: normal;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #303133;
+  margin: 0 0 0.25rem 0;
+}
+
+.stat-desc {
+  color: #909399;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* 快捷操作 */
+.quick-actions {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.quick-actions h3 {
+  margin: 0 0 1.5rem 0;
+  color: #303133;
+  font-size: 1.125rem;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.3s;
+  color: white;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #409eff 0%, #66b1ff 100%);
+}
+
+.action-btn.success {
+  background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%);
+}
+
+.action-btn.info {
+  background: linear-gradient(135deg, #909399 0%, #a6a9ad 100%);
+}
+
+.action-btn.warning {
+  background: linear-gradient(135deg, #e6a23c 0%, #eebe77 100%);
+}
+
+.action-btn.danger {
+  background: linear-gradient(135deg, #f56c6c 0%, #f78989 100%);
+}
+
+.action-btn.secondary {
+  background: linear-gradient(135deg, #606266 0%, #7a7d81 100%);
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.action-btn .el-icon {
+  font-size: 1.5rem;
+}
+
+/* 最近活动 */
+.recent-activities {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.recent-activities h3 {
+  margin: 0 0 1.5rem 0;
+  color: #303133;
+  font-size: 1.125rem;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.empty-activities {
+  text-align: center;
+  padding: 2rem;
+  color: #909399;
+}
+
+.empty-activities .el-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f5f7fa;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.activity-item:hover {
+  background: #ebeef5;
+}
+
+.activity-icon {
+  font-size: 1.25rem;
+  color: #409eff;
+  margin-top: 0.25rem;
+}
+
+.activity-content h4 {
+  margin: 0 0 0.25rem 0;
+  color: #303133;
+  font-size: 0.875rem;
+}
+
+.activity-content p {
+  margin: 0 0 0.25rem 0;
+  color: #606266;
+  font-size: 0.875rem;
+}
+
+.activity-time {
+  color: #909399;
+  font-size: 0.75rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    order: 2;
+  }
+  
+  .content-area {
+    order: 1;
+  }
+  
+  .welcome-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+</style>

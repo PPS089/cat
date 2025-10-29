@@ -1,0 +1,249 @@
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.register-card {
+  display: flex;
+  width: 800px;
+  height: 500px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.register-left {
+  flex: 1.2;
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.register-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 30px;
+}
+
+.welcome-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.welcome-subtitle {
+  font-size: 1rem;
+  font-weight: 300;
+  opacity: 0.9;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.register-right {
+  flex: 1;
+  padding: 40px 45px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.register-form {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.register-form :deep(.el-form-item) {
+  margin-bottom: 20px;
+}
+
+.register-form :deep(.el-input__wrapper) {
+  border-radius: 8px;
+  border: 1px solid #e1e5e9;
+  transition: all 0.3s ease;
+  padding: 12px 15px;
+  min-height: 45px;
+}
+
+.register-form :deep(.el-input__wrapper):hover {
+  border-color: #667eea;
+}
+
+.register-form :deep(.el-input__wrapper).is-focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.register-form :deep(.el-input__prefix) {
+  color: #667eea;
+  margin-right: 10px;
+}
+
+.register-form :deep(.el-input--large .el-input__inner) {
+  font-size: 1rem;
+  height: auto;
+  line-height: normal;
+}
+
+.register-form :deep(.el-input__icon) {
+  font-size: 18px;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 50px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+
+.submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.25);
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.login-text {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.login-text :deep(.el-link) {
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .register-card {
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+  }
+  
+  .register-left {
+    height: 180px;
+    flex: none;
+  }
+  
+  .register-right {
+    padding: 30px 25px;
+  }
+  
+  .welcome-title {
+    font-size: 1.6rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .form-title {
+    font-size: 1.4rem;
+  }
+  
+  .register-form {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-card {
+    max-width: 350px;
+  }
+  
+  .register-left {
+    height: 150px;
+  }
+  
+  .register-right {
+    padding: 25px 20px;
+  }
+  
+  .form-title {
+    font-size: 1.3rem;
+  }
+  
+  .welcome-title {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .register-card {
+    max-width: 320px;
+  }
+  
+  .register-left {
+    height: 130px;
+  }
+  
+  .register-right {
+    padding: 20px 15px;
+  }
+  
+  .form-title {
+    font-size: 1.2rem;
+  }
+  
+  .welcome-title {
+    font-size: 1.3rem;
+  }
+}
+

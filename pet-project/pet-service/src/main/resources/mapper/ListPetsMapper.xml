@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.petservice.mapper.ListPetsMapper">
+    <select id="selectByPage" resultType="com.example.petpojo.entity.Pets">
+        SELECT 
+            p.pid,
+            p.name,
+            p.breed,
+            p.age,
+            p.gender,
+            p.img_url,
+            p.species,
+            p.status,
+            p.shelter_id,
+            s.sid,
+            s.name as shelter_name,
+            s.location as shelter_location
+        FROM pets p
+        LEFT JOIN shelters s ON p.shelter_id = s.sid
+        WHERE p.status = 'UNADOPTED'
+        ORDER BY p.pid
+    </select>
+    
+    <select id="selectPetById" resultType="com.example.petpojo.entity.Pets">
+        SELECT 
+            p.pid,
+            p.name,
+            p.breed,
+            p.age,
+            p.gender,
+            p.img_url,
+            p.species,
+            p.status,
+            p.shelter_id,
+            s.sid,
+            s.name as shelter_name,
+            s.location as shelter_location
+        FROM pets p
+        LEFT JOIN shelters s ON p.shelter_id = s.sid
+        WHERE p.pid = #{petId}
+    </select>
+</mapper>

@@ -1,0 +1,173 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('../assets/img/dog.jpg');
+}
+
+.login-box {
+  margin-left: auto;
+  margin-right: 200px;
+  background: rgb(219, 157, 157);
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  height: 550px;
+}
+
+.login-header {
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+.login-header h2 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.switch-mode {
+  margin-top: 10px;
+}
+
+.mode-switch-btn {
+  background: #f0f0f0;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.mode-switch-btn:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.login-form {
+  margin: auto;
+  margin-top: 50px;
+  height: 400px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-right: 8px;
+  width: auto;
+  margin-bottom: 0;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-btn:hover {
+  background: #5a6fd8;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.register-link a {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+
+.language-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.language-switcher button {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.language-switcher button.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.language-switcher button:hover {
+  background: #f0f0f0;
+}
+
+.language-switcher button.active:hover {
+  background: #5a6fd8;
+}

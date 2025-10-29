@@ -1,0 +1,25 @@
+// tsconfig.app.json
+// 确认文件 "src/views/PetsView.vue" 是否存在，若不存在请创建该文件
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["vite/client", "node"],   // 可选，vite 已自带
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",   // ← 关键：把声明文件也包含进来
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ]
+}
