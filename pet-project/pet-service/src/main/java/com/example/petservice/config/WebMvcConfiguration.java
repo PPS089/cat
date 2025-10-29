@@ -40,7 +40,15 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         // 注册用户上下文拦截器（优先级最高，先设置用户上下文）
         registry.addInterceptor(userContextInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/images/**", "/static/**", "/media/**");
+                .excludePathPatterns(
+                        "/api/images/**", 
+                        "/static/**", 
+                        "/media/**",
+                        "/api/v3/api-docs/**",
+                        "/api/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/api/swagger-ui.html"
+                );
 
         // JWT authentication is handled by UserContextInterceptor
         // Add specific interceptors here if needed for admin/user role validation

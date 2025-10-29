@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
+                    "/swagger-ui.html",
                     "/swagger-ui.html"
                 ).permitAll()
                 // 其他所有请求都需要认证

@@ -52,6 +52,7 @@ public class UserContextInterceptor implements HandlerInterceptor {
         // 媒体文件接口 - 前缀匹配
         PUBLIC_URLS.add("/api/media/");
         
+        
         // 其他可能的公开接口 - 精确匹配
         PUBLIC_URLS.add("/api/health");
     }
@@ -71,6 +72,19 @@ public class UserContextInterceptor implements HandlerInterceptor {
             log.debug("请求头: {} = {}", headerName, headerValue);
         }
         log.debug("=== 请求头信息结束 ===");
+        
+        // Swagger 相关路径统一公开 - 优先判断
+        // 不管是否有/api前缀，只要包含/swagger、/v3/api-docs或/webjars就放行
+        log.debug("检查是否为Swagger相关路径: {}", requestUri);
+        log.debug("requestUri.contains('/swagger') = {}", requestUri.contains("/swagger"));
+        log.debug("requestUri.contains('/v3/api-docs') = {}", requestUri.contains("/v3/api-docs"));
+        log.debug("requestUri.contains('/webjars') = {}", requestUri.contains("/webjars"));
+        if (requestUri.contains("/swagger") || requestUri.contains("/v3/api-docs") || requestUri.contains("/webjars")) {
+            log.debug("Swagger相关路径，设为公开接口: {}", requestUri);
+            log.debug("公开接口，使用默认用户上下文: userId=1, username=system");
+            UserContext.setUserContext(1L, "system");
+            return true;
+        }
         
         // 检查是否为公开接口
         boolean isPublicEndpoint = isPublicUrl(requestUri);
@@ -161,20 +175,29 @@ public class UserContextInterceptor implements HandlerInterceptor {
      * 2. 不以"/"结尾的路径：要求精确匹配（如登录、注册接口）
      */
     private boolean isPublicUrl(String uri) {
+        log.debug("检查URI是否为公开接口: {}", uri);
         for (String publicUrl : PUBLIC_URLS) {
+            log.debug("检查公开路径: {}", publicUrl);
             // 对于以"/"结尾的路径，允许前缀匹配（如媒体文件接口）
             if (publicUrl.endsWith("/")) {
+                log.debug("公开路径以'/'结尾，检查前缀匹配: uri.startsWith(publicUrl) = {}", uri.startsWith(publicUrl));
+                log.debug("具体检查: '{}'.startsWith('{}') = {}", uri, publicUrl, uri.startsWith(publicUrl));
                 if (uri.startsWith(publicUrl)) {
                     log.debug("前缀匹配到公开接口: {} -> {}", uri, publicUrl);
                     return true;
+                } else {
+                    log.debug("前缀不匹配: {} 不以 {} 开头", uri, publicUrl);
                 }
             } 
             // 对于不以"/"结尾的路径，要求精确匹配（如登录、注册接口）
             else if (uri.equals(publicUrl)) {
                 log.debug("精确匹配到公开接口: {} -> {}", uri, publicUrl);
                 return true;
+            } else {
+                log.debug("精确不匹配: {} 不等于 {}", uri, publicUrl);
             }
         }
+        
         log.debug("非公开接口: {}", uri);
         return false;
     }
