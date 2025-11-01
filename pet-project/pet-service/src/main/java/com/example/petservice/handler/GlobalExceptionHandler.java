@@ -67,6 +67,7 @@ public class GlobalExceptionHandler {
      * 处理非法参数异常
      */
     @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)  // 添加这行，返回400状态码
     public Result<String> handleIllegalArgumentException(IllegalArgumentException e) {
         log.error("参数异常：", e);
         return Result.error(e.getMessage());
@@ -76,6 +77,7 @@ public class GlobalExceptionHandler {
      * 处理运行时异常
      */
     @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 添加这行，返回500状态码
     public Result<String> handleRuntimeException(RuntimeException e) {
         log.error("运行时异常：", e);
         return Result.error("运行时异常：" + e.getMessage());

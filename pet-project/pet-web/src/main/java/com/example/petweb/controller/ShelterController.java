@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.petcommon.result.Result;
-import com.example.petpojo.entity.Shelters;
 import com.example.petservice.service.ShelterService;
 import com.example.petpojo.vo.ShelterVo;
 
