@@ -1,11 +1,11 @@
-package com.example.petcommon.context;
+package com.example.petservice.interceptor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.example.petcommon.context.UserContext;
 import com.example.petcommon.utils.JwtUtil;
-import com.example.petcommon.utils.UserContext;
 
 import io.jsonwebtoken.Claims;
 import io.micrometer.common.lang.NonNull;
@@ -34,27 +34,27 @@ public class UserContextInterceptor implements HandlerInterceptor {
     
     static {
         // 登录和注册接口 - 精确匹配
-        PUBLIC_URLS.add("/api/user/login");
-        PUBLIC_URLS.add("/api/user/register");
+        PUBLIC_URLS.add("/user/login");
+        PUBLIC_URLS.add("/user/register");
+        PUBLIC_URLS.add("/user/");
         
         // 公开的文章接口 - 前缀匹配
-        PUBLIC_URLS.add("/api/articles/");
+        PUBLIC_URLS.add("/articles/");
         
         // 公开的宠物详情接口 - 前缀匹配
-        PUBLIC_URLS.add("/api/pets/details/");
+        PUBLIC_URLS.add("/pets/details/");
         
         // 媒体文件下载接口 - 前缀匹配
-        PUBLIC_URLS.add("/api/media/download/");
+        PUBLIC_URLS.add("/media/download/");
         
         // 图片资源接口 - 前缀匹配
-        PUBLIC_URLS.add("/api/images/");
+        PUBLIC_URLS.add("/images/");
         
         // 媒体文件接口 - 前缀匹配
-        PUBLIC_URLS.add("/api/media/");
-        
+        PUBLIC_URLS.add("/media/");
         
         // 其他可能的公开接口 - 精确匹配
-        PUBLIC_URLS.add("/api/health");
+        PUBLIC_URLS.add("/health");
     }
 
     @Override

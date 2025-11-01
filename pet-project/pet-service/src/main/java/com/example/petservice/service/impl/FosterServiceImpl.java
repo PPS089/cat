@@ -10,13 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.petcommon.context.UserContext;
 import com.example.petpojo.entity.Fosters;
 import com.example.petpojo.entity.Pets;
 import com.example.petpojo.entity.enums.CommonEnum;
 import com.example.petservice.mapper.FosterMapper;
 import com.example.petservice.mapper.PetsMapper;
 import com.example.petservice.service.FosterService;
-import com.example.petcommon.utils.UserContext;
 import com.example.petpojo.vo.FostersVo;
 
 import lombok.RequiredArgsConstructor;

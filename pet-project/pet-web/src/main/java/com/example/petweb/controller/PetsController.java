@@ -12,7 +12,6 @@ import com.example.petpojo.entity.Pets;
 import com.example.petservice.service.AdoptionsService;
 import com.example.petservice.service.FosterService;
 import com.example.petservice.service.ListPetsService;
-import com.example.petcommon.utils.UserContext;
 import com.example.petpojo.vo.ListPetsVo;
 import com.example.petpojo.vo.PetsDetailsVo;
 
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
 
 

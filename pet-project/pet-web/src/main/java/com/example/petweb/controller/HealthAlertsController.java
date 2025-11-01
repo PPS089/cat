@@ -1,9 +1,10 @@
 package com.example.petweb.controller;
 
+import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
 import com.example.petpojo.entity.HealthAlerts;
 import com.example.petservice.service.HealthAlertsService;
-import com.example.petcommon.utils.UserContext;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

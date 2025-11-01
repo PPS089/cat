@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.example.petcommon.context.UserContextInterceptor;
+import com.example.petservice.interceptor.UserContextInterceptor;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,13 +41,14 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(userContextInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/api/images/**", 
+                        "/user/login",
+                        "/user/register",
+                        "/images/**", 
                         "/static/**", 
                         "/media/**",
-                        "/api/v3/api-docs/**",
-                        "/api/swagger-ui/**",
-                        "/swagger-ui.html",
-                        "/api/swagger-ui.html"
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html"
                 );
 
         // JWT authentication is handled by UserContextInterceptor
@@ -63,7 +64,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         // 添加图片资源映射，支持上传的图片访问
         // 映射到Spring Boot的静态资源目录static/images/
         // 由于配置了context-path: /api，实际访问路径为/api/images/
-        registry.addResourceHandler("/api/images/**").addResourceLocations("classpath:/static/images/");
+        registry.addResourceHandler("/images/**").addResourceLocations("classpath:/static/images/");
         
         // 添加媒体文件访问映射
         // 将上传目录映射到API接口，用户可以直接访问上传的图片和视频
@@ -80,19 +81,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         log.info("扩展消息转换器...");
-        // 使用Spring容器中的ObjectMapper而不是自定义的JacksonObjectMapper
-        // 这样可以确保SpringDoc使用正确的ObjectMapper配置
-        for (HttpMessageConverter<?> converter : converters) {
-            if (converter instanceof MappingJackson2HttpMessageConverter jacksonConverter) {
-                // Spring会自动注入配置好的ObjectMapper
-                log.info("使用Spring配置的ObjectMapper");
-                return;
-            }
-        }
-        // 如果没有找到MappingJackson2HttpMessageConverter，创建一个新的
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        // Spring会自动注入配置好的ObjectMapper，不需要手动设置
-        converters.add(0, converter);
+        // 使用Spring容器中的ObjectMapper
+        // 通过JacksonConfig配置类提供的ObjectMapper来处理JSON序列化/反序列化
+        // 不需要额外的配置，Spring会自动注入配置好的ObjectMapper
     }
 
     /**

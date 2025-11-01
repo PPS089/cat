@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.petcommon.context.UserContext;
 import com.example.petpojo.dto.RecordDto;
 import com.example.petpojo.entity.PetRecords;
 import com.example.petservice.mapper.PetRecordsMapper;
 import com.example.petservice.service.PetRecordsService;
-import com.example.petcommon.utils.UserContext;
 
 import lombok.extern.slf4j.Slf4j;
 

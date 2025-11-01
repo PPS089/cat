@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.example.petpojo.dto.ChangePasswordDto;
 import com.example.petpojo.dto.UserUpdateDto;
-import com.example.petcommon.utils.UserContext;
 import com.example.petpojo.vo.UserVo;
 import com.example.petpojo.vo.AdoptionsVo;
 import com.example.petservice.service.AdoptionsService;
@@ -12,6 +11,7 @@ import com.example.petpojo.vo.FostersVo;
 import com.example.petservice.service.FosterService;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
 import com.example.petcommon.result.UserLoginResponse;
 import com.example.petpojo.dto.UserLoginDto;

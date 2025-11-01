@@ -2,6 +2,7 @@ package com.example.petservice.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.petcommon.context.UserContext;
 import com.example.petpojo.dto.AdoptionTimelineResponse;
 import com.example.petpojo.entity.Adoptions;
 import com.example.petpojo.entity.Fosters;
@@ -16,7 +17,6 @@ import com.example.petservice.mapper.UsersMapper;
 import com.example.petservice.service.AdoptionsService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.petcommon.utils.UserContext;
 import com.example.petpojo.vo.AdoptionTimelineVo;
 import com.example.petpojo.vo.AdoptionsVo;
 import com.example.petpojo.vo.AdoptionsWithFosterStatusVo;

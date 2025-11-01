@@ -1,7 +1,8 @@
 package com.example.petcommon.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.example.petcommon.utils.UserContext;
+import com.example.petcommon.context.UserContext;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;

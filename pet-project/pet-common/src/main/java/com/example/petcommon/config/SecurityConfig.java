@@ -33,7 +33,9 @@ public class SecurityConfig {
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html",
-                    "/swagger-ui.html"
+                    "/swagger-ui.html",
+                    "/user/login",
+                    "/user/register"
                 ).permitAll()
                 // 其他所有请求都需要认证
                 .anyRequest().permitAll() // 暂时允许所有其他请求，因为JWT拦截器会处理认证

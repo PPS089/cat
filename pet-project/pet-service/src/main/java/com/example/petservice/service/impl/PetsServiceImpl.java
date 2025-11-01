@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.petcommon.context.UserContext;
 import com.example.petpojo.dto.PetUpdateDto;
 import com.example.petpojo.entity.Adoptions;
 import com.example.petpojo.entity.Pets;
@@ -15,7 +16,6 @@ import com.example.petpojo.entity.enums.CommonEnum;
 import com.example.petservice.mapper.PetsMapper;
 import com.example.petservice.service.AdoptionsService;
 import com.example.petservice.service.PetsService;
-import com.example.petcommon.utils.UserContext;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,5 +1,6 @@
 package com.example.petweb.controller;
 
+import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
 import com.example.petservice.service.LoginHistoryService;
 import com.example.petpojo.vo.LoginHistoryVo;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import  com.example.petcommon.utils.UserContext;
 
 import java.util.List;
 

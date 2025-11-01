@@ -2,7 +2,6 @@ package com.example.petservice.service.impl;
 
 import com.example.petpojo.dto.ChangePasswordDto;
 import com.example.petpojo.dto.UserUpdateDto;
-import com.example.petcommon.utils.UserContext;
 import com.example.petpojo.vo.UserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +24,7 @@ import java.util.UUID;
 
 import com.example.petcommon.result.UserLoginResponse;
 import com.example.petcommon.config.JwtProperties;
+import com.example.petcommon.context.UserContext;
 import com.example.petpojo.dto.UserLoginDto;
 import com.example.petpojo.entity.LoginHistory;
 import com.example.petpojo.entity.enums.CommonEnum.LoginStatusEnum;

@@ -1,10 +1,10 @@
 package com.example.petservice.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.petcommon.context.UserContext;
 import com.example.petpojo.entity.LoginHistory;
 import com.example.petservice.mapper.LoginHistoryMapper;
 import com.example.petservice.service.LoginHistoryService;
-import com.example.petcommon.utils.UserContext;
 import com.example.petpojo.vo.LoginHistoryVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

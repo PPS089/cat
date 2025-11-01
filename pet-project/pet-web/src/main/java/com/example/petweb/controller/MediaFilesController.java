@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
 import com.example.petservice.service.MediaFilesService;
-import com.example.petcommon.utils.UserContext;
 import com.example.petpojo.vo.MediaFileVo;
 
 import lombok.RequiredArgsConstructor;

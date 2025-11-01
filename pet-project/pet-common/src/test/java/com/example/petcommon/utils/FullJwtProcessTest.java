@@ -1,6 +1,8 @@
 package com.example.petcommon.utils;
 
 import com.example.petcommon.config.JwtProperties;
+import com.example.petcommon.context.UserContext;
+
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
