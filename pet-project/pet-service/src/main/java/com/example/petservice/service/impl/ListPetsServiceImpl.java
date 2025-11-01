@@ -34,13 +34,13 @@ public class ListPetsServiceImpl extends ServiceImpl<ListPetsMapper, Pets> imple
         vo.setBreed(pet.getBreed());
         vo.setAge(pet.getAge());
         vo.setGender(pet.getGender()); // 确保是"公"/"母"格式
-        vo.setImageUrl(pet.getImageUrl());
+        vo.setImgUrl(pet.getImageUrl()); // 设置图片URL字段
         vo.setStatus(pet.getStatus() != null ? pet.getStatus().name() : "UNADOPTED"); // 状态值
         
         // 直接使用查询结果中的收容所信息
         if (pet.getShelterName() != null) {
             vo.setShelterName(pet.getShelterName());
-            vo.setShelterAddress(pet.getShelterLocation());
+            vo.setShelterAddress(pet.getShelterAddress());
         } else {
             vo.setShelterName("未知收容所");
             vo.setShelterAddress("未知地址");
@@ -96,4 +96,3 @@ public class ListPetsServiceImpl extends ServiceImpl<ListPetsMapper, Pets> imple
 
 
 }
-

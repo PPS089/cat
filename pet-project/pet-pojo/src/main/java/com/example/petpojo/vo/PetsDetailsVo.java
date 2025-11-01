@@ -28,7 +28,7 @@ public class PetsDetailsVo {
     private Integer adoptionFee;
     private Integer fosterFee;
     private String shelterName;
-    private String shelterLocation;
+    private String shelterAddress;
     private Long shelterId;
 
     

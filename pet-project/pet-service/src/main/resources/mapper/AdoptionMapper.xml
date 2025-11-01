@@ -9,6 +9,7 @@
         p.pid AS pid,  -- 对应 VO 的 pid（宠物ID）
         a.adopt_date AS adoptionDate,  -- 数据库 adopt_date → VO adoptionDate（驼峰对应）
         p.name AS name,  -- 宠物名 → VO name（无冲突，直接对应）
+        p.species AS species,  -- 添加物种字段映射
         p.breed AS breed,  -- 宠物品种 → VO breed
         p.age AS age,  -- 宠物年龄 → VO age
         p.gender AS gender,  -- 宠物性别 → VO gender
@@ -34,6 +35,7 @@
         p.pid AS pid,
         a.adopt_date AS adoptionDate,
         p.name AS name,
+        p.species AS species,  -- 添加物种字段映射
         p.breed AS breed,
         p.age AS age,
         p.gender AS gender,
@@ -61,6 +63,7 @@
         p.pid AS pid,
         a.adopt_date AS adoptionDate,
         p.name AS name,
+        p.species AS species,  -- 添加物种字段映射
         p.breed AS breed,
         p.age AS age,
         p.gender AS gender,
@@ -88,6 +91,7 @@
         p.pid AS pid,
         a.adopt_date AS adoptionDate,
         p.name AS name,
+        p.species AS species,  -- 添加物种字段映射
         p.breed AS breed,
         p.age AS age,
         p.gender AS gender,

@@ -39,5 +39,5 @@ public class Pets implements Serializable {
     private String shelterName;
     
     @TableField(exist = false)
-    private String shelterLocation;
+    private String shelterAddress;
 }

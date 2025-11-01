@@ -14,7 +14,7 @@ public class ListPetsVo {
     private String breed;
     private Integer age;
     private String gender; // 需要确保是"公"/"母"格式
-    private String imageUrl;
+    private String imgUrl; // 图片URL字段，前端需要
     private String shelterName;
     private String shelterAddress;
     private String status; // 宠物状态字段，需要是UNADOPTED等值

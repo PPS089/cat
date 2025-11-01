@@ -58,20 +58,21 @@ public class PetsController {
             pet.setId(listPetsVo.getPid());  // 使用pid作为id
             pet.setPid(listPetsVo.getPid()); // 使用pid作为pid
             pet.setName(listPetsVo.getName());
-            pet.setSpecies("adoption");
+            // 使用从数据库查询到的实际物种信息，而不是硬编码为"adoption"
+            pet.setSpecies(listPetsVo.getSpecies() != null ? listPetsVo.getSpecies() : "未知物种");
             pet.setBreed(listPetsVo.getBreed());
             pet.setAge(listPetsVo.getAge());
             pet.setGender(listPetsVo.getGender());
             pet.setStatus(listPetsVo.getStatus());
             pet.setDescription(listPetsVo.getName() + "是一只可爱的" + listPetsVo.getBreed() + "，正在寻找温暖的家庭");
-            pet.setImage(listPetsVo.getImageUrl() != null ? listPetsVo.getImageUrl() : "/dog.jpg");
+            pet.setImage(listPetsVo.getImgUrl() != null ? listPetsVo.getImgUrl() : "/dog.jpg");
             pet.setHealthStatus("健康");
             pet.setVaccinated(true);
             pet.setSpayed(false);
             pet.setAdoptionFee(200);
             pet.setFosterFee(50);
             pet.setShelterName(listPetsVo.getShelterName());
-            pet.setShelterLocation(listPetsVo.getShelterAddress());
+            pet.setShelterAddress(listPetsVo.getShelterAddress());
             pet.setShelterId(1L);
 
             return pet;

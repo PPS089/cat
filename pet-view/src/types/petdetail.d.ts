@@ -14,6 +14,6 @@ export interface petDetailResponse {
   gender: PetGender // 宠物性别（公/母）
   imgUrl: string | null // 宠物图片URL
   shelterName: string // 收容所名称
-  location: string // 收容所地址
+  shelterAddress: string // 收容所地址
 }
 

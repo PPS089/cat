@@ -154,7 +154,7 @@ export const fetchPetDetail = async (t: Function, router: any, route: any) => {
     
     petForm.value = {
       name: pet.name,
-      species: pet.species || pet.breed,
+      species: pet.species,
       breed: pet.breed,
       age: pet.age,
       gender: gender

@@ -15,8 +15,8 @@
             p.status,
             p.shelter_id,
             s.sid,
-            s.name as shelter_name,
-            s.location as shelter_location
+            s.name as shelterName,
+            s.location as shelterAddress
         FROM pets p
         LEFT JOIN shelters s ON p.shelter_id = s.sid
         WHERE p.status = 'UNADOPTED'
@@ -35,8 +35,8 @@
             p.status,
             p.shelter_id,
             s.sid,
-            s.name as shelter_name,
-            s.location as shelter_location
+            s.name as shelterName,
+            s.location as shelterAddress
         FROM pets p
         LEFT JOIN shelters s ON p.shelter_id = s.sid
         WHERE p.pid = #{petId}

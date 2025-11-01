@@ -50,10 +50,10 @@
               <span class="value">{{ getGenderLabel(pet.gender) }}</span>
             </div>
             <!-- 健康状态 -->
-            <div class="detail-item">
+            <!-- <div class="detail-item">
               <span class="label">{{ t('user.healthStatus') }}：</span>
               <span class="value">{{ getHealthStatusLabel(pet.status) }}</span>
-            </div>
+            </div> -->
           </div>
           
           <!-- 收容所信息区域 -->
@@ -68,7 +68,7 @@
               <!-- 收容所地址 -->
               <div class="detail-item">
                 <span class="label">{{ t('nav.address') || 'Address' }}：</span>
-                <span class="value">{{ pet.location || t('message.unknown') }}</span>
+                <span class="value">{{ pet.shelterAddress || t('message.unknown') }}</span>
               </div>
             </div>
           </div>
@@ -101,7 +101,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
-import { getStatusType, getStatusLabel, getGenderLabel, getHealthStatusLabel, fetchPetDetail } from '@/api/petdetail'
+import { getStatusType, getStatusLabel, getGenderLabel, fetchPetDetail } from '@/api/petdetail'
 import type{ petDetailResponse } from '../types/petdetail'
 
 // 路由相关

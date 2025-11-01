@@ -21,11 +21,9 @@ export const getStatusType = (status: PetStatus | string): 'success' | 'info' | 
 export const getStatusLabel = (status: PetStatus | string): string => {
   const statusKey = status.toUpperCase()
   switch (statusKey) {
-    case 'AVAILABLE': return '可领养'
+    case 'UNADOPTED': return '可领养'
     case 'ADOPTED': return '已领养'
-    case 'FOSTERED': return '寄养中'
-    case 'PENDING': return '待处理'
-    case 'QUARANTINE': return '隔离中'
+    case 'FOSTERING': return '寄养中'
     default: return status
   }
 }
@@ -40,18 +38,6 @@ export const getGenderLabel = (gender: PetGender | string): string => {
   }
 }
 
-// 健康状态标签映射
-export const getHealthStatusLabel = (status: string | undefined): string => {
-  if (!status) return '未知'
-  
-  switch (status.toUpperCase()) {
-    case 'HEALTHY': return '健康'
-    case 'GOOD': return '良好'
-    case 'FAIR': return '一般'
-    case 'NEEDS_ATTENTION': return '需要关注'
-    default: return status
-  }
-}
 
 
 export const fetchPetDetail = async (pid: number)=>{
