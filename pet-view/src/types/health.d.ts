@@ -59,8 +59,8 @@ export interface HealthAlert {
 
 // 健康提醒表单数据类型
 export interface HealthAlertForm {
-  healthId?: string | number;      // 健康检查ID（编辑时用）
-  pid: string | number;            // 宠物ID
+  healthId?: number;               // 健康检查ID（编辑时用）
+  pid: number;                     // 宠物ID
   healthType: string;              // 健康类型
   checkDate: string;               // 检查日期
   description: string;             // 健康描述

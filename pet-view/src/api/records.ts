@@ -17,9 +17,7 @@ import type {
   UseRecordsReturn
 } from '@/types/records'
 
-/**
- * 获取心情表情
- */
+// 心情表情
 export const useMoodEmoji = () => {
   const { t } = useI18n()
   
@@ -36,9 +34,7 @@ export const useMoodEmoji = () => {
   return { getMoodEmoji }
 }
 
-/**
- * 获取心情样式类
- */
+// 心情样式类
 export const useMoodClass = () => {
   const { t } = useI18n()
   
@@ -54,9 +50,7 @@ export const useMoodClass = () => {
   return { getMoodClass }
 }
 
-/**
- * 日期格式化
- */
+// 日期格式化
 export const useDateFormatter = () => {
   const formatDate = (dateString: string): string => {
     if (!dateString) return ''
@@ -72,9 +66,7 @@ export const useDateFormatter = () => {
   return { formatDate }
 }
 
-/**
- * 文件验证配置
- */
+// 文件验证配置
 const FILE_VALIDATION_CONFIG: FileValidationConfig = {
   maxFileSize: 52428800,  // 50MB
   supportedImageFormats: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'],
@@ -83,9 +75,7 @@ const FILE_VALIDATION_CONFIG: FileValidationConfig = {
   thumbnailMaxHeight: 200
 }
 
-/**
- * 生成图片缩略图
- */
+// 生成图片缩略图
 const generateImageThumbnail = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -95,11 +85,10 @@ const generateImageThumbnail = (file: File): Promise<string> => {
         const canvas = document.createElement('canvas')
         const ctx = canvas.getContext('2d')
         if (!ctx) {
-          resolve(event.target?.result as string)  // 如果失败则返回原始URL
+          resolve(event.target?.result as string)
           return
         }
 
-        // 计算缩放尺寸
         let width = img.width
         let height = img.height
         const maxWidth = FILE_VALIDATION_CONFIG.thumbnailMaxWidth
@@ -120,10 +109,10 @@ const generateImageThumbnail = (file: File): Promise<string> => {
         canvas.width = width
         canvas.height = height
         ctx.drawImage(img, 0, 0, width, height)
-        resolve(canvas.toDataURL('image/jpeg', 0.7))  // 使用JPEG格式，质量70%
+        resolve(canvas.toDataURL('image/jpeg', 0.7))
       }
       img.onerror = () => {
-        resolve(event.target?.result as string)  // 如果失败则返回原始URL
+        resolve(event.target?.result as string)
       }
       img.src = event.target?.result as string
     }
@@ -132,11 +121,8 @@ const generateImageThumbnail = (file: File): Promise<string> => {
   })
 }
 
-/**
- * 验证文件
- */
+// 验证文件
 const validateFile = (file: File): { valid: boolean; error?: string } => {
-  // 检查文件大小
   if (file.size > FILE_VALIDATION_CONFIG.maxFileSize) {
     return {
       valid: false,
@@ -144,7 +130,6 @@ const validateFile = (file: File): { valid: boolean; error?: string } => {
     }
   }
 
-  // 检查文件类型
   const isImage = FILE_VALIDATION_CONFIG.supportedImageFormats.includes(file.type)
   const isVideo = FILE_VALIDATION_CONFIG.supportedVideoFormats.includes(file.type)
 
@@ -158,28 +143,20 @@ const validateFile = (file: File): { valid: boolean; error?: string } => {
   return { valid: true }
 }
 
-/**
- * 文件上传管理（增强版本）
- */
+// 文件上传管理
 export const useFileUpload = () => {
   const filePreviews = ref<FilePreview[]>([])
 
-  /**
-   * 处理文件上传
-   */
   const handleFileUpload = async (event: Event): Promise<void> => {
     const target = event.target as HTMLInputElement
     const files = Array.from(target.files || [])
 
-    // 检查文件数量限制
     if (filePreviews.value.length + files.length > 5) {
       ElMessage.error('最多只能上传5个文件')
       return
     }
 
-    // 处理每个文件
     for (const file of files) {
-      // 验证文件
       const validation = validateFile(file)
       if (!validation.valid) {
         ElMessage.error(`文件 "${file.name}" 验证失败：${validation.error}`)
@@ -187,22 +164,10 @@ export const useFileUpload = () => {
       }
 
       try {
-        // 获取媒体类型
         const mediaType = file.type.startsWith('image/') ? 'image' : 'video'
-
-        // 生成预览URL
         let previewUrl = URL.createObjectURL(file)
-        let thumbnailUrl = previewUrl
+        let thumbnailUrl = mediaType === 'image' ? await generateImageThumbnail(file) : previewUrl
 
-        // 对于图片，生成缩略图
-        if (mediaType === 'image') {
-          thumbnailUrl = await generateImageThumbnail(file)
-        } else {
-          // 对于视频，使用原始对象URL作为预览
-          thumbnailUrl = previewUrl
-        }
-
-        // 添加到预览列表
         filePreviews.value.push({
           file,
           previewUrl,
@@ -217,28 +182,18 @@ export const useFileUpload = () => {
       }
     }
 
-    // 清空input，允许再次选择同一文件
     target.value = ''
   }
 
-  /**
-   * 删除文件预览
-   */
   const removeFile = (index: number): void => {
     const preview = filePreviews.value[index]
-    if (preview) {
-      // 释放对象URL
-      if (preview.previewUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(preview.previewUrl)
-      }
+    if (preview && preview.previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(preview.previewUrl)
     }
     filePreviews.value.splice(index, 1)
     ElMessage.success('文件已删除')
   }
 
-  /**
-   * 清空所有文件
-   */
   const clearAllFiles = (): void => {
     filePreviews.value.forEach((preview) => {
       if (preview.previewUrl.startsWith('blob:')) {
@@ -248,28 +203,16 @@ export const useFileUpload = () => {
     filePreviews.value = []
   }
 
-  /**
-   * 获取待上传的文件数组
-   */
   const getUploadFiles = (): File[] => {
     return filePreviews.value.map((preview) => preview.file)
   }
 
-  /**
-   * 获取文件图标
-   */
   const getFileIcon = (mediaType: string): string => {
-    if (mediaType === 'image') {
-      return '🖼️'
-    } else if (mediaType === 'video') {
-      return '🎬'
-    }
+    if (mediaType === 'image') return '🖼️'
+    if (mediaType === 'video') return '🎬'
     return '📄'
   }
 
-  /**
-   * 格式化文件大小
-   */
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes'
     const k = 1024
@@ -289,27 +232,23 @@ export const useFileUpload = () => {
   }
 }
 
-/**
- * 媒体查看管理
- */
+// 媒体查看管理
 export const useMediaModal = () => {
   const showMediaModal = ref(false)
   const currentMediaList = ref<MediaFile[]>([])
   const mediaLoading = ref(false)
 
   const openMediaModal = async (mediaList: MediaFile[], recordId?: number): Promise<void> => {
-    // 如果传入了recordId，则从后端加载该记录的媒体列表
     if (recordId) {
       mediaLoading.value = true
       try {
         const response = await request.get(`/media/record/${recordId}`)
         console.log(`后端返回的媒体数据:`, response)
         if (response.code === 200 && response.data) {
-          // response.data 是 MediaFileVo[] 数组，需要转换为前端的 MediaFile 格式
           const mediaFiles = Array.isArray(response.data) ? response.data : [response.data]
           currentMediaList.value = mediaFiles.map((m: any) => ({
             id: m.mid || m.id,
-            media_url: `/api${m.filePath || m.mediaUrl || m.media_url}`,  // 添加 /api 前缀，映射 filePath → media_url
+            media_url: `/api${m.filePath || m.mediaUrl || m.media_url}`,
             media_type: m.mediaType || m.media_type || 'image',
             media_name: m.fileName || m.name || ''
           }))
@@ -325,7 +264,6 @@ export const useMediaModal = () => {
         mediaLoading.value = false
       }
     } else {
-      // 如果没有传recordId，则使用传入的mediaList
       currentMediaList.value = mediaList || []
     }
     
@@ -346,14 +284,9 @@ export const useMediaModal = () => {
   }
 }
 
-/**
- * 事件数据获取
- */
+// 事件数据获取
 export const useEventData = () => {
   const { t } = useI18n()
-
-  
-  // 事件数据
   const events = ref<PetRecord[]>([])
   const loading = ref(false)
 
@@ -364,19 +297,15 @@ export const useEventData = () => {
       const response = await request.get('/events')
       console.log(t('fetchEventsApiResponse'), response)
       
-      // 适配实际的API响应格式 - 根据实际响应结构调整判断条件
       if (response.code === 200 && response.data) {
         console.log('fetchEvents: 事件数量:', response.data.length)
-        // 转换后端数据格式到前端格式，并验证数据完整性
         const newEvents = response.data.map((event: any) => {
-          // 验证必需字段
           const recordId = event.record_id || event.eid || event.id
           if (!recordId) {
             console.warn('Event missing record_id:', event)
             return null
           }
           
-          // 验证时间字段
           const recordTime = event.record_time || event.eventTime || event.event_time
           if (!recordTime) {
             console.warn('Event missing record_time:', event)
@@ -393,7 +322,6 @@ export const useEventData = () => {
             location: event.location || '',
             pet_name: event.pet_name || '',
             created_at: event.createdAt || event.created_at || recordTime,
-            // 使用后端返回的 mediaList，如果没有则使用旧的 mediaUrl 兼容
             media_list: event.mediaList && Array.isArray(event.mediaList) 
               ? event.mediaList.map((m: any) => ({
                   id: m.mid || m.id || 1,
@@ -408,9 +336,8 @@ export const useEventData = () => {
                   media_name: ''
                 }] : [])
           }
-        }).filter(Boolean) // 过滤掉无效的事件
+        }).filter(Boolean)
         
-    
         events.value = newEvents
         console.log('fetchEvents: 更新事件数据后，新事件数量:', events.value.length)
       } else {
@@ -433,20 +360,14 @@ export const useEventData = () => {
   }
 }
 
-/**
- * 宠物数据获取 - 只获取领养记录和pets表判断是否被领养，跟寄养没关系
- */
+// 宠物数据获取 - 只获取领养记录和pets表判断是否被领养，跟寄养没关系
 export const usePetData = () => {
   const { t } = useI18n()
   const userStore = useUserStore()
-  
-  // 宠物数据
   const pets = ref<PetInfo[]>([])
   const loading = ref(false)
 
   const fetchPets = async (): Promise<void> => {
-   
-
     loading.value = true
     try {
       console.log(t('fetchPetsStartGettingPetData'))
@@ -456,42 +377,37 @@ export const usePetData = () => {
         token: localStorage.getItem('jwt_token') || localStorage.getItem('token')
       })
       
-      // 只获取领养记录 - 事件记录只需要判断宠物是否被领养
       console.log(t('fetchPetsReadyToCallApiUserAdoptions'))
       const adoptionData = await request.get('/user/adoptions', {
         params: {
           current_page: 1,
-          per_page: 100  // 获取足够多的记录以确保包含所有相关宠物
+          per_page: 100
         }
       })
       
       console.log('fetchPets: API响应数据:', JSON.stringify(adoptionData, null, 2))
       
-
-      
-      // 1. 标准格式: { code: 200, data: { records: [...] } }
-      if (adoptionData.code === 200 ) {
-         const records = adoptionData.data.records
-       
-     
-      
-      if (records && Array.isArray(records) && records.length > 0) {
-        console.log(t('fetchPetsStartProcessingAdoptionRecords'))
-        const adoptionPets = records.map((record: any) => ({
-          pid: record.pid || record.id,
-          name: record.name || record.petName,
-          species: record.breed || record.species || '未知',
-          breed: record.breed || record.species || '未知',
-          type: 'adoption' as const,
-          date: record.adoptionDate || record.adoptDate || record.date
-        }))
-        console.log('fetchPets: 映射后的宠物数组:', adoptionPets)
-        pets.value = adoptionPets
-        console.log('fetchPets: 最终pets.value数量:', pets.value.length)
-      }
-     } else {
+      if (adoptionData.code === 200) {
+        const records = adoptionData.data.records
+        if (records && Array.isArray(records) && records.length > 0) {
+          console.log(t('fetchPetsStartProcessingAdoptionRecords'))
+          const adoptionPets = records.map((record: any) => ({
+            pid: record.pid || record.id,
+            name: record.name || record.petName,
+            species: record.breed || record.species || '未知',
+            breed: record.breed || record.species || '未知',
+            type: 'adoption' as const,
+            date: record.adoptionDate || record.adoptDate || record.date
+          }))
+          console.log('fetchPets: 映射后的宠物数组:', adoptionPets)
+          pets.value = adoptionPets
+          console.log('fetchPets: 最终pets.value数量:', pets.value.length)
+        } else {
+          pets.value = []
+          console.log('fetchPets: 没有获取到领养记录数据')
+        }
+      } else {
         pets.value = []
-        console.log('fetchPets: 没有获取到领养记录数据')
       }
     } catch (error) {
       ElMessage.error(t('api.getPetsFailed'))
@@ -511,7 +427,6 @@ export const usePetData = () => {
       return pet.name
     }
     
-    // 如果找不到宠物，但有提供宠物名字，则使用提供的名字
     if (petName) {
       console.log(`getPetName: PID ${pid} 未找到宠物，使用提供的名字: ${petName}`)
       return petName
@@ -529,16 +444,13 @@ export const usePetData = () => {
   }
 }
 
-/**
- * 事件操作管理
- */
+// 事件操作管理
 export const useEventOperations = (eventData?: { fetchEvents: () => Promise<void> }) => {
   const { t } = useI18n()
   const { fetchEvents } = eventData || useEventData()
 
   const deleteEvent = async (recordId: number): Promise<void> => {
     try {
-      // 验证 recordId 是否有效
       if (!recordId || recordId === undefined || recordId <= 0) {
         console.error('Invalid recordId:', recordId)
         ElMessage.error('无效的记录ID')
@@ -569,21 +481,18 @@ export const useEventOperations = (eventData?: { fetchEvents: () => Promise<void
     isEdit: boolean
   ): Promise<void> => {
     try {
-      // 转换日期时间格式：将 ISO 格式 (2025-10-24T17:07) 转换为后端支持的格式 (2025-10-24 17:07:00)
-      const recordTimeISO = formData.record_time; // 如: "2025-10-24T17:07"
+      const recordTimeISO = formData.record_time;
       const recordTimeFormatted = recordTimeISO ? recordTimeISO.replace('T', ' ') + ':00' : '';
       
-      // 转换前端字段到后端API字段格式
       const data = {
         pid: formData.pid,
         eventType: formData.event_type,
-        recordTime: recordTimeFormatted, // 使用格式化后的时间
+        recordTime: recordTimeFormatted,
         description: formData.description,
         mood: formData.mood || '',
         location: formData.location || ''
       }
 
-      // 1. 先创建或更新事件记录
       let recordId: number | null = null
       if (isEdit && formData.record_id) {
         await request.put(`/events/${formData.record_id}`, data)
@@ -595,9 +504,7 @@ export const useEventOperations = (eventData?: { fetchEvents: () => Promise<void
         ElMessage.success(t('api.addSuccess'))
       }
 
-      // 2. 然后上传文件（如果有的话）
-      // NOTE: 这里使用空数组作为默认值，实际的文件列表由useRecords中的getUploadFiles提供
-      const uploadFiles: File[] = [] // 占位符，实际值会在useRecords中处理
+      const uploadFiles: File[] = []
       if (uploadFiles && uploadFiles.length > 0 && recordId) {
         try {
           console.log(`上传流程：开始上传${uploadFiles.length}个文件...`)
@@ -609,7 +516,6 @@ export const useEventOperations = (eventData?: { fetchEvents: () => Promise<void
         }
       }
 
-      // 3. 缓冲时间后刷新事件列表
       console.log('saveEvent: 开始重新获取事件数据...')
       setTimeout(async () => {
         await fetchEvents()
@@ -632,9 +538,7 @@ export const useEventOperations = (eventData?: { fetchEvents: () => Promise<void
   }
 }
 
-/**
- * 筛选和排序逻辑
- */
+// 筛选和排序逻辑
 export const useRecordFilters = (events: Ref<PetRecord[]>) => {
   const filters = reactive<RecordFilters>({
     selectedPet: '',
@@ -673,9 +577,7 @@ export const useRecordFilters = (events: Ref<PetRecord[]>) => {
   }
 }
 
-/**
- * 排序逻辑
- */
+// 排序逻辑
 export const useRecordSorting = (events: Ref<PetRecord[]>) => {
   const sortBy = ref<SortField>('record_time')
 
@@ -703,9 +605,7 @@ export const useRecordSorting = (events: Ref<PetRecord[]>) => {
   }
 }
 
-/**
- * 时间线分组
- */
+// 时间线分组
 export const useTimelineGrouping = (events: Ref<PetRecord[]>) => {
   const groupedEvents = computed(() => {
     const groups: Record<string, PetRecord[]> = {}
@@ -722,9 +622,7 @@ export const useTimelineGrouping = (events: Ref<PetRecord[]>) => {
   return { groupedEvents }
 }
 
-/**
- * 表单管理
- */
+// 表单管理
 export const useRecordForm = () => {
   const formData = reactive<RecordFormData>({
     record_id: '',
@@ -749,18 +647,15 @@ export const useRecordForm = () => {
   }
 
   const populateForm = (event: PetRecord): void => {
-    // 修复日期格式转换：处理后端返回的 "2025-10-24 17:07:00" 格式
     let formattedDateTime = ''
     try {
       if (event.record_time) {
-        // 替换空格为 T，使其成为有效的 ISO 格式
         const isoString = event.record_time.replace(' ', 'T')
         const date = new Date(isoString)
         if (!isNaN(date.getTime())) {
           formattedDateTime = date.toISOString().slice(0, 16)
         } else {
           console.warn('Invalid date format:', event.record_time)
-          // 尝试直接解析原始格式
           const parts = event.record_time.split(' ')
           if (parts.length === 2) {
             formattedDateTime = `${parts[0]}T${parts[1].slice(0, 5)}`
@@ -784,9 +679,7 @@ export const useRecordForm = () => {
   }
 }
 
-/**
- * 主组合式函数 - 记录管理
- */
+// 主组合式函数 - 记录管理
 export const useRecords = (): UseRecordsReturn => {
   // 基础数据
   const { events, loading, fetchEvents } = useEventData()
@@ -809,7 +702,7 @@ export const useRecords = (): UseRecordsReturn => {
   // 表单管理
   const { formData, resetForm, populateForm } = useRecordForm()
   
-  // 操作管理 - 确保使用相同的事件数据实例
+  // 操作管理
   const { deleteEvent } = useEventOperations({ fetchEvents })
   
   // 模态框状态
@@ -838,14 +731,12 @@ export const useRecords = (): UseRecordsReturn => {
     resetForm()
   }
   
-  // 保存事件（包装saveEvent以適配组件使用）
+  // 保存事件
   const saveEventHandler = async (): Promise<void> => {
     try {
-      // 转换日期时间格式·将 ISO 格式 (2025-10-24T17:07) 转换为后端支持的格式 (2025-10-24 17:07:00)
       const recordTimeISO = formData.record_time
       const recordTimeFormatted = recordTimeISO ? recordTimeISO.replace('T', ' ') + ':00' : ''
         
-      // 转换前端字段到后端API字段格式
       const data = {
         pid: formData.pid,
         eventType: formData.event_type,
@@ -855,7 +746,6 @@ export const useRecords = (): UseRecordsReturn => {
         location: formData.location || ''
       }
   
-      // 1. 先创建或更新事件记录
       let recordId: number | null = null
       if (showEditModal.value && formData.record_id) {
         await request.put(`/events/${formData.record_id}`, data)
@@ -867,20 +757,18 @@ export const useRecords = (): UseRecordsReturn => {
         ElMessage.success('事件添加成功')
       }
   
-      // 2. 然后上传文件（如果有的话）
       const uploadFiles = getUploadFiles()
       if (uploadFiles && uploadFiles.length > 0 && recordId) {
         try {
-          console.log(`流头模元：开始上传${uploadFiles.length}个流传文件...`)
+          console.log(`上传流程：开始上传${uploadFiles.length}个文件...`)
           await uploadMediaFiles(uploadFiles, recordId)
           ElMessage.success('事件保存成功，媒体文件上传完成')
         } catch (uploadError) {
-          console.warn('流头模块警告：事件添加成功，但流传文件上传失败', uploadError)
-          ElMessage.warning('事件添加成功，但流传文件上传失败')
+          console.warn('流程警告：事件保存成功，但媒体文件上传失败', uploadError)
+          ElMessage.warning('事件保存成功，但媒体文件上传失败')
         }
       }
   
-      // 3. 缓冲时间后刷新事件列表
       console.log('saveEventHandler: 开始重新获取事件数据...')
       setTimeout(async () => {
         await fetchEvents()

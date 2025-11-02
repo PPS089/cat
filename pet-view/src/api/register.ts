@@ -103,14 +103,14 @@ export const useRegister = () => {
       })
       
       // 检查响应状态
-      if (response.data.code === 200 || response.data.code === 1) {
+      if (response.code === 200) {
         ElMessage.success(t('register.success'))
         router.push('/login')
       } else {
-        ElMessage.error(response.data.msg || response.data.message || t('register.error'))
+        ElMessage.error(response.message || t('register.error'))
       }
     } catch (err: any) {
-      ElMessage.error(err.response?.data?.message || t('register.error'))
+      ElMessage.error(err.response?.data?.message || err.message || t('register.error'))
     } finally {
       loading.value = false
     }

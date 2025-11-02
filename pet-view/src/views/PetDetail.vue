@@ -22,9 +22,7 @@
             <!-- 宠物名称 -->
             <h2>{{ pet.name }}</h2>
             <!-- 宠物状态标签 -->
-            <el-tag :type="getStatusType(pet.status)">
-              {{ getStatusLabel(pet.status) }}
-            </el-tag>
+            <el-tag type="success">可领养</el-tag>
           </div>
           
           <!-- 宠物详细信息网格布局 -->
@@ -49,11 +47,6 @@
               <span class="label">{{ t('nav.gender') }}：</span>
               <span class="value">{{ getGenderLabel(pet.gender) }}</span>
             </div>
-            <!-- 健康状态 -->
-            <!-- <div class="detail-item">
-              <span class="label">{{ t('user.healthStatus') }}：</span>
-              <span class="value">{{ getHealthStatusLabel(pet.status) }}</span>
-            </div> -->
           </div>
           
           <!-- 收容所信息区域 -->
@@ -101,7 +94,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
-import { getStatusType, getStatusLabel, getGenderLabel, fetchPetDetail } from '@/api/petdetail'
+import { getGenderLabel, fetchPetDetail } from '@/api/petdetail'
 import type{ petDetailResponse } from '../types/petdetail'
 
 // 路由相关

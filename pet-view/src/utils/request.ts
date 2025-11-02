@@ -146,6 +146,7 @@ service.interceptors.response.use(
       return Promise.reject(new Error(msg))
     }
 
+    // 返回完整的响应数据，包括code、msg和data
     return data
   },
   (error: any) => {

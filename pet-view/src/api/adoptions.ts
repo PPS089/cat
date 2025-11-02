@@ -38,8 +38,6 @@ export const useAdoptionTimeline = () => {
         const result = response.data as AdoptionTimelineResponse
         timeline.value = result.timeline
         dialogVisible.value = true
-        console.log(`成功获取时间线数据，共 ${result.timeline.length} 条记录`)
-        console.log('设置dialogVisible为true:', dialogVisible.value)
       } else {
         console.error('API返回错误:', response.message)
         ElMessage.error(response.message || t('user.loadTimelineFailed'))

@@ -1,5 +1,4 @@
 import { createRouter, createWebHashHistory } from "vue-router"
-import { useUserStore } from '../stores/user'
 
 const routes = [
     {
@@ -120,73 +119,16 @@ const router = createRouter({
 })
 
 // 全局路由守卫
-router.beforeEach(async (to, _from, next) => {
-  const userStore = useUserStore()
+router.beforeEach((to, _from, next) => {
+  const userid = localStorage.getItem('userId')
+  
+  // 检查路由是否需要认证
+  // const needsAuth = to.path.startsWith('/user')
+  const auth=["/","/login","/register","/exception"]
 
-  const userid:string | null = localStorage.getItem('userId')
-  console.log('路由守卫检查 - 路径:', to.path, '本地用户ID:', userid, 'Store用户ID:', userStore.info.userId)
-
-  // 定义需要登录的页面路径 - 使用更精确的匹配
-  const requireAuthPaths = [
-    '/user', '/user/', '/user/articles', '/user/adoption-pets', '/user/pets/edit/', '/user/health-alerts', 
-    '/user/adoptions', '/user/fosters', '/user/profile', 
-    '/user/settings', '/user/events'
-  ]
-
-  // 检查是否需要登录
-  const needsAuth = requireAuthPaths.some(path => 
-    to.path === path || 
-    to.path.startsWith(path) || 
-    to.path.startsWith('/user/pet-detail/') ||
-    to.path.startsWith('/user/articles/')
-  )
-
-  if (needsAuth) {
-    // 首先检查本地存储中是否有用户ID，这是最基本的认证状态
-    if (!userid) {
-      console.log('本地存储中没有用户ID，重定向到登录页，原始路径:', to.path);
-      return next({ path: '/login', query: { redirect: to.fullPath } })
-    }
-    
-    // 如果store中的用户信息不完整（userId为0），尝试从API获取
-    if (!userStore.info.userId || userStore.info.userId === 0) {
-      try {
-        console.log('Store中用户信息不完整，尝试从API获取用户资料...');
-        await userStore.fetchProfile()
-        
-        // 获取资料后再次检查用户ID
-        console.log('API获取资料后 - Store用户ID:', userStore.info.userId, '本地用户ID:', userid);
-        
-        if (!userStore.info.userId || userStore.info.userId === 0) {
-          console.log('API获取用户资料后userId仍为0，认证失败，重定向到登录页');
-          return next({ path: '/login', query: { redirect: to.fullPath } })
-        }
-        
-        // 验证API返回的userId与本地存储的userId是否一致
-        if (userStore.info.userId && userStore.info.userId !== 0) {
-          if (String(userStore.info.userId) !== userid) {
-            console.warn(`userId不一致警告: API返回 ${userStore.info.userId} vs 本地存储 ${userid}，使用API返回的userId`);
-            // 更新本地存储的userId
-            localStorage.setItem('userId', String(userStore.info.userId));
-          } else {
-            console.log(`userId一致性检查通过: API返回 ${userStore.info.userId} vs 本地存储 ${userid}`);
-          }
-        } else {
-          console.log('API返回的userId无效:', userStore.info.userId);
-        }
-      } catch (error) {
-        console.error('获取用户资料失败:', error);
-        return next({ path: '/login', query: { redirect: to.fullPath } })
-      }
-      
-      // 再次检查userId - 确保获取到了有效的用户信息
-      if (!userStore.info.userId || userStore.info.userId === 0) {
-        console.log('用户资料获取失败或userId无效，重定向到登录页');
-        return next({ path: '/login', query: { redirect: to.fullPath } })
-      }
-      
-      console.log('用户认证成功，允许访问:', to.path);
-    }
+  
+  if (!auth.includes(to.path) && !userid) {
+    return next({ path: '/login', query: { redirect: to.fullPath } })
   }
   
   next()

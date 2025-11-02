@@ -398,8 +398,9 @@ export const useWebSocket = () => {
         const minutesDiff = Math.round(timeDiff / 1000 / 60)
         
         // 逻辑：提醒时间已经过期（timeDiff <= 0），且在最近24小时内（timeDiff > -24h）
+        // 包括normal、pending和critical状态的提醒都应该触发
         const shouldRemind = timeDiff <= 0 && timeDiff > -reminderThreshold && 
-                           (alert.status === 'normal' || alert.status === 'pending')
+                           (alert.status === 'normal' || alert.status === 'pending' || alert.status === 'critical')
         
         console.log(`检查: "${alert.description}"`, {
           reminderTime: reminderTimeStr,
@@ -442,16 +443,59 @@ export const useWebSocket = () => {
   }
   
   /**
+   * 清理过期的已发送提醒记录（超过7天的记录）
+   */
+  const cleanupOldSentReminders = () => {
+    try {
+      const sentReminders = JSON.parse(localStorage.getItem('sent-reminders') || '[]')
+      const now = new Date()
+      const sevenDaysAgo = now.getTime() - (7 * 24 * 60 * 60 * 1000) // 7天前
+      
+      // 过滤掉超过7天的记录
+      const filteredReminders = sentReminders.filter((sent: any) => {
+        const sentTime = new Date(sent.sentAt).getTime()
+        return sentTime > sevenDaysAgo
+      })
+      
+      // 如果有记录被清理，更新localStorage
+      if (filteredReminders.length < sentReminders.length) {
+        localStorage.setItem('sent-reminders', JSON.stringify(filteredReminders))
+        console.log(`清理了 ${sentReminders.length - filteredReminders.length} 条过期的已发送提醒记录`)
+      }
+    } catch (error) {
+      console.error('清理过期提醒记录失败:', error)
+    }
+  }
+
+  /**
    * 检查并发送定时提醒
    */
   const checkAndSendReminders = () => {
     try {
+      // 定期清理过期记录
+      cleanupOldSentReminders()
+      
       const reminders = getScheduledReminders()
       const sentReminders = JSON.parse(localStorage.getItem('sent-reminders') || '[]')
+      const now = new Date()
       
       reminders.forEach((alert: HealthAlert) => {
         // 检查是否已经发送过此提醒
-        const alreadySent = sentReminders.some((sent: any) => sent.alertId === alert.hid)
+        const alreadySent = sentReminders.some((sent: any) => {
+          // 如果提醒ID匹配且发送时间在24小时内，则认为已发送
+          if (sent.alertId === alert.hid) {
+            const sentTime = new Date(sent.sentAt)
+            const hoursSinceSent = (now.getTime() - sentTime.getTime()) / (1000 * 60 * 60)
+            return hoursSinceSent < 24 // 24小时内的提醒视为已发送
+          }
+          return false
+        })
+        
+        // 添加调试日志
+        if (alreadySent) {
+          console.log(`提醒 "${alert.description}" 已在24小时内发送过，跳过`)
+        }
+        
         if (!alreadySent) {
           sendScheduledReminder(alert)
         }
@@ -530,6 +574,7 @@ export const useWebSocket = () => {
     getStoredMessages,
     getStoredHealthAlerts,
     markHealthAlertAsRead,
-    syncHealthAlertsToStorage
+    syncHealthAlertsToStorage,
+    cleanupOldSentReminders
   }
 }

@@ -20,9 +20,7 @@ export const useLogin = () => {
   // 设置跳转路径
   if (route.query.from) {
     routerPath.value = route.query.from as string;
-    console.log('检测到from参数，跳转到路径:', routerPath.value);
   } else {
-    console.log('没有from参数，使用默认路径:', routerPath.value);
   }
   
   const form = reactive<LoginForm>({
@@ -38,10 +36,6 @@ export const useLogin = () => {
         username: form.username,
         password: form.password
       })
-
-      console.log('登录响应数据:', response);
-
-      // 后端返回格式为 {code: 200, msg: 'success', data: {实际数据}}
       
       const loginData = response.data as LoginResponse
       
@@ -71,9 +65,6 @@ export const useLogin = () => {
         // 登录成功后立即获取完整用户资料
         console.log('登录成功，开始获取完整用户资料...');
         await userStore.fetchProfile();
-        
-        // 登录历史记录已由后端自动处理，这里可以添加额外的日志记录
-        console.log('用户登录成功，登录历史已记录到数据库，用户ID:', loginData.userId);
         
         // 尝试跳转，添加错误处理
         await router.push(routerPath.value);

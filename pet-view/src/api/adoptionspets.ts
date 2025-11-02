@@ -126,9 +126,7 @@ export const useAdoptPet = (availablePets: any = null) => {
         }
       )
       
-      const response = await request.post(
-        '/pets/adopt',
-        null,
+      const response = await request.post('/pets/adopt',null,
         {
           params: { petId: pet.pid }
         }
@@ -137,7 +135,6 @@ export const useAdoptPet = (availablePets: any = null) => {
       
       // response 已经是解析后的数据，直接检查 code
       if (response.code === 200) {
-        console.log('领养成功，开始显示成功消息')
         ElMessage.success(t('message.adoptionSuccess'))
         // 重新获取宠物列表
         await fetchAvailablePets()
@@ -156,7 +153,7 @@ export const useAdoptPet = (availablePets: any = null) => {
       if (error !== 'cancel') {
         
         // 处理特定错误情况
-        const errorMessage = error.response?.data?.msg || error.response?.data?.message
+        const errorMessage =error.response?.data?.message
         if (errorMessage?.includes('已被领养') || errorMessage?.includes('已有领养记录')) {
           ElMessage.error(t('message.petAlreadyAdopted') || '该宠物已被其他人领养，页面将自动刷新')
           // 自动刷新宠物列表

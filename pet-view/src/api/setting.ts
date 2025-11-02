@@ -87,18 +87,10 @@ export const useSettings = () => {
     // 获取登录历史
   const fetchLoginHistory = async () => {
     try {
-      console.log('开始获取登录历史...')
-      console.log('当前用户ID:', localStorage.getItem('userId'))
-      console.log('当前token:', localStorage.getItem('token')?.substring(0, 10) + '...')
       
       const response = await request.get('/login-history')
-      console.log('登录历史响应:', response)
       
       if(response.code == 200) {
-        // 检查数据格式 - 后端返回Result包装的数据
-        console.log('登录历史数据:', response.data)
-        console.log('数据类型:', Array.isArray(response.data) ? '数组' : typeof response.data)
-  
           loginHistory.value = response.data.map((item: any) => ({
             id: item.id,
             userId: item.userId,

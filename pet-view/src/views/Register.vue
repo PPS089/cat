@@ -98,9 +98,9 @@
         <div class="form-footer">
           <p class="login-text">
             {{ t('register.hasAccount') }}
-            <el-link type="primary" @click="login" :underline="false">
+            <router-link to="/login" class="login-link">
               {{ t('register.loginNow') }}
-            </el-link>
+            </router-link>
           </p>
         </div>
       </div>

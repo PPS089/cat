@@ -1,5 +1,4 @@
 
-export type PetStatus = 'available' | 'adopted' | 'pending' | 'fostered' | 'quarantine'
 
 export type PetGender = 'male' | 'female' | 'unknown'
 

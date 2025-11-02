@@ -79,9 +79,6 @@ export const useLoadFosters = () => {
         }
       })
     
-      console.log('DEBUG: API响应数据:', response)
-      console.log('DEBUG: response.data:', response.data)
-      
       // 检查实际的响应数据结构
       let actualData= response.data as FosterData
       

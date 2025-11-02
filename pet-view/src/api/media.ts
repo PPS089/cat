@@ -1,8 +1,5 @@
 import request from '@/utils/request'
 
-/**
- * 媒体文件API
- */
 
 /**
  * 上传媒体文件
@@ -23,8 +20,7 @@ export const uploadMediaFiles = async (
   // 添加记录ID
   formData.append('recordId', String(recordId))
   
-  // 注意：不要显式设置 Content-Type 头，让浏览器自动设置
-  // 这样才能正确生成 multipart/form-data 的边界符号
+  
   return request.post('/media/upload', formData)
 }
 
