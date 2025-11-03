@@ -49,14 +49,15 @@
   transform: rotate(10deg) scale(1.1);
 }
 
-/* 语言切换容器 */
-.language-switch-container {
-  margin-right: 1rem;
-  display: flex;
-  align-items: center;
-}
+
 
 /* 用户信息中心 - 玻璃拟态风格 */
+.header-right {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
 .user-dashboard {
   display: flex;
   align-items: center;
@@ -127,15 +128,33 @@
   transform: rotate(180deg);
 }
 
-/* 用户下拉菜单 - 现代卡片设计 */
+/* 下拉菜单包装器样式 */
+.dropdown-wrapper {
+  margin-right: 80px;
+}
+
+/* 全局强制覆盖用户下拉菜单位置 */
+body .el-popper.user-dropdown-menu,
+html body .el-popper.user-dropdown-menu,
+:root body .el-popper.user-dropdown-menu {
+  right: 0px !important;
+  left: auto !important;
+  transform: none !important;
+  position: fixed !important;
+}
+
+/* 用户下拉菜单样式 */
 .user-dropdown-menu {
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
+  padding: 0;
   overflow: hidden;
-  min-width: 280px;
+  min-width: 240px;
+  margin-top: 8px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .user-dropdown-header {
