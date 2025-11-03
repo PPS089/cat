@@ -2,7 +2,11 @@ package com.example.petpojo.entity;
 
 import java.io.Serializable;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.example.petpojo.entity.enums.CommonEnum;
 
 import lombok.AllArgsConstructor;

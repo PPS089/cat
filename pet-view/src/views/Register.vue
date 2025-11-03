@@ -126,7 +126,6 @@ const {
   Message,
   
   // 方法
-  login,
   onSubmit,
   
   // 翻译函数

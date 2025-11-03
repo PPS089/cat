@@ -7,6 +7,10 @@ export interface MediaFile {
   id: number
   media_url: string
   media_type: 'image' | 'video'
+  media_name?: string
+  uploadTime?: string
+  created_at?: string
+  updated_at?: string
 }
 
 // 文件预览类型
@@ -39,6 +43,7 @@ export interface PetRecord {
   location?: string
   pet_name?: string
   created_at: string
+  updated_at?: string
   media_list?: MediaFile[]
 }
 
@@ -90,6 +95,9 @@ export interface UseRecordsReturn {
   filters: RecordFilters
   viewMode: Ref<ViewMode>
   sortBy: Ref<SortField>
+  
+  // 提交状态
+  isSubmitting: Ref<boolean>
   
   // 模态框状态
   showAddModal: Ref<boolean>

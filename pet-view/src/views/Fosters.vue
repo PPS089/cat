@@ -34,6 +34,10 @@
                 <span class="value">{{ foster.endDate ? formatDate(foster.endDate) : t('user.ongoing') }}</span>
               </div>
               <div class="info-item">
+                <span class="label">{{ t('user.shelter') }}：</span>
+                <span class="value">{{ foster.shelter ? foster.shelter.name : t('user.unknown') }}</span>
+              </div>
+              <div class="info-item">
                 <span class="label">{{ t('user.status') }}：</span>
                 <el-tag :type="foster.status === 'ongoing' ? 'warning' : 'success'">
                   {{ foster.status === 'ongoing' ? t('user.ongoing') : t('user.fosterEnded') }}

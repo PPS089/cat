@@ -16,6 +16,30 @@ html.dark .articles-container {
   overflow: hidden;
 }
 
+.carousel-image-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  background-color: #f8f8f8;
+}
+
+html.dark .carousel-image-container {
+  background-color: #1a1a1a;
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+.carousel-image:hover {
+  transform: scale(1.03);
+}
+
 .carousel-slide {
   height: 400px;
   display: flex;

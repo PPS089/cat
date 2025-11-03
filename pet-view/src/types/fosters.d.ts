@@ -9,6 +9,11 @@ export interface Foster {
     gender: string
     image: string | '/dog.jpg'
   }
+  shelter: {
+    sid: number
+    name: string
+    location: string
+  }
   startDate: string
   endDate: string | null
   status: 'ongoing' | 'ended'

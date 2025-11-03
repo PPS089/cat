@@ -1,23 +1,22 @@
 package com.example.petweb.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
-import com.example.petservice.service.MediaFilesService;
 import com.example.petpojo.vo.MediaFileVo;
+import com.example.petservice.service.MediaFilesService;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,8 +43,6 @@ public class MediaFilesController {
         log.info("上传目录已初始化: {}", uploadDir);
     }
 
-    @Value("${app.upload-max-size:52428800}")
-    private long maxFileSize;
 
     /**
      * 上传单个或多个媒体文件到事件记录
@@ -56,120 +53,19 @@ public class MediaFilesController {
             @RequestParam("recordId") Integer recordId) {
         
         try {
-            Long userId = UserContext.getCurrentUserId();
-            log.info("上传媒体文件: 用户ID={}, 记录ID={}, 文件数量={}", userId, recordId, files.length);
-            
-            if (files.length == 0) {
-                return Result.error("请选择要上传的文件");
-            }
-            
-            if (files.length > 5) {
-                return Result.error("单次最多上传5个文件");
-            }
-            
-            // 创建上传目录
-            File uploadDirFile = new File(uploadDir);
-            if (!uploadDirFile.exists()) {
-                uploadDirFile.mkdirs();
-            }
-            
-            List<MediaFileVo> uploadedFiles = new ArrayList<>();
-            
-            for (MultipartFile file : files) {
-                if (file.isEmpty()) {
-                    log.warn("跳过空文件");
-                    continue;
-                }
-                
-                String originalFilename = file.getOriginalFilename();
-                String contentType = file.getContentType();
-                long fileSize = file.getSize();
-                
-                log.info("处理文件: {}, ContentType: {}, Size: {} bytes", originalFilename, contentType, fileSize);
-                
-                // 验证文件大小
-                if (fileSize > maxFileSize) {
-                    log.warn("文件过大: {} ({}MB, 限制{}MB)", originalFilename, fileSize / 1024 / 1024, maxFileSize / 1024 / 1024);
-                    continue;
-                }
-                
-                // 验证文件类型
-                if (!isValidMediaType(contentType)) {
-                    log.warn("不支持的文件类型: {} (ContentType: {})", originalFilename, contentType);
-                    continue;
-                }
-                
-                try {
-                    // 生成唯一文件名
-                    String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
-                    String savedFileName = UUID.randomUUID().toString() + fileExtension;
-                    
-                    // 保存文件
-                    Path filePath = Paths.get(uploadDir, savedFileName);
-                    file.transferTo(filePath.toFile());
-                    
-                    // 验证文件是否保存成功
-                    if (!Files.exists(filePath)) {
-                        log.error("文件保存失败: {}", savedFileName);
-                        continue;
-                    }
-                    
-                    // 确定媒体类型
-                    String mediaType = getMediaType(contentType);
-                    
-                    // 保存到数据库
-                    String filePathStr = "/media/download/" + savedFileName;  // 不含 /api 前缀，上传的是相对于 /api 的路径
-                    MediaFileVo mediaFileVo = mediaFilesService.saveMediaFile(
-                            recordId,
-                            userId.intValue(),
-                            originalFilename,
-                            filePathStr,
-                            mediaType,
-                            file.getSize()
-                    );
-                    
-                    uploadedFiles.add(mediaFileVo);
-                    log.info("文件上传成功: {} -> {}", originalFilename, savedFileName);
-                    
-                } catch (IOException e) {
-                    log.error("保存文件失败: {}", file.getOriginalFilename(), e);
-                }
-            }
-            
-            if (uploadedFiles.isEmpty()) {
-                return Result.error("文件上传失败，请检查文件格式和大小");
-            }
-            
+            List<MediaFileVo> uploadedFiles = mediaFilesService.uploadMediaFiles(recordId, files);
+            log.info("媒体文件上传成功: 共{}个文件", uploadedFiles.size());
             return Result.success(uploadedFiles);
-            
-        } catch (Exception e) {
-            log.error("媒体文件上传异常", e);
+        } catch (IllegalArgumentException e) {
+            log.warn("媒体文件上传参数错误: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        } catch (RuntimeException e) {
+            log.error("媒体文件上传失败: {}", e.getMessage());
             return Result.error("上传失败: " + e.getMessage());
         }
     }
 
-    /**
-     * 下载媒体文件
-     */
-    @GetMapping("/download/{fileName}")
-    public byte[] downloadMedia(
-            @PathVariable String fileName) throws IOException {
-        log.info("下载媒体文件: {}", fileName);
-        
-        // 安全检查：防止路径遍历攻击
-        if (fileName.contains("..") || fileName.contains("/") || fileName.contains("\\")) {
-            throw new IllegalArgumentException("非法文件名");
-        }
-        
-        Path filePath = Paths.get(uploadDir, fileName);
-        
-        if (!Files.exists(filePath)) {
-            log.warn("文件不存在: {}", filePath);
-            throw new IOException("文件不存在");
-        }
-        
-        return Files.readAllBytes(filePath);
-    }
+
 
     /**
      * 删除媒体文件
@@ -201,23 +97,5 @@ public class MediaFilesController {
         return Result.success(mediaFiles);
     }
 
-    /**
-     * 验证是否为有效的媒体类型
-     */
-    private boolean isValidMediaType(String contentType) {
-        if (contentType == null) {
-            return false;
-        }
-        return contentType.startsWith("image/") || contentType.startsWith("video/");
-    }
 
-    /**
-     * 获取媒体类型
-     */
-    private String getMediaType(String contentType) {
-        if (contentType != null && contentType.startsWith("video/")) {
-            return "video";
-        }
-        return "image";
-    }
 }

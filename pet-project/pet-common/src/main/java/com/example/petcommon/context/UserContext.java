@@ -20,8 +20,7 @@ public class UserContext {
      * 获取当前用户ID
      */
     public static Long getCurrentUserId() {
-        Long userId = currentUserId.get();
-        return userId != null ? userId : 1L; // 默认返回系统用户ID
+        return currentUserId.get();
     }
     
     /**

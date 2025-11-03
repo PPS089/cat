@@ -8,9 +8,8 @@ import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
 import com.example.petpojo.dto.RecordDto;
 import com.example.petpojo.entity.PetRecords;
-import com.example.petservice.service.PetRecordsService;
 import com.example.petpojo.vo.EventVo;
-import com.example.petservice.service.MediaFilesService;
+import com.example.petservice.service.PetRecordsService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,33 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PetRecordsController {
 
     private final PetRecordsService petRecordsService;
-    private final MediaFilesService mediaFilesService;
-
-
-        /**
-     * 将 PetRecords 转换为 EventVo
-     */
-    private EventVo convertToEventVo(PetRecords petRecords) {
-        EventVo eventVo = new EventVo();
-        eventVo.setEid(petRecords.getRecordId());
-        eventVo.setPid(petRecords.getPid());
-        eventVo.setUid(petRecords.getUid());
-        eventVo.setEventType(petRecords.getEventType());
-        eventVo.setEventTime(petRecords.getRecordTime());
-        eventVo.setMood(petRecords.getMood());
-        eventVo.setDescription(petRecords.getDescription());
-        eventVo.setLocation(petRecords.getLocation());
-        eventVo.setMediaUrl(petRecords.getMediaUrl());
-        eventVo.setMediaType(petRecords.getMediaType());
-        eventVo.setCreatedAt(petRecords.getCreatedAt());
-        eventVo.setUpdatedAt(petRecords.getUpdatedAt());
-        
-        // 加载该记录的媒体文件
-        List<com.example.petpojo.vo.MediaFileVo> mediaList = mediaFilesService.getMediaByRecordId(petRecords.getRecordId());
-        eventVo.setMediaList(mediaList);
-        
-        return eventVo;
-    }
 
     /**
      * 获取用户的事件记录列表
@@ -64,17 +36,11 @@ public class PetRecordsController {
         Long userId = UserContext.getCurrentUserId();
         log.info("获取用户事件记录，用户ID: {}", userId);
         
-        // 获取用户的事件记录
-        List<PetRecords> records = petRecordsService.getUserRecords(userId.intValue());
-        
-        // 使用 BeanUtils 转换为 VO
-        List<EventVo> eventVos = records.stream()
-                .map(record -> convertToEventVo(record))
-                .toList();
+        // 直接获取EventVo列表，避免在Controller中进行转换
+        List<EventVo> eventVos = petRecordsService.getUserEventVos(userId.intValue());
         
         return Result.success(eventVos);
     }
-
 
     /**
      * 创建事件记录
@@ -84,7 +50,8 @@ public class PetRecordsController {
         log.info("创建事件记录，用户ID: {}, 宠物ID: {}", recordDto.getUid(), recordDto.getPid());
         
         PetRecords petRecords = petRecordsService.createRecord(recordDto);
-        EventVo eventVo = convertToEventVo(petRecords);
+        // 使用新的方法获取EventVo
+        EventVo eventVo = petRecordsService.getEventVoById(petRecords.getRecordId());
         
         return Result.success(eventVo);
     }
@@ -100,7 +67,8 @@ public class PetRecordsController {
         log.info("更新事件记录，记录ID: {}", eventId);
         
         PetRecords petRecords = petRecordsService.updateRecord(eventId, recordDto);
-        EventVo eventVo = convertToEventVo(petRecords);
+        // 使用新的方法获取EventVo
+        EventVo eventVo = petRecordsService.getEventVoById(petRecords.getRecordId());
         
         return Result.success(eventVo);
     }
@@ -121,6 +89,4 @@ public class PetRecordsController {
             return Result.error("删除失败");
         }
     }
-
-
 }

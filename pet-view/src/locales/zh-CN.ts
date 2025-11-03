@@ -70,7 +70,8 @@ export default {
     confirmDeleteEvent: '确定要删除这个事件吗？',
     cancelOperation: '取消操作',
     address: '地址',
-    noChanges: '没有检测到任何更改'
+    noChanges: '没有检测到任何更改',
+    redirectSuccessTo: '登录成功，跳转至'
   },
   message: {
     back: '返回',
@@ -562,7 +563,9 @@ export default {
     preferencesSynced: '偶好设置已同步',
     saveInterfaceSettings: '保存界面设置',
     interfaceSettingsSaved: '界面设置保存成功',
-    saveInterfaceSettingsFailed: '保存界面设置失败'
+    saveInterfaceSettingsFailed: '保存界面设置失败',
+    passwordChanged: '密码修改成功',
+    passwordChangeFailed: '密码修改失败'
   },
   theme: {
     title: '主题设置',
@@ -690,7 +693,9 @@ export default {
     editEvent: '编辑事件',
     delete: '删除',
     save: '保存',
+    saving: '保存中',
     update: '更新',
+    updating: '更新中',
     cancel: '取消',
     confirm: '确定',
     confirmDelete: '确认删除',
@@ -790,6 +795,8 @@ export default {
     upcoming: '即将到期',
     normal: '正常',
     recurringEvent: '宠物定期事件',
+    updatedAt: '更新于',
+    createdAt: '创建于',
     personalSettings: '个人设置',
     userCenter: '用户中心',
     information: '信息资讯',
@@ -1068,6 +1075,8 @@ export default {
     operationFailed: '操作失败',
     confirmDeleteHealthAlert: '确定要删除这条健康提醒吗？',
     deleteConfirmation: '删除确认',
+    confirm: '确定',
+    cancel: '取消',
     invalidArticleId: '文章ID无效',
     likeSuccess: '收藏成功',
     unlikeSuccess: '取消收藏',

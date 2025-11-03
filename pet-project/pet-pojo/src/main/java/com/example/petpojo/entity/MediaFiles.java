@@ -43,11 +43,5 @@ public class MediaFiles implements Serializable {
     private Long fileSize;
     
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime uploadTime;
-    
-    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
-    
-    @TableField(fill = FieldFill.UPDATE)
-    private LocalDateTime updatedAt;
 }

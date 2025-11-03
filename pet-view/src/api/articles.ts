@@ -48,6 +48,7 @@ export const useArticles = () => {
           author: article.author || t('admin'),
           viewCount: article.viewCount || 0,
           createdAt: article.createdAt || '',
+          updatedAt: article.updatedAt || '',
         }))
         
         // 处理分页数据
@@ -80,6 +81,7 @@ export const useArticles = () => {
           author: data.author || t('admin'),
           viewCount: data.viewCount || 0,
           createdAt: data.createdAt || '',
+          updatedAt: data.updatedAt || '',
         }
       } else {
         ElMessage.error(t('api.getArticleListFailed'))

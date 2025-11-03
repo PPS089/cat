@@ -76,8 +76,8 @@ export function usePets() {
     try {
       // 使用新的寄养API端点
       const requestData = {
-        shelter_id: selectedShelter.value,
-        start_date: new Date().toISOString().split('T')[0] 
+        shelterId: selectedShelter.value,
+        startDate: new Date().toISOString().split('T')[0] 
       }
       
       const response = await request.post(

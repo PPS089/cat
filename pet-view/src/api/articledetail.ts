@@ -42,6 +42,7 @@ export const useArticleDetail = () => {
           viewCount: articleData.viewCount || 0,
           coverImage: articleData.coverImage || '',
           author: articleData.author || '',
+          updatedAt: articleData.updatedAt || '',
         }
       } else {
         ElMessage.error(t('api.getArticleDetailFailed'))

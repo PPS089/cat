@@ -1,12 +1,10 @@
 package com.example.petservice.config;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -34,25 +32,39 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
      * @param registry
      */
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
+    public void addInterceptors(@NonNull InterceptorRegistry registry) {
         log.info("开始注册自定义拦截器...");
 
         // 注册用户上下文拦截器（优先级最高，先设置用户上下文）
         registry.addInterceptor(userContextInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
+                        // 用户相关接口
                         "/user/login",
                         "/user/register",
+                        "/user/",
+                        
+                        // 公开的文章接口
+                        "/articles/**",
+                        
+                        // 公开的宠物详情接口
+                        "/pets/details/**",
+                        
+                        // 媒体文件下载接口（只排除下载，不包括上传）
+                        "/media/download/**",
+                        
+                        // 静态资源接口
                         "/images/**", 
-                        "/static/**", 
-                        "/media/**",
+                        "/static/**",
+                        
+                        // Swagger相关接口
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
-                        "/swagger-ui.html"
+                        "/swagger-ui.html",
+                        
+                        // 健康检查接口
+                        "/health"
                 );
-
-        // JWT authentication is handled by UserContextInterceptor
-        // Add specific interceptors here if needed for admin/user role validation
     }
 
     /**
@@ -60,34 +72,16 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
      * @param registry
      */
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         // 添加图片资源映射，支持上传的图片访问
-        // 映射到Spring Boot的静态资源目录static/images/
-        // 由于配置了context-path: /api，实际访问路径为/api/images/
+        
         registry.addResourceHandler("/images/**").addResourceLocations("classpath:/static/images/");
         
-        // 添加媒体文件访问映射
+        // 添加媒体文件访问映射（仅下载）
         // 将上传目录映射到API接口，用户可以直接访问上传的图片和视频
-        registry.addResourceHandler("/media/**").addResourceLocations("file:" + uploadDir + "/");
+        registry.addResourceHandler("/media/download/**").addResourceLocations("file:" + uploadDir + "/");
         
         // 添加classpath静态资源映射
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
-
-    /**
-     * 扩展Spring MVC框架的消息转换器
-     * @param converters
-     */
-    @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        log.info("扩展消息转换器...");
-        // 使用Spring容器中的ObjectMapper
-        // 通过JacksonConfig配置类提供的ObjectMapper来处理JSON序列化/反序列化
-        // 不需要额外的配置，Spring会自动注入配置好的ObjectMapper
-    }
-
-    /**
-     * 扩展消息转换器配置
-     * 用于自定义JSON序列化和反序列化
-     */
 }

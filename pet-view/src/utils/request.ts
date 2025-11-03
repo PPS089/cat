@@ -42,7 +42,8 @@ const service: AxiosInstance = axios.create({
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // 获取token，优先使用jwt_token，如果没有则使用token
-    const token = localStorage.getItem('jwt_token') || localStorage.getItem('token')
+    const token = localStorage.getItem('jwt_token') 
+    const userId = localStorage.getItem('userId')
 
     // 请求头添加token
     // 精确匹配需要排除的登录接口，避免误伤其他包含'login'的接口
@@ -60,6 +61,15 @@ service.interceptors.request.use(
           ;(config.headers as any).Authorization = `Bearer ${token}`
         }
         console.log('DEBUG: 设置Authorization头:', `Bearer ${token}`)
+      } else {
+        console.warn('DEBUG: 未找到token，可能用户未登录')
+      }
+      
+      // 添加调试信息，确保使用正确的userId
+      if (userId) {
+        console.log('DEBUG: 当前用户ID:', userId)
+      } else {
+        console.warn('DEBUG: 未找到userId，可能用户未登录')
       }
     }
     
@@ -78,6 +88,18 @@ service.interceptors.request.use(
 // ------------------------ 响应拦截器 ------------------------
 service.interceptors.response.use(
   (response: AxiosResponse) => {
+    // 记录当前用户ID，用于调试
+    const currentUserId = localStorage.getItem('userId')
+    console.log('DEBUG: 响应成功，当前用户ID:', currentUserId, 'URL:', response.config.url)
+    
+    // 检查响应数据中的用户ID是否与当前登录用户ID一致
+    if (response.data && typeof response.data === 'object' && 'userId' in response.data) {
+      const responseUserId = response.data.userId
+      if (currentUserId && responseUserId && responseUserId.toString() !== currentUserId.toString()) {
+        console.error('DEBUG: 用户ID不匹配! localStorage userId:', currentUserId, '响应 userId:', responseUserId)
+      }
+    }
+    
     const key = getRequestKey(response.config)
     removePending(key)
 

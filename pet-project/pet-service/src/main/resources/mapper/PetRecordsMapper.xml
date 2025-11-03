@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.petservice.mapper.PetRecordsMapper">
+    
+    <!-- 根据用户ID获取事件记录列表，直接映射为EventVo -->
+    <select id="getEventVosByUserId" resultType="com.example.petpojo.vo.EventVo">
+        SELECT 
+            r.record_id AS eid,
+            r.pid AS pid,
+            r.uid AS uid,
+            r.event_type AS eventType,
+            r.record_time AS eventTime,
+            r.mood AS mood,
+            r.description AS description,
+            r.location AS location,
+            r.created_at AS createdAt,
+            r.updated_at AS updatedAt
+        FROM pet_records r
+        WHERE r.uid = #{uid}
+        ORDER BY r.record_time DESC
+    </select>
+    
+    <!-- 根据记录ID获取事件记录，直接映射为EventVo -->
+    <select id="getEventVoById" resultType="com.example.petpojo.vo.EventVo">
+        SELECT 
+            r.record_id AS eid,
+            r.pid AS pid,
+            r.uid AS uid,
+            r.event_type AS eventType,
+            r.record_time AS eventTime,
+            r.mood AS mood,
+            r.description AS description,
+            r.location AS location,
+            r.created_at AS createdAt,
+            r.updated_at AS updatedAt
+        FROM pet_records r
+        WHERE r.record_id = #{recordId}
+    </select>
+    
+</mapper>

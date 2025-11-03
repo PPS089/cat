@@ -14,6 +14,10 @@
             <el-icon><Calendar /></el-icon>
             <span>{{ formatDate(article.createdAt) }}</span>
           </div>
+          <div v-if="article.updatedAt && article.updatedAt !== article.createdAt" class="meta-item">
+            <el-icon><Refresh /></el-icon>
+            <span>更新于 {{ formatDate(article.updatedAt) }}</span>
+          </div>
           <div class="meta-item">
             <el-icon><View /></el-icon>
             <span>{{ article.viewCount }} 次阅读</span>
@@ -64,7 +68,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { User, Calendar, View, Star, Share, Document } from '@element-plus/icons-vue'
+import { User, Calendar, View, Star, Share, Document, Refresh } from '@element-plus/icons-vue'
 import { useArticleDetail } from '@/api/articledetail'
 
 // 使用文章详情组合式函数

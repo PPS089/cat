@@ -1,9 +1,11 @@
+# 开发环境特定配置
 server:
   port: 8080
 
 spring:
+  # 开发环境数据源配置
   datasource:
-    url: jdbc:mysql://localhost:3306/project?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/pet_project?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8
     username: root
     password: zx4221335
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -31,7 +33,7 @@ logging:
     org.springframework: debug
     com.baomidou.mybatisplus: debug
 
-# 开发环境特定配置
+# 开发环境特定标志
 dev:
   enabled: true
   hot-reload: true

@@ -34,6 +34,11 @@ public class FostersVo {
      * 宠物信息 - 匹配前端期望的嵌套结构
      */
     private PetInfo pet;
+    
+    /**
+     * 收容所信息
+     */
+    private ShelterInfo shelter;
 
     @Data
     @NoArgsConstructor
@@ -45,5 +50,14 @@ public class FostersVo {
         private Integer age;
         private String gender;
         private String image;
+    }
+    
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ShelterInfo {
+        private Integer sid;
+        private String name;
+        private String location;
     }
 }

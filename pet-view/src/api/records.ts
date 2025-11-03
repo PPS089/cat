@@ -2,7 +2,6 @@ import { ref, computed, reactive, type Ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import request from '@/utils/request'
-import { useUserStore } from '@/stores/user'
 import { uploadMediaFiles } from './media'
 import type {
   PetRecord,
@@ -150,6 +149,8 @@ export const useFileUpload = () => {
   const handleFileUpload = async (event: Event): Promise<void> => {
     const target = event.target as HTMLInputElement
     const files = Array.from(target.files || [])
+    
+    console.log(`用户选择了 ${files.length} 个文件`)
 
     if (filePreviews.value.length + files.length > 5) {
       ElMessage.error('最多只能上传5个文件')
@@ -157,6 +158,8 @@ export const useFileUpload = () => {
     }
 
     for (const file of files) {
+      console.log(`处理文件: ${file.name}, 大小: ${file.size}, 类型: ${file.type}`)
+      
       const validation = validateFile(file)
       if (!validation.valid) {
         ElMessage.error(`文件 "${file.name}" 验证失败：${validation.error}`)
@@ -176,13 +179,16 @@ export const useFileUpload = () => {
           isValid: true
         })
 
+        console.log(`文件 "${file.name}" 已添加到预览列表`)
         ElMessage.success(`文件 "${file.name}" 添加成功`)
       } catch (error) {
+        console.error(`处理文件 "${file.name}" 失败:`, error)
         ElMessage.error(`文件 "${file.name}" 处理失败：${error instanceof Error ? error.message : '未知错误'}`)
       }
     }
 
     target.value = ''
+    console.log(`当前预览列表中共有 ${filePreviews.value.length} 个文件`)
   }
 
   const removeFile = (index: number): void => {
@@ -204,7 +210,9 @@ export const useFileUpload = () => {
   }
 
   const getUploadFiles = (): File[] => {
-    return filePreviews.value.map((preview) => preview.file)
+    const files = filePreviews.value.map((preview) => preview.file)
+    console.log(`获取上传文件列表，共 ${files.length} 个文件`)
+    return files
   }
 
   const getFileIcon = (mediaType: string): string => {
@@ -243,16 +251,15 @@ export const useMediaModal = () => {
       mediaLoading.value = true
       try {
         const response = await request.get(`/media/record/${recordId}`)
-        console.log(`后端返回的媒体数据:`, response)
         if (response.code === 200 && response.data) {
           const mediaFiles = Array.isArray(response.data) ? response.data : [response.data]
           currentMediaList.value = mediaFiles.map((m: any) => ({
-            id: m.mid || m.id,
-            media_url: `/api${m.filePath || m.mediaUrl || m.media_url}`,
-            media_type: m.mediaType || m.media_type || 'image',
-            media_name: m.fileName || m.name || ''
+            id: m.mid,
+            media_url: `/api${m.filePath}`,
+            media_type: m.mediaType,
+            media_name: m.fileName,
+            updated_at: m.updatedAt
           }))
-          console.log(`已加载记录 ${recordId} 的媒体文件:`, currentMediaList.value)
         } else {
           currentMediaList.value = []
         }
@@ -291,61 +298,35 @@ export const useEventData = () => {
   const loading = ref(false)
 
   const fetchEvents = async (): Promise<void> => {
-    console.log(t('fetchEventsFunctionStart'))
     loading.value = true
     try {
       const response = await request.get('/events')
-      console.log(t('fetchEventsApiResponse'), response)
       
       if (response.code === 200 && response.data) {
-        console.log('fetchEvents: 事件数量:', response.data.length)
-        const newEvents = response.data.map((event: any) => {
-          const recordId = event.record_id || event.eid || event.id
-          if (!recordId) {
-            console.warn('Event missing record_id:', event)
-            return null
-          }
-          
-          const recordTime = event.record_time || event.eventTime || event.event_time
-          if (!recordTime) {
-            console.warn('Event missing record_time:', event)
-            return null
-          }
-          
-          return {
-            record_id: recordId,
-            pid: event.pid || 0,
-            event_type: event.eventType || event.event_type || '未知',
-            description: event.description || '',
-            record_time: recordTime,
-            mood: event.mood || '',
-            location: event.location || '',
-            pet_name: event.pet_name || '',
-            created_at: event.createdAt || event.created_at || recordTime,
-            media_list: event.mediaList && Array.isArray(event.mediaList) 
-              ? event.mediaList.map((m: any) => ({
-                  id: m.mid || m.id || 1,
-                  media_url: `/api${m.filePath || m.media_url || m.url}`,
-                  media_type: m.mediaType || m.media_type || 'image',
-                  media_name: m.fileName || m.media_name || ''
-                }))
-              : (event.mediaUrl ? [{ 
-                  id: 1, 
-                  media_url: event.mediaUrl, 
-                  media_type: event.mediaType || 'image',
-                  media_name: ''
-                }] : [])
-          }
-        }).filter(Boolean)
-        
-        events.value = newEvents
-        console.log('fetchEvents: 更新事件数据后，新事件数量:', events.value.length)
+        events.value = response.data.map((event: any) => ({
+          record_id: event.eid,
+          pid: event.pid,
+          event_type: event.eventType,
+          description: event.description,
+          record_time: event.eventTime,
+          mood: event.mood,
+          location: event.location,
+          pet_name: event.pet_name || '',
+          created_at: event.createdAt || event.eventTime,
+          updated_at: event.updatedAt || event.createdAt || event.eventTime,
+          media_list: event.mediaList ? event.mediaList.map((m: any) => ({
+            id: m.mid,
+            media_url: `/api${m.filePath}`,
+            media_type: m.mediaType,
+            media_name: m.fileName,
+            updated_at: m.updatedAt
+          })) : []
+        }))
       } else {
         events.value = []
-        console.warn(t('fetchEventsApiResponseFormatIncorrect'))
       }
     } catch (error) {
-      console.error('fetchEvents: 获取事件失败:', error)
+      console.error('获取事件失败:', error)
       ElMessage.error(t('api.getEventsFailed'))
       events.value = []
     } finally {
@@ -360,24 +341,15 @@ export const useEventData = () => {
   }
 }
 
-// 宠物数据获取 - 只获取领养记录和pets表判断是否被领养，跟寄养没关系
+// 宠物数据获取
 export const usePetData = () => {
   const { t } = useI18n()
-  const userStore = useUserStore()
   const pets = ref<PetInfo[]>([])
   const loading = ref(false)
 
   const fetchPets = async (): Promise<void> => {
     loading.value = true
     try {
-      console.log(t('fetchPetsStartGettingPetData'))
-      console.log(t('fetchPetsCurrentUserInfo'), {
-        user_id: userStore.info.userId,
-        userName: userStore.info.userName,
-        token: localStorage.getItem('jwt_token') || localStorage.getItem('token')
-      })
-      
-      console.log(t('fetchPetsReadyToCallApiUserAdoptions'))
       const adoptionData = await request.get('/user/adoptions', {
         params: {
           current_page: 1,
@@ -385,27 +357,15 @@ export const usePetData = () => {
         }
       })
       
-      console.log('fetchPets: API响应数据:', JSON.stringify(adoptionData, null, 2))
-      
-      if (adoptionData.code === 200) {
-        const records = adoptionData.data.records
-        if (records && Array.isArray(records) && records.length > 0) {
-          console.log(t('fetchPetsStartProcessingAdoptionRecords'))
-          const adoptionPets = records.map((record: any) => ({
-            pid: record.pid || record.id,
-            name: record.name || record.petName,
-            species: record.breed || record.species || '未知',
-            breed: record.breed || record.species || '未知',
-            type: 'adoption' as const,
-            date: record.adoptionDate || record.adoptDate || record.date
-          }))
-          console.log('fetchPets: 映射后的宠物数组:', adoptionPets)
-          pets.value = adoptionPets
-          console.log('fetchPets: 最终pets.value数量:', pets.value.length)
-        } else {
-          pets.value = []
-          console.log('fetchPets: 没有获取到领养记录数据')
-        }
+      if (adoptionData.code === 200 && adoptionData.data?.records) {
+        pets.value = adoptionData.data.records.map((record: any) => ({
+          pid: record.pid || record.id,
+          name: record.name || record.petName,
+          species: record.breed || record.species || '未知',
+          breed: record.breed || record.species || '未知',
+          type: 'adoption' as const,
+          date: record.adoptionDate || record.adoptDate || record.date
+        }))
       } else {
         pets.value = []
       }
@@ -415,24 +375,19 @@ export const usePetData = () => {
       pets.value = []
     } finally {
       loading.value = false
-      console.log('fetchPets: 最终pets.value:', pets.value)
     }
   }
 
   const getPetName = (pid: number, petName?: string): string => {
-    console.log(`getPetName: 查找PID ${pid}, 可用宠物数量: ${pets.value.length}, 宠物列表:`, pets.value.map(p => ({pid: p.pid, name: p.name})))
     const pet = pets.value.find(p => p.pid === pid)
     if (pet) {
-      console.log(`getPetName: PID ${pid} 找到宠物: ${pet.name}`)
       return pet.name
     }
     
     if (petName) {
-      console.log(`getPetName: PID ${pid} 未找到宠物，使用提供的名字: ${petName}`)
       return petName
     }
     
-    console.log(`getPetName: PID ${pid} 未找到宠物且没有提供名字，返回未知宠物`)
     return t('api.unknownPet')
   }
 
@@ -451,7 +406,7 @@ export const useEventOperations = (eventData?: { fetchEvents: () => Promise<void
 
   const deleteEvent = async (recordId: number): Promise<void> => {
     try {
-      if (!recordId || recordId === undefined || recordId <= 0) {
+      if (!recordId || recordId <= 0) {
         console.error('Invalid recordId:', recordId)
         ElMessage.error('无效的记录ID')
         return
@@ -465,9 +420,7 @@ export const useEventOperations = (eventData?: { fetchEvents: () => Promise<void
       
       await request.delete(`/events/${recordId}`)
       ElMessage.success(t('api.deleteSuccess'))
-      console.log('deleteEvent: 开始重新获取事件数据...')
       await fetchEvents()
-      console.log('deleteEvent: 事件数据重新获取完成')
     } catch (error) {
       if (error !== 'cancel') {
         ElMessage.error(t('api.deleteFailed'))
@@ -476,65 +429,8 @@ export const useEventOperations = (eventData?: { fetchEvents: () => Promise<void
     }
   }
 
-  const saveEvent = async (
-    formData: RecordFormData,
-    isEdit: boolean
-  ): Promise<void> => {
-    try {
-      const recordTimeISO = formData.record_time;
-      const recordTimeFormatted = recordTimeISO ? recordTimeISO.replace('T', ' ') + ':00' : '';
-      
-      const data = {
-        pid: formData.pid,
-        eventType: formData.event_type,
-        recordTime: recordTimeFormatted,
-        description: formData.description,
-        mood: formData.mood || '',
-        location: formData.location || ''
-      }
-
-      let recordId: number | null = null
-      if (isEdit && formData.record_id) {
-        await request.put(`/events/${formData.record_id}`, data)
-        recordId = Number(formData.record_id)
-        ElMessage.success(t('api.updateSuccess'))
-      } else {
-        const response = await request.post('/events', data)
-        recordId = response.data?.eid || response.data?.record_id || response.data?.id
-        ElMessage.success(t('api.addSuccess'))
-      }
-
-      const uploadFiles: File[] = []
-      if (uploadFiles && uploadFiles.length > 0 && recordId) {
-        try {
-          console.log(`上传流程：开始上传${uploadFiles.length}个文件...`)
-          await uploadMediaFiles(uploadFiles, recordId)
-          ElMessage.success('流程完成：事件和媒体文件上传成功')
-        } catch (uploadError) {
-          console.warn('流程警告：事件保存成功，但媒体文件上传失败', uploadError)
-          ElMessage.warning('事件保存成功，但媒体文件上传失败')
-        }
-      }
-
-      console.log('saveEvent: 开始重新获取事件数据...')
-      setTimeout(async () => {
-        await fetchEvents()
-        console.log('saveEvent: 事件数据重新获取完成')
-      }, 500)
-    } catch (error) {
-      ElMessage.error(isEdit ? t('api.updateFailed') : t('api.addFailed'))
-      console.error('Error saving event:', error)
-      if ((error as any).response) {
-        console.error('Error response:', (error as any).response.data)
-        console.error('Error status:', (error as any).response.status)
-      }
-      throw error
-    }
-  }
-
   return {
-    deleteEvent,
-    saveEvent
+    deleteEvent
   }
 }
 
@@ -655,7 +551,6 @@ export const useRecordForm = () => {
         if (!isNaN(date.getTime())) {
           formattedDateTime = date.toISOString().slice(0, 16)
         } else {
-          console.warn('Invalid date format:', event.record_time)
           const parts = event.record_time.split(' ')
           if (parts.length === 2) {
             formattedDateTime = `${parts[0]}T${parts[1].slice(0, 5)}`
@@ -712,6 +607,9 @@ export const useRecords = (): UseRecordsReturn => {
   // 视图模式
   const viewMode = ref<ViewMode>('grid')
   
+  // 提交状态
+  const isSubmitting = ref(false)
+  
   // 计算属性
   const totalEvents = computed(() => events.value.length)
   const totalMedia = computed(() => 
@@ -733,6 +631,14 @@ export const useRecords = (): UseRecordsReturn => {
   
   // 保存事件
   const saveEventHandler = async (): Promise<void> => {
+    // 防止重复提交
+    if (isSubmitting.value) {
+      ElMessage.warning('正在保存中，请勿重复提交')
+      return
+    }
+    
+    isSubmitting.value = true
+    
     try {
       const recordTimeISO = formData.record_time
       const recordTimeFormatted = recordTimeISO ? recordTimeISO.replace('T', ' ') + ':00' : ''
@@ -753,35 +659,40 @@ export const useRecords = (): UseRecordsReturn => {
         ElMessage.success('事件更新成功')
       } else {
         const response = await request.post('/events', data)
-        recordId = response.data?.eid || response.data?.record_id || response.data?.id
+        recordId = response.data?.eid
         ElMessage.success('事件添加成功')
       }
   
-      const uploadFiles = getUploadFiles()
-      if (uploadFiles && uploadFiles.length > 0 && recordId) {
-        try {
-          console.log(`上传流程：开始上传${uploadFiles.length}个文件...`)
-          await uploadMediaFiles(uploadFiles, recordId)
-          ElMessage.success('事件保存成功，媒体文件上传完成')
-        } catch (uploadError) {
-          console.warn('流程警告：事件保存成功，但媒体文件上传失败', uploadError)
-          ElMessage.warning('事件保存成功，但媒体文件上传失败')
+      // 只有在成功创建/更新事件后才上传媒体文件
+      if (recordId) {
+        const uploadFiles = getUploadFiles()
+        console.log(`准备上传的文件数量: ${uploadFiles ? uploadFiles.length : 0}`)
+        
+        if (uploadFiles && uploadFiles.length > 0) {
+          try {
+            // 确保所有文件一次性上传，并关联到同一个记录ID
+            console.log('开始上传媒体文件...')
+            const uploadResult = await uploadMediaFiles(uploadFiles, recordId)
+            console.log('媒体文件上传结果:', uploadResult)
+            ElMessage.success('事件保存成功，媒体文件上传完成')
+          } catch (uploadError) {
+            console.warn('流程警告：事件保存成功，但媒体文件上传失败', uploadError)
+            ElMessage.warning('事件保存成功，但媒体文件上传失败')
+          }
+        } else {
+          console.log('没有文件需要上传')
         }
       }
-  
-      console.log('saveEventHandler: 开始重新获取事件数据...')
-      setTimeout(async () => {
-        await fetchEvents()
-        console.log('saveEventHandler: 事件数据重新获取完成')
-        closeModal()
-      }, 500)
+      
+      // 所有操作完成后，刷新数据并关闭模态框
+      await fetchEvents()
+      closeModal()
     } catch (error) {
       ElMessage.error(showEditModal.value ? '事件更新失败' : '事件添加失败')
       console.error('Error saving event:', error)
-      if ((error as any).response) {
-        console.error('Error response:', (error as any).response.data)
-        console.error('Error status:', (error as any).response.status)
-      }
+    } finally {
+      // 确保无论成功还是失败，都重置提交状态
+      isSubmitting.value = false
     }
   }
 
@@ -795,6 +706,9 @@ export const useRecords = (): UseRecordsReturn => {
     filters,
     viewMode,
     sortBy,
+    
+    // 提交状态
+    isSubmitting,
     
     // 模态框状态
     showAddModal,

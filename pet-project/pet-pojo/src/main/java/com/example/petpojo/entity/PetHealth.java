@@ -36,4 +36,6 @@ public class PetHealth  implements Serializable {
     private String status;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
+    @TableField(fill = FieldFill.UPDATE)
+    private LocalDateTime updatedAt;
 }

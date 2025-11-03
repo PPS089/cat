@@ -2,15 +2,21 @@
   <div class="articles-container" :class="{ 'dark': themeStore.preferences.theme === 'dark' }">
     <!-- 轮播图 -->
     <div class="carousel-container">
-      <el-carousel height="400px" indicator-position="outside" arrow="always">
+      <el-carousel height="450px" indicator-position="outside" arrow="always">
         <el-carousel-item>
-          <img src="@/assets/img/dog.jpg" alt="可爱的宠物" style="width: 100%; height: 100%; object-fit: cover;">
+          <div class="carousel-image-container">
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80" alt="自然风景" class="carousel-image">
+          </div>
         </el-carousel-item>
         <el-carousel-item>
-          <img src="@/assets/img/dog.jpg" alt="可爱的宠物" style="width: 100%; height: 100%; object-fit: cover;">
+          <div class="carousel-image-container">
+            <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80" alt="自然风景" class="carousel-image">
+          </div>
         </el-carousel-item>
         <el-carousel-item>
-          <img src="@/assets/img/dog.jpg" alt="可爱的宠物" style="width: 100%; height: 100%; object-fit: cover;">
+          <div class="carousel-image-container">
+            <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80" alt="自然风景" class="carousel-image">
+          </div>
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -23,10 +29,10 @@
         class="article-card"
         @click="viewArticle(article.id)"
       >
-        <!-- 文章封面 --   article.coverImage  -->>
+        <!-- 文章封面 -->
         <div class="article-cover">
           <img 
-            :src=" '/src/assets/img/dog.jpg'" 
+            :src="article.coverImage || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'" 
             :alt="article.title"
             @error="handleImageError"
           />
@@ -49,6 +55,10 @@
             <span class="article-date">
               <el-icon><Calendar /></el-icon>
               {{ formatDate(article.createdAt) }}
+            </span>
+            <span v-if="article.updatedAt && article.updatedAt !== article.createdAt" class="article-updated">
+              <el-icon><Refresh /></el-icon>
+              {{ formatDate(article.updatedAt) }}
             </span>
           </div>
         </div>
@@ -75,7 +85,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { View, User, Calendar, Document } from '@element-plus/icons-vue'
+import { View, User, Calendar, Document, Refresh } from '@element-plus/icons-vue'
 import { useArticles } from '@/api/articles'
 import Pagination from '@/components/Pagination.vue'
 
@@ -95,9 +105,14 @@ const {
   handlePageChange,
   formatDate,
   getArticleSummary,
-  handleImageError,
   initialize
 } = useArticles()
+
+// 处理图片加载错误
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.src = 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+}
 
 // 组件挂载时初始化
 onMounted(() => {

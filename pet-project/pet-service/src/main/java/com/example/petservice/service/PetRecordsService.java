@@ -3,6 +3,7 @@ package com.example.petservice.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.petpojo.dto.RecordDto;
 import com.example.petpojo.entity.PetRecords;
+import com.example.petpojo.vo.EventVo;
 
 import java.util.List;
 
@@ -21,6 +22,16 @@ public interface PetRecordsService extends IService<PetRecords> {
      * 获取宠物的事件记录列表
      */
     List<PetRecords> getPetRecords(Integer pid);
+    
+    /**
+     * 获取用户的事件记录列表，直接返回EventVo
+     */
+    List<EventVo> getUserEventVos(Integer uid);
+    
+    /**
+     * 根据记录ID获取事件记录，直接返回EventVo
+     */
+    EventVo getEventVoById(Integer recordId);
     
     /**
      * 创建事件记录

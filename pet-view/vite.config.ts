@@ -14,12 +14,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8081',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
         // 确保所有请求头都被正确转发
-        configure: (proxy, options) => {
-          proxy.on('proxyReq', function (proxyReq, req, res) {
+        configure: (proxy) => {
+          proxy.on('proxyReq', function (proxyReq, req) {
             // 转发所有请求头
             Object.keys(req.headers).forEach(key => {
               const headerValue = req.headers[key];
@@ -29,6 +29,11 @@ export default defineConfig({
             });
           });
         }
+      },
+      '/api/ws': {
+        target: 'ws://localhost:8080',
+        ws: true,
+        changeOrigin: true
       }
     }
   }

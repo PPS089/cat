@@ -14,23 +14,29 @@ const AVATAR_VALIDATION_TIMEOUT = 5000
 const AVATAR_UPDATE_DELAY = 1000
 
 // 从API获取用户完整资料
-export const fetchUserProfileFromAPI = async () => {
+export const fetchUserProfileFromAPI = async (): Promise<{ success: boolean; data: any; message: string }> => {
   try {
     const userId = localStorage.getItem('userId')
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('jwt_token')
     if (!token || !userId) {
-      console.warn('用户未登录')
-      return { success: false, message: `${userId}用户未登录` }
+      console.warn('用户未登录或缺少必要信息')
+      return { success: false, data: null, message: '用户未登录或缺少必要信息' }
     }
     
     const response = await request.get('/user/profile')
     const result = response.data
   
-    return { success: true, data: result }
+    return { success: true, data: result, message: '获取用户资料成功' }
   }
-  catch (error) {
+  catch (error: any) {
     console.error('从API获取用户资料失败:', error)
-    return { success: false, message: '获取用户资料失败' }
+    
+    // 检查是否是401/403错误（未授权）
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      return { success: false, data: null, message: '用户未登录或缺少必要信息' }
+    }
+    
+    return { success: false, data: null, message: '获取用户资料失败' }
   }
 }
 

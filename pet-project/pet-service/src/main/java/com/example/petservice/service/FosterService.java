@@ -10,13 +10,6 @@ import com.example.petpojo.vo.FostersVo;
 
 public interface FosterService extends IService<Fosters> {
     /**
-     * 创建寄养信息
-     * @param petId 宠物id
-     * @return 寄养信息
-     */
-    Fosters createFoster(Long petId);
-    
-    /**
      * 创建寄养信息（带收容所和开始日期）
      * @param petId 宠物id
      * @param shelterId 收容所id

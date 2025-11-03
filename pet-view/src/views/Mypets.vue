@@ -1,4 +1,3 @@
-
 <template>
   <div class="pets-container" :class="{ 'dark': themeStore.preferences.theme === 'dark' }">
     <header class="pets-header">
@@ -145,8 +144,6 @@ const {
 
 
 onMounted(async () => {
-  // 首次加载宠物数据（避免重复调用）
-  console.log('Mypets组件挂载完成，开始加载初始数据')
   fetchPets()
 })
 

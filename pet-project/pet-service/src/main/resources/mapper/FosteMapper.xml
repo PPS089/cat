@@ -17,9 +17,13 @@
         p.breed AS "pet.breed",  -- 宠物品种 → pet对象的breed
         p.age AS "pet.age",  -- 宠物年龄 → pet对象的age
         p.gender AS "pet.gender",  -- 宠物性别 → pet对象的gender
-        p.img_url AS "pet.image"  -- 宠物图片URL → pet对象的image
+        p.img_url AS "pet.image",  -- 宠物图片URL → pet对象的image
+        s.sid AS "shelter.sid",  -- 收容所ID → shelter对象的sid
+        s.name AS "shelter.name",  -- 收容所名称 → shelter对象的name
+        s.location AS "shelter.location"  -- 收容所位置 → shelter对象的location
         FROM `fosters` f
         JOIN pets p ON f.pid = p.pid  -- 关联宠物表（确保条件完整）
+        JOIN shelters s ON f.sid = s.sid  -- 关联收容所表
         WHERE f.uid = #{id}
         LIMIT #{offset}, #{pageSize}
     </select>

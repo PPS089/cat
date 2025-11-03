@@ -29,6 +29,7 @@ public class Fosters  implements Serializable {
 
     private Integer pid;
     private Integer uid;
+    private Integer sid;  // 添加收容所ID字段
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime startDate;

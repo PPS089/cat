@@ -42,7 +42,8 @@ export const useWebSocket = () => {
     const targetPort = currentPort && currentPort !== '5174' ? currentPort : '5174'
     const targetHost = targetPort ? `${window.location.hostname}:${targetPort}` : window.location.host
     
-    wsUrl.value = `${protocol}//${targetHost}/ws/${id}`
+    // 使用/api前缀通过Vite代理连接WebSocket
+    wsUrl.value = `${protocol}//${targetHost}/api/ws/${id}`
     console.log(`WebSocket连接URL: ${wsUrl.value}`)
     
     try {

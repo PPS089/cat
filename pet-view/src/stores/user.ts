@@ -10,6 +10,7 @@ export const useUserStore = defineStore('user', () => {
   // 从localStorage读取初始数据
   const storedInfo = localStorage.getItem('userInfo')
   const storedUserId = localStorage.getItem('userId')
+  const storedUserName = localStorage.getItem('userName')
   
   // 如果有存储的用户信息，使用存储的，否则创建初始对象
   let initialInfo: userInfo
@@ -22,6 +23,8 @@ export const useUserStore = defineStore('user', () => {
       }
     } catch (e) {
       console.error('解析存储的用户信息失败:', e)
+      // 清理无效数据
+      localStorage.removeItem('userInfo')
       initialInfo = {
         userName: '',
         headPic: '/src/assets/img/dog.jpg',
@@ -32,13 +35,17 @@ export const useUserStore = defineStore('user', () => {
       }
     }
   } else {
+    // 如果没有存储的完整用户信息，尝试从独立字段恢复
     initialInfo = {
-      userName: '',
+      userName: storedUserName || '',
       headPic: '/src/assets/img/dog.jpg',
       userId: storedUserId ? parseInt(storedUserId) : 0,
       email: '',
       phone: '',
       introduce: '',
+    }
+    if (storedUserId || storedUserName) {
+      console.log('从独立字段恢复用户信息:', JSON.stringify(initialInfo, null, 2))
     }
   }
 
@@ -78,6 +85,14 @@ export const useUserStore = defineStore('user', () => {
           console.log('用户数据结构:', JSON.stringify(result.data, null, 2))
           // 更新数据 - 添加防御性检查
           if (typeof result.data === 'object' && result.data !== null) {
+            // 清理旧的用户信息，确保使用最新的数据
+            info.userName = ''
+            info.headPic = '/src/assets/img/dog.jpg'
+            info.email = ''
+            info.phone = ''
+            info.introduce = ''
+            
+            // 设置新的用户信息
             info.userName = result.data.userName || ''
             info.headPic = result.data.headPic  ? `/api/images/${result.data.headPic}` : '/src/assets/img/dog.jpg'
             info.email = result.data.email || ''
@@ -104,7 +119,10 @@ export const useUserStore = defineStore('user', () => {
           console.log('用户资料获取成功 - 用户名:', info.userName, '用户ID:', info.userId)
           console.log('完整的用户信息:', JSON.stringify(info, null, 2))
         } else {
-          ElMessage.error(result.message || '获取用户资料失败')
+          // 只有在真正获取用户资料失败时才显示错误消息
+          if (result.message !== '用户未登录或缺少必要信息') {
+            ElMessage.error(result.message || '获取用户资料失败')
+          }
         }
       } catch (error) {
         console.error('获取用户资料失败:', error)

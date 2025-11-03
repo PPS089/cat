@@ -11,6 +11,12 @@
     <artifactId>pet-common</artifactId>
 
     <dependencies>
+        <!-- 内部模块依赖 -->
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>pet-pojo</artifactId>
+        </dependency>
+        
         <!-- Spring Boot Starter Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

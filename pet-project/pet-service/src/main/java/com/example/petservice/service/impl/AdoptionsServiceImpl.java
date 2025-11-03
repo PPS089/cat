@@ -245,8 +245,8 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
         List<Fosters> fosters = fosterMapper.selectList(fosterWrapper);
         
         for (Fosters foster : fosters) {
-            // 获取收容所信息 - 使用宠物所属的收容所
-            Shelters fosterShelter = sheltersMapper.selectById(pet.getShelterId());
+            // 获取收容所信息 - 使用寄养记录的收容所
+            Shelters fosterShelter = sheltersMapper.selectById(foster.getSid());
             String fosterShelterName = fosterShelter != null ? fosterShelter.getName() : "未知收容所";
             
             // 添加开始寄养时间线项

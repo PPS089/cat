@@ -36,8 +36,6 @@ public class Users implements Serializable {
     private String phone;
     private String passwordHash;
     private String introduce;
-//    @TableField(value = "nickname")
-//    private String nickName;
     @TableField(value = "headpic")
     private String headPic;
     private String email;

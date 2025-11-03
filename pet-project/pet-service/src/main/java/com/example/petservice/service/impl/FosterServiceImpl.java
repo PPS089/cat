@@ -31,18 +31,6 @@ public class FosterServiceImpl extends ServiceImpl<FosterMapper, Fosters> implem
     private final PetsMapper petsMapper;
 
     /**
-     * 创建寄养信息
-     * @param petId 宠物id
-     */
-    @Override
-    public Fosters createFoster(Long petId) {
-        Fosters foster = new Fosters();
-        foster.setPid(petId.intValue());
-        foster.setUid(UserContext.getCurrentUserId().intValue());
-        return foster;
-    }
-
-    /**
      * 创建寄养信息（带收容所和开始日期）
      * @param petId 宠物id
      * @param shelterId 收容所id
@@ -66,6 +54,7 @@ public class FosterServiceImpl extends ServiceImpl<FosterMapper, Fosters> implem
         Fosters foster = new Fosters();
         foster.setPid(petId.intValue());
         foster.setUid(UserContext.getCurrentUserId().intValue());
+        foster.setSid(shelterId.intValue());  // 设置收容所ID
         
         // 设置开始日期为当前时间（忽略传入的日期，使用当前时间）
         foster.setStartDate(LocalDateTime.now());

@@ -8,6 +8,7 @@ export interface Article {
   author: string
   viewCount: number
   createdAt: string
+  updatedAt?: string
 }
 
 

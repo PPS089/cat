@@ -100,7 +100,13 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         log.error("参数类型转换异常: {}", e.getMessage());
-        return Result.error(400, "参数类型错误: " + e.getName() + " 应该是 " + e.getRequiredType().getSimpleName() + " 类型");
+        String requiredTypeName = "未知类型";
+        Class<?> requiredType = e.getRequiredType();
+        if (requiredType != null) {
+            String simpleName = requiredType.getSimpleName();
+            requiredTypeName = (simpleName != null && !simpleName.isEmpty()) ? simpleName : "未知类型";
+        }
+        return Result.error(400, "参数类型错误: " + e.getName() + " 应该是 " + requiredTypeName + " 类型");
     }
 
     /**

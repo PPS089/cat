@@ -4,7 +4,9 @@ import com.example.petpojo.entity.PetHealth;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.petpojo.vo.HealthVo;
+import org.apache.ibatis.annotations.Mapper;
 
+@Mapper
 public interface PetHealthMapper extends BaseMapper<PetHealth> {
 
 

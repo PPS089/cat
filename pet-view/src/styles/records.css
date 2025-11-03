@@ -984,6 +984,40 @@
   text-align: center;
 }
 
+.media-info {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.dark-theme .media-info {
+  background: #4a5568;
+}
+
+.media-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+  word-break: break-all;
+}
+
+.dark-theme .media-name {
+  color: #ffffff;
+}
+
+.media-time {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin: 4px 0;
+}
+
+.dark-theme .media-time {
+  color: #bdc3c7;
+}
+
 .media-carousel img,
 .media-carousel video {
   max-width: 100%;

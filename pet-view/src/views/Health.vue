@@ -109,6 +109,9 @@
               <span v-if="alert.reminderTime" class="reminder-time">
                 <strong>{{ t('healthAlerts.reminderTime') }}:</strong> {{ formatDate(alert.reminderTime) }}
               </span>
+              <span v-if="alert.updatedAt && alert.updatedAt !== alert.checkDate" class="updated-time">
+                <strong>更新时间:</strong> {{ formatDate(alert.updatedAt) }}
+              </span>
             </div>
           </div>
 

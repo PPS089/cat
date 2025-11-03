@@ -1,21 +1,17 @@
 package com.example.petservice.websocket;
 
-import jakarta.websocket.OnClose;
-import jakarta.websocket.OnMessage;
-import jakarta.websocket.OnOpen;
-import jakarta.websocket.server.PathParam;
-import jakarta.websocket.server.ServerEndpoint;
-import org.springframework.stereotype.Component;
-import jakarta.websocket.Session;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.stereotype.Component;
 
-/**
- * WebSocket服务
- */
+import jakarta.websocket.OnClose;
+import jakarta.websocket.OnMessage;
+import jakarta.websocket.OnOpen;
+import jakarta.websocket.Session;
+import jakarta.websocket.server.PathParam;
+import jakarta.websocket.server.ServerEndpoint;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -23,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WebSocketServer {
     //存放会话对象
-    private static Map<String, Session> sessionMap = new HashMap();
+    private static final Map<String, Session> sessionMap = new HashMap<>();
 
     /**
      * 连接建立成功调用的方法
@@ -66,8 +62,12 @@ public class WebSocketServer {
             try {
                 //服务器向客户端发送消息
                 session.getBasicRemote().sendText(message);
-            } catch (Exception e) {
-                log.error(e.getMessage());
+            } catch (java.io.IOException e) {
+                log.error("发送消息失败", e);
+            } catch (IllegalStateException e) {
+                log.error("WebSocket连接状态异常", e);
+                // 移除无效会话
+                sessionMap.values().remove(session);
             }
         }
     }
@@ -78,12 +78,16 @@ public class WebSocketServer {
      */
     public void sendToUsersClient(String id, String message) {
         Session session = sessionMap.get(id);
-        if (session != null&&session.isOpen()) {
+        if (session != null && session.isOpen()) {
             try {
                 //服务器向客户端发送消息
                 session.getBasicRemote().sendText(message);
-            } catch (Exception e) {
-               log.error("发送消息给客户端{}失败", id, e);
+            } catch (java.io.IOException e) {
+                log.error("发送消息给客户端{}失败", id, e);
+            } catch (IllegalStateException e) {
+                log.error("客户端{}的WebSocket连接状态异常", id, e);
+                // 移除无效会话
+                sessionMap.remove(id);
             }
         }
     }

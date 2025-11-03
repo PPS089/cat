@@ -170,6 +170,9 @@
             <div class="event-time">
               <span class="record-time">{{ formatDate(event.record_time) }}</span>
               <span class="created-time">{{ t('records.recordedAt') }} {{ formatDate(event.created_at) }}</span>
+              <span v-if="event.updated_at && event.updated_at !== event.created_at" class="updated-time">
+                {{ t('records.updatedAt') }} {{ formatDate(event.updated_at) }}
+              </span>
             </div>
             <div class="event-actions">
               <button class="action-btn edit-btn" @click="editEvent(event)">
@@ -290,7 +293,7 @@
           <button class="close-btn" @click="closeModal">×</button>
         </div>
         
-        <form @submit.prevent="saveEvent" class="modal-form">
+        <form class="modal-form">
           <div class="form-group">
             <label>{{ t('records.pet') }}</label>
             <select v-model="formData.pid" required class="form-select">
@@ -426,12 +429,12 @@
           </div>
 
           <div class="modal-actions">
-            <button type="button" class="cancel-btn" @click="closeModal">
-              {{ t('records.cancel') }}
-            </button>
-            <button type="submit" class="save-btn">
-              {{ showEditModal ? t('records.update') : t('records.save') }}
-            </button>
+            <button type="button" class="cancel-btn" @click="closeModal" :disabled="isSubmitting">
+                  {{ t('records.cancel') }}
+                </button>
+                <button type="button" class="save-btn" @click="saveEvent" :disabled="isSubmitting">
+                  {{ isSubmitting ? (showEditModal ? t('records.updating') : t('records.saving')) : (showEditModal ? t('records.update') : t('records.save')) }}
+                </button>
           </div>
         </form>
       </div>
@@ -462,6 +465,11 @@
               :src="media.media_url"
               controls
             ></video>
+            <div class="media-info">
+              <p class="media-name">{{ media.media_name || `媒体文件 ${index + 1}` }}</p>
+              <p class="media-time">创建时间: {{ formatDate(media.created_at || '') }}</p>
+              <p v-if="media.updated_at && media.updated_at !== (media.created_at || '')" class="media-time">更新时间: {{ formatDate(media.updated_at || '') }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -473,43 +481,12 @@
 import { onMounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRecords } from '@/api/records'
-import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
 
 const { t } = useI18n()
 
-const userStore = useUserStore()
 const themeStore = useThemeStore()
 
-// 同步用户状态
-  const syncUserState = () => {
-    if (typeof window === 'undefined') return // SSR保护
-    
-    // 统一token键名，优先使用jwt_token，回退到token
-    const token = localStorage.getItem('jwt_token') || localStorage.getItem('token')
-    const username = localStorage.getItem('userName') || localStorage.getItem('username')
-    const userId = localStorage.getItem('userId') || localStorage.getItem('userid')
-    
-    console.log('同步用户状态:', { token: !!token, username, userId })
-    
-    if (token && username && userId) {
-      // 手动设置用户状态
-      userStore.info.userName = username
-      userStore.info.userId = parseInt(userId)
-      console.log('用户状态同步成功:', { userName: username, userId: parseInt(userId) })
-    } else {
-      console.log('用户状态不完整，需要重新登录', { token, username, userId })
-      // 清除不一致的状态
-      if (!token) {
-        localStorage.removeItem('userName')
-        localStorage.removeItem('userId')
-        localStorage.removeItem('username')
-        localStorage.removeItem('userid')
-        userStore.info.userName = ''
-        userStore.info.userId = 0
-      }
-    }
-  }
 
 // 使用组合式函数
 const {
@@ -520,6 +497,9 @@ const {
   filters,
   viewMode,
   sortBy,
+  
+  // 提交状态
+  isSubmitting,
   
   // 模态框状态
   showAddModal,
@@ -557,21 +537,7 @@ const {
   closeModal
 } = useRecords()
 
-// 生命周期
-onMounted(async () => {
-  syncUserState()
-  
-  // 检查是否真正登录（客户端环境）
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('jwt_token')
-    if (!token) {
-      // 可以在这里添加跳转到登录页的逻辑
-      // router.push('/login')
-      return
-    }
-  }
-  
-  try {
+ onMounted(async () => {
     // 先获取宠物数据
     await fetchPets()
     
@@ -580,10 +546,7 @@ onMounted(async () => {
     
     // 再获取事件数据，这样事件映射时宠物数据已可用
     await fetchEvents()
-  } catch (error) {
-    console.error('records.vue: 数据获取失败:', error)
-  }
-})
+  })
 </script>
 
 

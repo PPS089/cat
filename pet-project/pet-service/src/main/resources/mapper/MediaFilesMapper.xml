@@ -5,13 +5,13 @@
     <select id="getMediaByRecordId" resultType="com.example.petpojo.entity.MediaFiles">
         SELECT * FROM media_files
         WHERE record_id = #{recordId}
-        ORDER BY upload_time DESC
+        ORDER BY created_at DESC
     </select>
 
     <select id="getMediaByUserId" resultType="com.example.petpojo.entity.MediaFiles">
         SELECT * FROM media_files
         WHERE uid = #{uid}
-        ORDER BY upload_time DESC
+        ORDER BY created_at DESC
     </select>
 
 </mapper>

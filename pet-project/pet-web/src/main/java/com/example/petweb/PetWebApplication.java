@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.example.petweb", "com.example.petservice", "com.example.petcommon"})
+@ComponentScan(basePackages = {"com.example.petweb", "com.example.petcommon", "com.example.petservice"})
 public class PetWebApplication {
 
     public static void main(String[] args) {

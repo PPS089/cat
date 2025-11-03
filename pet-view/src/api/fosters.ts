@@ -22,8 +22,8 @@ export const useDeleteFoster = () => {
         t('user.confirmDeleteFoster'),
         t('user.confirmDeleteFosterTitle'),
         {
-            confirmButtonText: t('confirm'),
-            cancelButtonText: t('cancel'),
+            confirmButtonText: t('common.confirm'),
+            cancelButtonText: t('common.cancel'),
             type: 'warning',
         }
         )
@@ -100,6 +100,11 @@ export const useLoadFosters = () => {
               age: foster.pet?.age ,
               gender: foster.pet?.gender ,
               image: foster.pet?.image ? (foster.pet.image.startsWith('http') ? foster.pet.image : `http://localhost:8082/api/images/${foster.pet.image}`) : '/src/assets/img/dog.jpg'
+            },
+            shelter: {
+              sid: foster.shelter?.sid,
+              name: foster.shelter?.name,
+              location: foster.shelter?.location
             },
             startDate: foster.startDate ,
             endDate: foster.endDate ,

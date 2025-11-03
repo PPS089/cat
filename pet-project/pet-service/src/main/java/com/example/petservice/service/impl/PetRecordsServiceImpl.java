@@ -11,9 +11,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.petcommon.context.UserContext;
 import com.example.petpojo.dto.RecordDto;
 import com.example.petpojo.entity.PetRecords;
+import com.example.petpojo.vo.EventVo;
 import com.example.petservice.mapper.PetRecordsMapper;
+import com.example.petservice.service.MediaFilesService;
 import com.example.petservice.service.PetRecordsService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -22,7 +25,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetRecords> implements PetRecordsService {
+
+    private final MediaFilesService mediaFilesService;
 
     /**
      * 获取用户的事件记录列表
@@ -46,6 +52,40 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
         queryWrapper.eq(PetRecords::getPid, pid)
                    .orderByDesc(PetRecords::getRecordTime);
         return this.list(queryWrapper);
+    }
+    
+    /**
+     * 获取用户的事件记录列表，直接返回EventVo
+     */
+    @Override
+    public List<EventVo> getUserEventVos(Integer uid) {
+        log.info("获取用户事件记录列表，用户ID: {}", uid);
+        List<EventVo> eventVos = baseMapper.getEventVosByUserId(uid);
+        
+        // 为每个事件加载媒体文件
+        for (EventVo eventVo : eventVos) {
+            List<com.example.petpojo.vo.MediaFileVo> mediaList = mediaFilesService.getMediaByRecordId(eventVo.getEid());
+            eventVo.setMediaList(mediaList);
+        }
+        
+        return eventVos;
+    }
+    
+    /**
+     * 根据记录ID获取事件记录，直接返回EventVo
+     */
+    @Override
+    public EventVo getEventVoById(Integer recordId) {
+        log.info("获取事件记录，记录ID: {}", recordId);
+        EventVo eventVo = baseMapper.getEventVoById(recordId);
+        
+        if (eventVo != null) {
+            // 加载媒体文件
+            List<com.example.petpojo.vo.MediaFileVo> mediaList = mediaFilesService.getMediaByRecordId(recordId);
+            eventVo.setMediaList(mediaList);
+        }
+        
+        return eventVo;
     }
     
     /**
@@ -87,17 +127,20 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
             throw new IllegalArgumentException("事件记录不存在，ID: " + recordId);
         }
         
-        // 只允许更新部分字段
-        petRecords.setEventType(recordDto.getEventType());
-        petRecords.setMood(recordDto.getMood());
-        petRecords.setDescription(recordDto.getDescription());
-        petRecords.setLocation(recordDto.getLocation());
-        petRecords.setRecordTime(recordDto.getRecordTime());
-        petRecords.setMediaUrl(recordDto.getMediaUrl());
-        petRecords.setMediaType(recordDto.getMediaType());
+        // 更新所有字段
+        BeanUtils.copyProperties(recordDto, petRecords);
         
-        this.updateById(petRecords);
-        log.info("事件记录更新成功，记录ID: {}", recordId);
+        // 手动设置更新时间，确保updatedAt字段被更新
+        petRecords.setUpdatedAt(LocalDateTime.now());
+        
+        // 直接调用updateById，MyBatis Plus会自动更新updatedAt字段（使用非严格模式的fillStrategy）
+        boolean updated = this.updateById(petRecords);
+        if (updated) {
+            log.info("事件记录更新成功，记录ID: {}，更新时间: {}", recordId, petRecords.getUpdatedAt());
+        } else {
+            log.warn("事件记录更新失败，记录ID: {}", recordId);
+        }
+        
         return petRecords;
     }
     

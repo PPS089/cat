@@ -39,9 +39,4 @@ public class PetRecords  implements Serializable {
     private LocalDateTime createdAt;
     @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updatedAt;
-
-
-
-    private String mediaUrl;
-    private String mediaType;
 }
