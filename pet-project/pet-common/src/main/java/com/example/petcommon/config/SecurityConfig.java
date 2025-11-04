@@ -27,7 +27,7 @@ public class SecurityConfig {
             // 配置请求授权
             .authorizeHttpRequests(authz -> authz
                 // 允许注册和登录接口无需认证
-                .requestMatchers("/users", "/users/login", "/admin/employee/login").permitAll()
+                .requestMatchers("/user", "/user/login", "/admin/employee/login").permitAll()
                 // 放行Swagger相关路径
                 .requestMatchers(
 //                    "/v3/api-docs/**",

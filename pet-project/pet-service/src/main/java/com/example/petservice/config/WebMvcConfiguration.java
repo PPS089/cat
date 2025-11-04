@@ -42,7 +42,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         // 用户相关接口
                         "/user/login",
                         "/user/register",
-                        "/user/",
+                        "/user",
                         
                         // 公开的文章接口
                         "/articles/**",
