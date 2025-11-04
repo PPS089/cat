@@ -61,6 +61,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
+//                        "/api/swagger-ui/**",
+//                        "/api/swagger-ui.html",
+//                        "api/v3/api-docs/**",
                         
                         // 健康检查接口
                         "/health"

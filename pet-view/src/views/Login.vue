@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { User, Lock } from '@element-plus/icons-vue'
 import { useLogin } from '@/api/login'
@@ -86,10 +86,8 @@ const router = useRouter()
 const loading = ref(false)
 
 // 使用登录逻辑
-const { t, form, handleLogin: originalHandleLogin, initForm } = useLogin()
+const { t, form, handleLogin: originalHandleLogin } = useLogin()
 
-// 初始化表单（自动填充记住的用户名）
-initForm()
 
 // 处理登录
 const handleLogin = async () => {

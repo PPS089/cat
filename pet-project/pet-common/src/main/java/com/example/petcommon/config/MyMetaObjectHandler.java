@@ -15,8 +15,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     
     @Override
     public void insertFill(MetaObject metaObject) {
-        log.debug("开始插入填充...");
-        
+
         LocalDateTime now = LocalDateTime.now();
         
         // 使用宽松模式填充创建时间，确保字段存在时才填充
@@ -34,20 +33,16 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         this.fillStrategy(metaObject, "updatedTime", now);
         this.fillStrategy(metaObject, "gmtModified", now);
         this.fillStrategy(metaObject, "updated_at", now);
-        
-        log.debug("插入填充完成");
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        log.debug("开始更新填充...");
         
         LocalDateTime now = LocalDateTime.now();
         
         // 填充更新时间字段
         fillUpdateTime(metaObject, now);
-        
-        log.debug("更新填充完成");
+
     }
     
     /**

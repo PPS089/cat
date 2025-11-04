@@ -30,12 +30,14 @@ public class SecurityConfig {
                 .requestMatchers("/users", "/users/login", "/admin/employee/login").permitAll()
                 // 放行Swagger相关路径
                 .requestMatchers(
-                    "/v3/api-docs/**",
-                    "/swagger-ui/**",
-                    "/swagger-ui.html",
-                    "/swagger-ui.html",
-                    "/user/login",
-                    "/user/register"
+//                    "/v3/api-docs/**",
+//                    "/swagger-ui/**",
+//                    "/swagger-ui.html",
+//                    "/swagger-ui.html",
+                    "/api/swagger-ui/**",
+                    "/api/swagger-ui.html",
+                    "/api/user/login",
+                    "/api/user/register"
                 ).permitAll()
                 // 其他所有请求都需要认证
                 .anyRequest().permitAll() // 暂时允许所有其他请求，因为JWT拦截器会处理认证

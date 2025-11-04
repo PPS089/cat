@@ -42,9 +42,10 @@ export const useHeaderActions = () => {
       })
 
       // 清除本地存储的用户信息
-      localStorage.removeItem('userInfo')
-      localStorage.removeItem('userId')
-      localStorage.removeItem('token')
+        localStorage.removeItem('jwt_token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('rememberedUsername');
+        localStorage.removeItem('rememberedPassword');
       ElMessage.success(t('common.logoutSuccess'))
       router.push('/login')
     } catch (error) {

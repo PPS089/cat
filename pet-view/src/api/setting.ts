@@ -6,6 +6,7 @@ import { useThemeStore } from '@/stores/theme'
 import {request} from '../utils'
 import type { LoginHistoryItem, PasswordForm, Preferences } from '@/types/setting'
 import { onMounted } from 'vue'
+import router from '@/router'
 
 /**
  * 用户设置组合式函数
@@ -72,11 +73,17 @@ export const useSettings = () => {
     passwordLoading.value = true
     try {
       await userStore.changePassword(passwordForm)
-      ElMessage.success(t('settings.passwordChanged'))
       // 清空表单
       passwordForm.currentPassword = ''
       passwordForm.newPassword = ''
       passwordForm.confirmPassword = ''
+      //跳转到登录页
+      ElMessage.success(t('settings.passwordChanged'))
+      localStorage.removeItem('jwt_token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('rememberedUsername');
+      localStorage.removeItem('rememberedPassword');
+      router.push('/login')
     } catch (error: any) {
       ElMessage.error(t('settings.passwordChangeFailed') + (error.message ? ': ' + error.message : ''))
     } finally {

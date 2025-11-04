@@ -1,4 +1,4 @@
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -28,6 +28,20 @@ export const useLogin = () => {
     password: '',
     rememberMe: false
   })
+
+  // 记住用户名和密码的初始化
+  const initForm = () => {
+    const rememberedUsername = localStorage.getItem('rememberedUsername');
+    const rememberedPassword = localStorage.getItem('rememberedPassword');
+    if (rememberedUsername && rememberedPassword) {
+      form.username = rememberedUsername;
+      form.password = rememberedPassword;
+      form.rememberMe = true;
+    }
+  }
+
+  // 初始化表单
+  initForm()
 
   const handleLogin = async () => {
     try {
@@ -72,16 +86,18 @@ export const useLogin = () => {
         // 清理旧的用户信息和token
         localStorage.removeItem('jwt_token');
         localStorage.removeItem('userId');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('rememberedUsername');
-        localStorage.removeItem('rememberedPassword');
+        
+        // 只有在用户选择不记住密码时才清除记住的用户名和密码
+        if (!form.rememberMe) {
+          localStorage.removeItem('rememberedUsername');
+          localStorage.removeItem('rememberedPassword');
+        }
         
         // 统一存储字段名，保持前后端一致
         localStorage.setItem('userId', loginData.userId.toString());
         localStorage.setItem('jwt_token', token); 
-        localStorage.setItem('userName', loginData.userName || '');
-        localStorage.setItem('rememberedUsername', form.username);
         if (form.rememberMe) {
+          localStorage.setItem('rememberedUsername', form.username);
           localStorage.setItem('rememberedPassword', form.password);
         }
         
@@ -106,55 +122,13 @@ export const useLogin = () => {
         // 尝试跳转，添加错误处理
         await router.push(routerPath.value);
         console.log(t('redirectSuccessTo'), routerPath.value);
-      } else {
-        // 根据不同的错误类型提供更友好的提示
-        let errorMessage = '登录失败';
-        
-        if (loginData.message) {
-          if (loginData.message.includes('用户名') || loginData.message.includes('密码')) {
-            errorMessage = '用户名或密码错误，请检查后重新输入';
-          } else if (loginData.message.includes('不存在')) {
-            errorMessage = '用户不存在，请检查用户名或注册新账号';
-          }else {
-            errorMessage = loginData.message;
-          }
-        }
-        
-        ElMessage.error({
-          message: errorMessage,
-          showClose: true,
-          duration: 5000
-        });
-        
-        console.log(t('loginFailedServerReturn'), loginData.message);
-      }
+      } 
     } catch (error: any) {
       console.error('登录请求失败:', error);
       
       // 根据不同的错误类型提供更友好的提示
-      let errorMessage = '登录失败，请稍后重试';
+      let errorMessage = '用户名或密码错误，请检查后重新输入';
       
-      if (error.response) {
-        // 服务器返回了错误状态码
-        if (error.response.status === 401) {
-          errorMessage = '用户名或密码错误，请检查后重新输入';
-        } else if (error.response.status === 403) {
-          errorMessage = '账号已被禁用，请联系管理员';
-        } else if (error.response.status === 404) {
-          errorMessage = '用户不存在，请检查用户名或注册新账号';
-        } else if (error.response.status >= 500) {
-          errorMessage = '服务器内部错误，请稍后重试';
-        }
-      } else if (error.request) {
-        // 请求已发出但没有收到响应
-        errorMessage = '网络连接失败，请检查网络设置';
-      } else if (error.message) {
-        if (error.message.includes('Network Error')) {
-          errorMessage = '网络连接失败，请检查网络设置';
-        } else if (error.message.includes('timeout')) {
-          errorMessage = '请求超时，请稍后重试';
-        }
-      }
       
       ElMessage.error({
         message: errorMessage,
@@ -164,17 +138,7 @@ export const useLogin = () => {
     }
   }
 
-  const initForm = () => {
-    onMounted(() => {
-      const rememberedUsername = localStorage.getItem('rememberedUsername');
-      const rememberedPassword = localStorage.getItem('rememberedPassword');
-      if (rememberedUsername && rememberedPassword) {
-        form.username = rememberedUsername;
-        form.password = rememberedPassword;
-        form.rememberMe = true;
-      }
-    });
-  }
+
 
   return {
     // 翻译函数
@@ -183,7 +147,6 @@ export const useLogin = () => {
     form,
     routerPath,
     // 方法
-    handleLogin,
-    initForm
+    handleLogin
   }
 }

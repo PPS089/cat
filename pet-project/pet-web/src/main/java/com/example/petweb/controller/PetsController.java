@@ -28,11 +28,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
 
-
 import com.example.petservice.service.PetsService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 /**
  * 宠物管理控制器
  * 提供宠物相关的 REST API 接口
@@ -41,6 +47,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/pets")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "宠物管理", description = "宠物相关的 API 接口")
+@SecurityRequirement(name = "bearer-key")
 public class PetsController {
 
     private final PetsService petsService;
@@ -83,9 +91,13 @@ public class PetsController {
     /**
      * 领养宠物
      */
-
     @PostMapping("/adopt")
-    public Result<Pets> adoptPet(@RequestParam Long petId) {
+    @Operation(summary = "领养宠物", description = "用户领养指定的宠物")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "领养成功"),
+            @ApiResponse(responseCode = "400", description = "领养失败，宠物可能已被领养或不存在")
+    })
+    public Result<Pets> adoptPet(@Parameter(description = "宠物ID", required = true) @RequestParam Long petId) {
         log.info("领养宠物ID: {}", petId);
         try {
             Pets adopted = petsService.adop(petId);
@@ -110,7 +122,14 @@ public class PetsController {
      * 寄养宠物
      */
     @PostMapping("/{petId}/foster")
-    public Result<Fosters> fosterPet(@PathVariable Long petId, @RequestBody FosterRequest request) {
+    @Operation(summary = "寄养宠物", description = "将宠物寄养到指定的收容所")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "寄养成功"),
+            @ApiResponse(responseCode = "400", description = "寄养失败")
+    })
+    public Result<Fosters> fosterPet(
+            @Parameter(description = "宠物ID", required = true) @PathVariable Long petId, 
+            @Parameter(description = "寄养请求信息", required = true) @RequestBody FosterRequest request) {
         log.info("寄养宠物ID: {}, 收容所ID: {}, 开始日期: {}", petId, request.getShelterId(), request.getStartDate());
         Fosters fostered = fosterService.createFoster(petId, request.getShelterId(), request.getStartDate());
         if (fostered != null) {
@@ -126,7 +145,12 @@ public class PetsController {
      * 删除宠物寄养记录
      */
     @DeleteMapping("delete/{id}")
-    public Result<String> deletePetFoster(@PathVariable Long id) {
+    @Operation(summary = "删除宠物寄养记录", description = "根据ID删除宠物的寄养记录")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "删除成功"),
+            @ApiResponse(responseCode = "400", description = "删除失败")
+    })
+    public Result<String> deletePetFoster(@Parameter(description = "寄养记录ID", required = true) @PathVariable Long id) {
         log.info("删除宠物寄养记录ID: {}", id);
         boolean deleted = fosterService.deleteFoster(id);
         if (deleted) {
@@ -140,7 +164,12 @@ public class PetsController {
      * 结束宠物寄养
      */
     @PostMapping("/{petId}/foster/end")
-    public Result<Map<String, Object>> endPetFoster(@PathVariable Long petId) {
+    @Operation(summary = "结束宠物寄养", description = "结束指定宠物的寄养状态")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "结束寄养成功"),
+            @ApiResponse(responseCode = "400", description = "结束寄养失败")
+    })
+    public Result<Map<String, Object>> endPetFoster(@Parameter(description = "宠物ID", required = true) @PathVariable Long petId) {
         log.info("结束宠物寄养ID: {}", petId);
         boolean ended = fosterService.endFosterByPetId(petId);
         if (ended) {
@@ -159,7 +188,12 @@ public class PetsController {
      * 获取宠物领养时间线
      */
     @GetMapping("/{petId}/adoption-timeline")
-    public Result<AdoptionTimelineResponse> getAdoptionTimeline(@PathVariable Long petId) {
+    @Operation(summary = "获取宠物领养时间线", description = "获取指定宠物的领养过程时间线")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "获取成功"),
+            @ApiResponse(responseCode = "400", description = "获取失败")
+    })
+    public Result<AdoptionTimelineResponse> getAdoptionTimeline(@Parameter(description = "宠物ID", required = true) @PathVariable Long petId) {
         log.info("获取宠物领养时间线，宠物ID: {}", petId);
         try {
             Long userId = UserContext.getCurrentUserId();
@@ -175,9 +209,14 @@ public class PetsController {
      * 更新宠物信息
      */
     @PutMapping("/{petId}")
+    @Operation(summary = "更新宠物信息", description = "更新指定宠物的信息")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "更新成功"),
+            @ApiResponse(responseCode = "400", description = "更新失败，宠物不存在或参数错误")
+    })
     public Result<Pets> updatePet(
-            @PathVariable Long petId, 
-            @RequestBody PetUpdateDto petUpdateDto) {
+            @Parameter(description = "宠物ID", required = true) @PathVariable Long petId, 
+            @Parameter(description = "宠物更新信息", required = true) @RequestBody PetUpdateDto petUpdateDto) {
         log.info("更新宠物信息，宠物ID: {}, 更新数据: {}", petId, petUpdateDto);
         
         try {

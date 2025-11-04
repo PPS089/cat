@@ -325,7 +325,7 @@ export default {
     switchToAdmin: '切换到管理员登录',
     usernamePlaceholder: '请输入用户名',
     passwordPlaceholder: '请输入密码',
-    rememberMe: '记住我（7天免登录）',
+    rememberMe: '记住我（下次免登录）',
     noAccount: '还没有账号？',
     registerNow: '立即注册',
     submit: '登录',

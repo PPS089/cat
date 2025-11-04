@@ -2,32 +2,41 @@ package com.example.petweb.controller;
 
 import java.util.Map;
 
-import com.example.petpojo.dto.ChangePasswordDto;
-import com.example.petpojo.dto.UserUpdateDto;
-import com.example.petpojo.vo.UserVo;
-import com.example.petpojo.vo.AdoptionsVo;
-import com.example.petservice.service.AdoptionsService;
-import com.example.petpojo.vo.FostersVo;
-import com.example.petservice.service.FosterService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
 import com.example.petcommon.result.UserLoginResponse;
+import com.example.petpojo.dto.ChangePasswordDto;
 import com.example.petpojo.dto.UserLoginDto;
+import com.example.petpojo.dto.UserUpdateDto;
 import com.example.petpojo.dto.UsersCreateDto;
+import com.example.petpojo.vo.AdoptionsVo;
+import com.example.petpojo.vo.FostersVo;
+import com.example.petpojo.vo.UserVo;
+import com.example.petservice.service.AdoptionsService;
+import com.example.petservice.service.FosterService;
 import com.example.petservice.service.UsersService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -39,6 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 @Slf4j
+@SecurityRequirement(name = "bearer-key")
 public class UsersController {
 
     private final UsersService usersService;
@@ -54,7 +64,7 @@ public class UsersController {
         @ApiResponse(responseCode = "400", description = "请求参数错误")
     })
     @PostMapping
-    public Result<UserLoginResponse> createUser(@Valid @RequestBody UsersCreateDto userdto) {
+    public Result<UserLoginResponse> createUser(@Parameter(description = "用户创建信息", required = true) @Valid @RequestBody UsersCreateDto userdto) {
         log.info("创建新用户: {}", userdto);
         UserLoginResponse response = usersService.createUser(userdto);
         
@@ -67,10 +77,18 @@ public class UsersController {
     @Operation(summary = "用户登录", description = "用户使用用户名和密码登录系统")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "登录成功"),
-        @ApiResponse(responseCode = "401", description = "用户名或密码错误")
+        @ApiResponse(responseCode = "401", description = "用户名或密码错误"),
+        @ApiResponse(responseCode = "400", description = "请求参数错误", 
+            content = @io.swagger.v3.oas.annotations.media.Content(
+                mediaType = "application/json",
+                schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = com.example.petcommon.result.ResultMapStringString.class)
+            )
+        )
     })
     @PostMapping("/login")
-    public Result<UserLoginResponse> login(@Valid @RequestBody UserLoginDto userLogindto, HttpServletRequest request) {
+    public Result<UserLoginResponse> login(
+            @Parameter(description = "用户登录信息", required = true) @Valid @RequestBody UserLoginDto userLogindto, 
+            HttpServletRequest request) {
         log.info("用户登录: {}", userLogindto);
         UserLoginResponse response = usersService.userLogin(userLogindto, request);
 
@@ -102,7 +120,14 @@ public class UsersController {
      * 更新用户信息
      */
     @PutMapping("/profile")
-    public Result<UserVo> updateUser(@RequestPart(value = "avatar", required = false) MultipartFile file, @ModelAttribute UserUpdateDto userUpdateDto) {
+    @Operation(summary = "更新用户信息", description = "更新当前登录用户的信息，包括头像")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "更新成功"),
+        @ApiResponse(responseCode = "400", description = "更新失败")
+    })
+    public Result<UserVo> updateUser(
+            @Parameter(description = "用户头像文件") @RequestPart(value = "avatar", required = false) MultipartFile file, 
+            @Parameter(description = "用户更新信息") @ModelAttribute UserUpdateDto userUpdateDto) {
         UserVo userVo = usersService.updateUser(userUpdateDto, file);
         return Result.success(userVo);
     }
@@ -112,7 +137,13 @@ public class UsersController {
      * 更改密码
      */
     @PutMapping("/updatePassword")
-    public Result<String> updatePassword(@RequestBody ChangePasswordDto changePasswordDto) {
+    @Operation(summary = "更改密码", description = "修改当前登录用户的密码")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "密码修改成功"),
+        @ApiResponse(responseCode = "400", description = "密码修改失败，原密码错误")
+    })
+    public Result<String> updatePassword(
+            @Parameter(description = "密码修改信息", required = true) @RequestBody ChangePasswordDto changePasswordDto) {
         usersService.changePassword(changePasswordDto);
         return Result.success("密码更新成功");
     }
@@ -121,9 +152,13 @@ public class UsersController {
      * 获取用户领养记录
      */
     @GetMapping("/adoptions")
+    @Operation(summary = "获取用户领养记录", description = "分页获取当前用户的领养记录")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "获取成功")
+    })
     public Result<Map<String, Object>> getUserAdoptions(
-            @RequestParam(value = "current_page", defaultValue = "1") Integer currentPage,
-            @RequestParam(value = "per_page", defaultValue = "10") Integer pageSize) {
+            @Parameter(description = "当前页码，从1开始") @RequestParam(value = "current_page", defaultValue = "1") Integer currentPage,
+            @Parameter(description = "每页记录数") @RequestParam(value = "per_page", defaultValue = "10") Integer pageSize) {
         Long userId = UserContext.getCurrentUserId();
         log.info("获取用户领养记录: userId={}, currentPage={}, pageSize={}", userId, currentPage, pageSize);
         // 如果pageSize大于100，限制为100条记录
@@ -148,9 +183,13 @@ public class UsersController {
      * 获取用户寄养记录
      */
     @GetMapping("/fosters")
+    @Operation(summary = "获取用户寄养记录", description = "分页获取当前用户的寄养记录")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "获取成功")
+    })
     public Result<Map<String, Object>> getUserFosters(
-            @RequestParam(value = "current_page", defaultValue = "1") Integer currentPage,
-            @RequestParam(value = "per_page", defaultValue = "10") Integer pageSize) {
+            @Parameter(description = "当前页码，从1开始") @RequestParam(value = "current_page", defaultValue = "1") Integer currentPage,
+            @Parameter(description = "每页记录数") @RequestParam(value = "per_page", defaultValue = "10") Integer pageSize) {
         Long userId = UserContext.getCurrentUserId();
         // 如果pageSize大于100，限制为100条记录
         if (pageSize > 100) {
