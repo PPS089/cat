@@ -9,16 +9,21 @@ import java.util.List;
 
 /**
  * 媒体文件服务接口
+ * 定义媒体文件相关的业务方法
  */
 public interface MediaFilesService extends IService<MediaFiles> {
 
     /**
      * 根据记录ID获取媒体文件列表
+     * @param recordId 记录ID
+     * @return 媒体文件VO列表
      */
     List<MediaFileVo> getMediaByRecordId(Integer recordId);
     
     /**
      * 根据用户ID获取媒体文件列表
+     * @param uid 用户ID
+     * @return 媒体文件VO列表
      */
     List<MediaFileVo> getMediaByUserId(Integer uid);
     
@@ -44,11 +49,15 @@ public interface MediaFilesService extends IService<MediaFiles> {
     
     /**
      * 删除媒体文件
+     * @param mid 媒体文件ID
+     * @return 是否删除成功
      */
     boolean deleteMediaFile(Integer mid);
     
     /**
      * 删除记录相关的所有媒体文件
+     * @param recordId 记录ID
+     * @return 是否删除成功
      */
     boolean deleteMediaByRecordId(Integer recordId);
 }

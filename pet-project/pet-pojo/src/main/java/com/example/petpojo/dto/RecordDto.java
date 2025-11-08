@@ -22,8 +22,4 @@ public class RecordDto {
     private String location;
     
     private LocalDateTime recordTime;
-    
-    private String mediaUrl;
-    
-    private String mediaType;
 }

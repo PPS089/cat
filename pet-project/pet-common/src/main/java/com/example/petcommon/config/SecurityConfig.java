@@ -28,16 +28,13 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // 允许注册和登录接口无需认证
                 .requestMatchers("/user", "/user/login", "/admin/employee/login").permitAll()
-                // 放行Swagger相关路径
+                // 放行Swagger相关路径 (注意：由于应用配置了context-path=/api，这里不需要再加/api前缀)
                 .requestMatchers(
-//                    "/v3/api-docs/**",
-//                    "/swagger-ui/**",
-//                    "/swagger-ui.html",
-//                    "/swagger-ui.html",
-                    "/api/swagger-ui/**",
-                    "/api/swagger-ui.html",
-                    "/api/user/login",
-                    "/api/user/register"
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/v3/api-docs/**",
+                    "/user/login",
+                    "/user/register"
                 ).permitAll()
                 // 其他所有请求都需要认证
                 .anyRequest().permitAll() // 暂时允许所有其他请求，因为JWT拦截器会处理认证

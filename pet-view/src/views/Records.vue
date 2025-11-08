@@ -441,39 +441,111 @@
     </div>
 
     <!-- 媒体查看模态框 -->
-    <div v-if="showMediaModal" class="media-modal-overlay" @click="closeMediaModal">
-      <div class="media-modal-content" @click.stop>
-        <div class="media-modal-header">
-          <h3>{{ t('records.mediaViewer') }}</h3>
-          <button class="close-btn" @click="closeMediaModal">×</button>
-        </div>
-        <div v-if="mediaLoading" class="media-loading">
-          <p>正在加载媒体文件...</p>
-        </div>
-        <div v-else-if="currentMediaList.length === 0" class="media-empty">
-          <p>此事件没有媒体文件</p>
-        </div>
-        <div v-else class="media-carousel">
-          <div v-for="(media, index) in currentMediaList" :key="index" class="media-item">
-            <img 
-              v-if="media.media_type === 'image'" 
-              :src="media.media_url" 
-              :alt="`Media ${index + 1}`"
-            >
-            <video 
-              v-else-if="media.media_type === 'video'" 
-              :src="media.media_url"
-              controls
-            ></video>
-            <div class="media-info">
-              <p class="media-name">{{ media.media_name || `媒体文件 ${index + 1}` }}</p>
-              <p class="media-time">创建时间: {{ formatDate(media.created_at || '') }}</p>
-              <p v-if="media.updated_at && media.updated_at !== (media.created_at || '')" class="media-time">更新时间: {{ formatDate(media.updated_at || '') }}</p>
+    <Teleport to="body">
+      <Transition name="media-viewer">
+        <div 
+          v-if="showMediaModal" 
+          class="media-viewer-overlay" 
+          @click="closeMediaModal"
+          @keydown.esc="closeMediaModal"
+          @keydown.left="prevMedia"
+          @keydown.right="nextMedia"
+          tabindex="-1"
+        >
+          <div class="media-viewer-content" @click.stop>
+            <!-- 关闭按钮 -->
+            <button class="media-viewer-close" @click="closeMediaModal">×</button>
+            
+            <!-- 图片显示区域 -->
+            <div class="media-viewer-main" v-if="currentMediaList.length > 0">
+              <!-- 左箭头 -->
+              <button 
+                v-if="currentMediaList.length > 1" 
+                class="media-nav-btn media-nav-prev"
+                @click.stop="prevMedia"
+                :aria-label="t('records.previousMedia')"
+              >
+                ‹
+              </button>
+              
+              <!-- 媒体内容 -->
+              <div class="media-display">
+                <Transition name="media-fade" mode="out-in">
+                  <img 
+                    v-if="currentMediaList[currentMediaIndex]?.media_type === 'image'" 
+                    :key="`img-${currentMediaIndex}`"
+                    :src="currentMediaList[currentMediaIndex].media_url" 
+                    :alt="currentMediaList[currentMediaIndex].media_name || `媒体文件 ${currentMediaIndex + 1}`"
+                    class="media-image"
+                  >
+                  <video 
+                    v-else-if="currentMediaList[currentMediaIndex]?.media_type === 'video'" 
+                    :key="`video-${currentMediaIndex}`"
+                    :src="currentMediaList[currentMediaIndex].media_url"
+                    controls
+                    class="media-video"
+                    :autoplay="true"
+                  ></video>
+                </Transition>
+              </div>
+              
+              <!-- 右箭头 -->
+              <button 
+                v-if="currentMediaList.length > 1" 
+                class="media-nav-btn media-nav-next"
+                @click.stop="nextMedia"
+                :aria-label="t('records.nextMedia')"
+              >
+                ›
+              </button>
+            </div>
+            
+            <!-- 媒体信息和缩略图 -->
+            <div class="media-viewer-footer" v-if="currentMediaList.length > 0">
+              <div class="media-info">
+                <h4>{{ currentMediaList[currentMediaIndex]?.media_name || `媒体文件 ${currentMediaIndex + 1}` }}</h4>
+                <p v-if="currentMediaList[currentMediaIndex]?.created_at">
+                  {{ t('records.createdAt') }}: {{ formatDate(currentMediaList[currentMediaIndex].created_at || '') }}
+                </p>
+                <p v-if="currentMediaList[currentMediaIndex]?.updated_at && currentMediaList[currentMediaIndex].updated_at !== (currentMediaList[currentMediaIndex].created_at || '')">
+                  {{ t('records.updatedAt') }}: {{ formatDate(currentMediaList[currentMediaIndex].updated_at || '') }}
+                </p>
+                <p>
+                  {{ t('records.mediaIndex', { current: currentMediaIndex + 1, total: currentMediaList.length }) }}
+                </p>
+              </div>
+              
+              <!-- 缩略图导航 -->
+              <div class="media-thumbnails" v-if="currentMediaList.length > 1">
+                <div 
+                  v-for="(media, index) in currentMediaList" 
+                  :key="index"
+                  class="thumbnail-item"
+                  :class="{ active: index === currentMediaIndex }"
+                  @click.stop="selectMedia(index)"
+                  :aria-label="`${t('records.media')} ${index + 1}`"
+                >
+                  <img 
+                    v-if="media.media_type === 'image'" 
+                    :src="media.media_url" 
+                    :alt="media.media_name || `媒体文件 ${index + 1}`"
+                  >
+                  <div v-else class="video-thumbnail">
+                    <span class="video-icon">🎬</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 空状态 -->
+            <div class="media-empty" v-else>
+              <p>{{ t('records.noMediaFiles') }}</p>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </Transition>
+    </Teleport>
+
   </div>
 </template>
 
@@ -505,7 +577,7 @@ const {
   showAddModal,
   showEditModal,
   showMediaModal,
-  mediaLoading,
+  currentMediaIndex, // 添加当前媒体索引
   
   // 表单数据
   formData,
@@ -531,6 +603,9 @@ const {
   formatFileSize,
   openMediaModal,
   closeMediaModal,
+  nextMedia, // 添加切换方法
+  prevMedia,
+  selectMedia,
   editEvent,
   deleteEvent,
   saveEvent,

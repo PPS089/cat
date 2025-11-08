@@ -26,7 +26,7 @@ export const useHealth = () => {
     healthType: '',
     checkDate: '',
     description: '',
-    reminderTime: '',
+    reminderTime: undefined,
     status: 'normal'
   })
 
@@ -178,9 +178,14 @@ export const useHealth = () => {
     try {
       await request.put(`/user/health-alerts/${healthId}/status?status=${status}`)
       await fetchHealthAlerts()
-      ElMessage.success(t('api.updateSuccess'))
-    } catch (error) {
-      ElMessage.error(t('api.updateFailed'))
+      ElMessage.success(t('api.updateHealthAlertSuccess'))
+    } catch (error: any) {
+      console.error(t('api.updateHealthAlertFailed'), error)
+      if (error.response && error.response.status === 400) {
+        ElMessage.error(t('api.updateHealthAlertFailed') + ': ' + (error.response.data?.message || t('common.validationError')))
+      } else {
+        ElMessage.error(t('api.updateHealthAlertFailed'))
+      }
     }
   }
 
@@ -216,19 +221,33 @@ export const useHealth = () => {
 
       let formattedCheckDate = formData.checkDate
       if (formData.checkDate && formData.checkDate.includes('T')) {
-        formattedCheckDate = formData.checkDate.replace('T', ' ')
+        // 将日期格式转换为 yyyy-MM-dd HH:mm:ss
+        const date = new Date(formData.checkDate)
+        formattedCheckDate = date.getFullYear() + '-' + 
+          String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+          String(date.getDate()).padStart(2, '0') + ' ' + 
+          String(date.getHours()).padStart(2, '0') + ':' + 
+          String(date.getMinutes()).padStart(2, '0') + ':' + 
+          String(date.getSeconds()).padStart(2, '0')
       }
 
-      let formattedReminderTime = formData.reminderTime
+      let formattedReminderTime = formData.reminderTime || null
       if (formData.reminderTime && formData.reminderTime.includes('T')) {
-        formattedReminderTime = formData.reminderTime.replace('T', ' ')
+        // 将日期格式转换为 yyyy-MM-dd HH:mm:ss
+        const date = new Date(formData.reminderTime)
+        formattedReminderTime = date.getFullYear() + '-' + 
+          String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+          String(date.getDate()).padStart(2, '0') + ' ' + 
+          String(date.getHours()).padStart(2, '0') + ':' + 
+          String(date.getMinutes()).padStart(2, '0') + ':' + 
+          String(date.getSeconds()).padStart(2, '0')
       }
 
       const payload = {
         pid: formData.pid,
         healthType: formData.healthType,
         checkDate: formattedCheckDate,
-        reminderTime: formattedReminderTime || null,
+        reminderTime: formattedReminderTime, // 允许为null
         status: formData.status,
         description: formData.description
       }
@@ -248,9 +267,24 @@ export const useHealth = () => {
       } else {
         ElMessage.error(t('api.operationFailed'))
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(t('api.saveHealthAlertFailed'), error)
-      ElMessage.error(t('api.saveHealthAlertFailed'))
+      // 区分创建和更新操作的错误提示
+      if (formData.healthId && formData.healthId > 0) {
+        // 更新操作
+        if (error.response && error.response.status === 400) {
+          ElMessage.error(t('api.updateHealthAlertFailed') + ': ' + (error.response.data?.message || t('common.validationError')))
+        } else {
+          ElMessage.error(t('api.updateHealthAlertFailed'))
+        }
+      } else {
+        // 创建操作
+        if (error.response && error.response.status === 400) {
+          ElMessage.error(t('api.saveHealthAlertFailed') + ': ' + (error.response.data?.message || t('common.validationError')))
+        } else {
+          ElMessage.error(t('api.saveHealthAlertFailed'))
+        }
+      }
     }
   }
 
@@ -262,7 +296,7 @@ export const useHealth = () => {
     formData.pid = 0
     formData.healthType = ''
     formData.checkDate = ''
-    formData.reminderTime = ''
+    formData.reminderTime = undefined
     formData.status = 'normal'
     formData.description = ''
   }

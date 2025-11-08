@@ -25,6 +25,11 @@ public interface PetRecordsMapper extends BaseMapper<PetRecords> {
     List<EventVo> getEventVosByUserId(Integer uid);
     
     /**
+     * 根据宠物ID获取事件记录列表，直接返回EventVo
+     */
+    List<EventVo> getEventVosByPetId(Integer pid);
+    
+    /**
      * 根据记录ID获取事件记录，直接返回EventVo
      */
     EventVo getEventVoById(Integer recordId);

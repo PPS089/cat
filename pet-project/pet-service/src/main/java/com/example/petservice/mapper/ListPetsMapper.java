@@ -2,7 +2,7 @@ package com.example.petservice.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.petpojo.entity.Pets;
-
+import com.example.petpojo.vo.PetListVo; // 添加新的VO导入
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,5 +13,8 @@ import org.apache.ibatis.annotations.Param;
 public interface ListPetsMapper extends BaseMapper<Pets> {
     IPage<Pets> selectByPage(Page<Pets> page);
     Pets selectPetById(@Param("petId") Integer petId);
-//    IPage<ListPetsVo> listPets(@Param("current_page") Integer currentPage, @Param("per_page") Integer pageSize);
+    
+    // 添加新的方法用于直接查询VO
+    IPage<PetListVo> selectPetListByPage(Page<PetListVo> page);
+    PetListVo selectPetListById(@Param("petId") Integer petId);
 }

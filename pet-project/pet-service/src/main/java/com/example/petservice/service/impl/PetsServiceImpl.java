@@ -13,6 +13,8 @@ import com.example.petpojo.dto.PetUpdateDto;
 import com.example.petpojo.entity.Adoptions;
 import com.example.petpojo.entity.Pets;
 import com.example.petpojo.entity.enums.CommonEnum;
+import com.example.petpojo.vo.AdoptionsVo;
+import com.example.petpojo.vo.PetListVo;
 import com.example.petservice.mapper.PetsMapper;
 import com.example.petservice.service.AdoptionsService;
 import com.example.petservice.service.PetsService;
@@ -36,7 +38,7 @@ public class PetsServiceImpl extends ServiceImpl<PetsMapper, Pets> implements Pe
      * 获取用户已领养的宠物列表
      */
     @Override
-    public List<Pets> getUserAdoptedPets() {
+    public List<PetListVo> getUserAdoptedPets() {
         Long userId = UserContext.getCurrentUserId();
         log.info("获取用户已领养的宠物列表，用户ID: {}", userId);
         
@@ -60,8 +62,25 @@ public class PetsServiceImpl extends ServiceImpl<PetsMapper, Pets> implements Pe
         petQuery.in(Pets::getPid, petIds);
         List<Pets> pets = this.list(petQuery);
         
-        log.info("获取到用户已领养宠物数量: {}，用户ID: {}", pets.size(), userId);
-        return pets;
+        // 转换为PetListVo
+        List<PetListVo> petListVos = pets.stream()
+                .map(pet -> {
+                    PetListVo vo = new PetListVo();
+                    vo.setPid(pet.getPid());
+                    vo.setName(pet.getName());
+                    vo.setSpecies(pet.getSpecies());
+                    vo.setBreed(pet.getBreed());
+                    vo.setAge(pet.getAge());
+                    vo.setGender(pet.getGender());
+                    vo.setImgUrl(pet.getImageUrl());
+                    vo.setStatus(pet.getStatus() != null ? pet.getStatus().getCode() : null);
+                    // 注意：这里没有设置收容所信息，因为Pets实体不包含这些信息
+                    return vo;
+                })
+                .collect(java.util.stream.Collectors.toList());
+        
+        log.info("获取到用户已领养宠物数量: {}，用户ID: {}", petListVos.size(), userId);
+        return petListVos;
     }
 
 
@@ -72,7 +91,7 @@ public class PetsServiceImpl extends ServiceImpl<PetsMapper, Pets> implements Pe
 
     @Override
     @Transactional
-    public Pets adop(Long petId) {
+    public PetListVo adop(Long petId) {
 
         Long userId = UserContext.getCurrentUserId();
 
@@ -113,15 +132,29 @@ public class PetsServiceImpl extends ServiceImpl<PetsMapper, Pets> implements Pe
  *  添加领养记录
  */
 
-        Adoptions adoptions = adoptionsService.createAdoption(petId.intValue());
-
-        if (adoptions == null) {
+        AdoptionsVo adoptionsVo = adoptionsService.createAdoption(petId.intValue());
+        // 我们只需要检查领养记录是否创建成功，不需要使用返回的VO对象
+        // 如果adoptionsVo为null，说明创建失败
+        if (adoptionsVo == null) {
             log.error("创建领养记录失败，宠物ID: {}", petId);
             throw new RuntimeException("创建领养记录失败");
         }
         
         log.info("宠物领养成功，宠物ID: {}，用户ID: {}", petId, userId);
-        return pet;
+        
+        // 转换为PetListVo
+        PetListVo petListVo = new PetListVo();
+        petListVo.setPid(pet.getPid());
+        petListVo.setName(pet.getName());
+        petListVo.setSpecies(pet.getSpecies());
+        petListVo.setBreed(pet.getBreed());
+        petListVo.setAge(pet.getAge());
+        petListVo.setGender(pet.getGender());
+        petListVo.setImgUrl(pet.getImageUrl());
+        petListVo.setStatus(pet.getStatus() != null ? pet.getStatus().getCode() : null);
+        // 注意：这里没有设置收容所信息，因为Pets实体不包含这些信息
+        
+        return petListVo;
     }
 
 
@@ -129,7 +162,7 @@ public class PetsServiceImpl extends ServiceImpl<PetsMapper, Pets> implements Pe
      *更新宠物信息
      */
     @Override
-    public Pets update(PetUpdateDto petUpdateDto) {
+    public PetListVo update(PetUpdateDto petUpdateDto) {
         Pets pet = lambdaQuery()
                 .eq(Pets::getPid, petUpdateDto.getPid())
                 .one();          // 取不到返回 null
@@ -142,7 +175,20 @@ public class PetsServiceImpl extends ServiceImpl<PetsMapper, Pets> implements Pe
 
         BeanUtils.copyProperties(petUpdateDto, pet);
         this.updateById(pet);
-        return pet;
+        
+        // 转换为PetListVo
+        PetListVo petListVo = new PetListVo();
+        petListVo.setPid(pet.getPid());
+        petListVo.setName(pet.getName());
+        petListVo.setSpecies(pet.getSpecies());
+        petListVo.setBreed(pet.getBreed());
+        petListVo.setAge(pet.getAge());
+        petListVo.setGender(pet.getGender());
+        petListVo.setImgUrl(pet.getImageUrl());
+        petListVo.setStatus(pet.getStatus() != null ? pet.getStatus().getCode() : null);
+        // 注意：这里没有设置收容所信息，因为Pets实体不包含这些信息
+        
+        return petListVo;
     }
 
 

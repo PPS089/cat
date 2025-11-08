@@ -9,23 +9,56 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * 文章信息VO类
+ * 用于封装文章的详细信息
+ */
 public class ArticlesVo {
 
 
+    /**
+     * 文章ID
+     */
     private Integer id;
 
+    /**
+     * 文章标题
+     */
     private String title;
 
+    /**
+     * 文章内容
+     */
     private String content;
 
+    /**
+     * 文章摘要
+     */
     private String summary;
 
+    /**
+     * 文章作者
+     */
     private String author;
 
+    /**
+     * 封面图片URL
+     */
     private String coverImage;
 
+    /**
+     * 浏览次数
+     */
     private Integer viewCount;
 
+    /**
+     * 创建时间
+     */
     private LocalDateTime createdAt;
+
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updatedAt;
 
 }

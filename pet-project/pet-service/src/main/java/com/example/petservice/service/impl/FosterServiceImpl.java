@@ -4,9 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,23 +24,28 @@ import com.example.petpojo.vo.FostersVo;
 import lombok.RequiredArgsConstructor;
 
 
-
+/**
+ * 寄养服务实现类
+ * 实现寄养相关的业务逻辑
+ */
 @Service
 @RequiredArgsConstructor
 public class FosterServiceImpl extends ServiceImpl<FosterMapper, Fosters> implements FosterService {
-
-    private final FosterMapper fosterMapper;
-    private final PetsMapper petsMapper;
+    @Autowired
+    private FosterMapper fosterMapper;
+    @Autowired
+    private PetsMapper petsMapper;
 
     /**
      * 创建寄养信息（带收容所和开始日期）
      * @param petId 宠物id
      * @param shelterId 收容所id
      * @param startDate 开始日期
+     * @return 寄养信息VO对象
      */
     @Override
     @Transactional
-    public Fosters createFoster(Long petId, Long shelterId, LocalDate startDate) {
+    public FostersVo createFoster(Long petId, Long shelterId, LocalDate startDate) {
         // 检查宠物是否存在且属于当前用户
         Pets pet = petsMapper.selectById(petId);
         if (pet == null) {
@@ -66,7 +73,8 @@ public class FosterServiceImpl extends ServiceImpl<FosterMapper, Fosters> implem
         pet.setStatus(CommonEnum.PetStatusEnum.FOSTERING);
         petsMapper.updateById(pet);
         
-        return foster;
+        // 查询并返回VO对象
+        return fosterMapper.getFosterById(foster.getFid());
     }
 
     /**
@@ -108,30 +116,25 @@ public class FosterServiceImpl extends ServiceImpl<FosterMapper, Fosters> implem
      */
     @Override
     @Transactional
-    public boolean deleteFoster(Long id) {
-        // 检查寄养记录是否存在
-        Fosters foster = this.getById(id);
-        if (foster == null) {
-            return false;
+    public CommonEnum.FosterDeleteResultEnum deleteFoster(Integer id) {
+        List<Object> foster = fosterMapper.selectObjs(new LambdaQueryWrapper<Fosters>()
+        .eq(Fosters::getFid, id)
+        .select(Fosters::getEndDate));
+        //寄养结束时间
+         LocalDateTime endDate =foster.isEmpty() ? null : (LocalDateTime) foster.get(0);
+        if(foster.isEmpty()){
+            return CommonEnum.FosterDeleteResultEnum.DELETE_FAILED;
+        } else if (endDate == null) {
+            return CommonEnum.FosterDeleteResultEnum.PET_IS_FOSTERING;
+        }else{
+             // 真正从数据库删除寄养记录
+            boolean deleted = this.removeById(id);
+            if (!deleted) {
+                return CommonEnum.FosterDeleteResultEnum.DELETE_FAILED;
+            }
         }
         
-        // 获取对应的宠物
-        Pets pet = petsMapper.selectById(foster.getPid());
-        if (pet == null) {
-            throw new RuntimeException("宠物不存在");
-        }
-        
-        // 真正从数据库删除寄养记录
-        boolean deleted = this.removeById(id);
-        if (!deleted) {
-            return false;
-        }
-        
-        // 更新宠物状态为已领养
-        pet.setStatus(CommonEnum.PetStatusEnum.ADOPTED);
-        petsMapper.updateById(pet);
-        
-        return true;
+        return CommonEnum.FosterDeleteResultEnum.SUCCESS;
     }
 
     /**
@@ -215,4 +218,5 @@ public class FosterServiceImpl extends ServiceImpl<FosterMapper, Fosters> implem
         
         return true;
     }
+
 }

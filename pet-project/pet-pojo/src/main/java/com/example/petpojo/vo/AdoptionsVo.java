@@ -6,38 +6,69 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * 领养信息VO类
+ * 用于封装领养记录的详细信息，包括宠物信息和收容所信息
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdoptionsVo {
     /**
-     * 领养记录
+     * 领养记录ID
      */
     private Integer aid;
+    /**
+     * 领养日期
+     */
     private LocalDateTime adoptionDate;
     /**
-     * 宠物信息
+     * 宠物ID
      */
     private Integer pid;
+    /**
+     * 宠物名称
+     */
     private String name;
+    /**
+     * 宠物物种
+     */
     private String species;
+    /**
+     * 宠物品种
+     */
     private String breed;
+    /**
+     * 宠物年龄
+     */
     private Integer age;
+    /**
+     * 宠物性别
+     */
     private String gender;
+    /**
+     * 宠物图片URL
+     */
     private String image;
     /**
-     * 收容所信息
+     * 收容所ID
      */
     private Integer sid;
+    /**
+     * 收容所名称
+     */
     private String sname;
+    /**
+     * 收容所位置
+     */
     private String location;
     /**
-     * 寄养状态
+     * 是否正在寄养
      */
     private Boolean isFostering;
     
     /**
-     * 宠物状态（FOSTERING/ADOPTED等）
+     * 宠物状态
      */
     private String petStatus;
 

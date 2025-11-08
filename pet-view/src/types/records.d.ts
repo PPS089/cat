@@ -109,6 +109,7 @@ export interface UseRecordsReturn {
   formData: RecordFormData
   filePreviews: Ref<FilePreview[]>  // 臭上次的 uploadedFiles
   currentMediaList: Ref<MediaFile[]>
+  currentMediaIndex: Ref<number> // 添加当前媒体索引
   
   // 计算属性
   totalEvents: ComputedRef<number>
@@ -130,6 +131,9 @@ export interface UseRecordsReturn {
   formatFileSize: (bytes: number) => string
   openMediaModal: (mediaList: MediaFile[], recordId?: number) => Promise<void>
   closeMediaModal: () => void
+  nextMedia: () => void // 添加切换方法
+  prevMedia: () => void
+  selectMedia: (index: number) => void
   editEvent: (event: PetRecord) => void
   deleteEvent: (recordId: number) => Promise<void>
   saveEvent: () => Promise<void>

@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 登录历史服务实现类
+ * 实现登录历史相关的业务逻辑
+ */
 @Service
 @RequiredArgsConstructor
 public class LoginHistoryServiceImpl extends ServiceImpl<LoginHistoryMapper, LoginHistory> implements LoginHistoryService {
@@ -40,16 +44,16 @@ public class LoginHistoryServiceImpl extends ServiceImpl<LoginHistoryMapper, Log
         }
         return vo;
     }
+    /**
+     * 获取最近七天的登录历史记录
+     * @return 登录历史记录VO列表
+     */
     @Override
     public List<LoginHistoryVo> getLoginHistory() {
         Long currentUserId = UserContext.getCurrentUserId();
         
-        // 添加调试日志
-        System.out.println("DEBUG: getLoginHistory called with userId: " + currentUserId);
-        
         // 检查用户ID是否有效
         if (currentUserId == null || currentUserId <= 0) {
-            System.out.println("DEBUG: Invalid userId: " + currentUserId + ", returning empty list");
             return new ArrayList<>();
         }
 
@@ -58,28 +62,15 @@ public class LoginHistoryServiceImpl extends ServiceImpl<LoginHistoryMapper, Log
                 .ge(LoginHistory::getLoginTime, LocalDateTime.now().minusDays(7))
                 .orderByDesc(LoginHistory::getLoginTime)
                 .list();
-        
-        System.out.println("DEBUG: Found " + loginHistories.size() + " login history records for userId: " + currentUserId);
-        if (!loginHistories.isEmpty()) {
-            System.out.println("DEBUG: First record userId: " + loginHistories.get(0).getUserId() + ", loginTime: " + loginHistories.get(0).getLoginTime());
-        } else {
-            System.out.println("DEBUG: No login history found for userId: " + currentUserId + " in the last 7 days");
-            // 检查是否有任何历史记录（不限时间）
-            List<LoginHistory> allHistory = lambdaQuery()
-                    .eq(LoginHistory::getUserId, currentUserId.longValue())
-                    .orderByDesc(LoginHistory::getLoginTime)
-                    .list();
-            System.out.println("DEBUG: Total login history records for userId " + currentUserId + ": " + allHistory.size());
-        }
 
-        List<LoginHistoryVo> loginHistoryVos=loginHistories
-                .stream()
+        return loginHistories.stream()
                 .map(this::convertToVo)
                 .collect(Collectors.toList());
-
-        return loginHistoryVos;
     }
 
+    /**
+     * 清除当前用户的登录历史记录
+     */
     @Override
     public void clearLoginHistory() {
         Long currentUserId = UserContext.getCurrentUserId();

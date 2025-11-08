@@ -52,9 +52,10 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
     /**
      * 创建领养信息
      * @param pid 宠物id
+     * @return 领养信息VO
      */
     @Override
-    public Adoptions createAdoption(Integer pid) {
+    public AdoptionsVo createAdoption(Integer pid) {
         Adoptions adoptions = new Adoptions();
         adoptions.setPid(pid);
         adoptions.setUid(UserContext.getCurrentUserId().intValue());
@@ -63,11 +64,27 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
         if (!isSuccess) {
             throw new RuntimeException("领养信息创建失败");
         }
-        return adoptions;
+        
+        // 通过关联查询获取完整的领养信息
+        Integer userId = UserContext.getCurrentUserId().intValue();
+        List<AdoptionsVo> adoptionsVos = adoptionsMapper.getUserAdoptions(userId, 0, 1);
+        if (!adoptionsVos.isEmpty()) {
+            return adoptionsVos.get(0);
+        }
+        
+        // 如果没有找到，创建一个基本的VO对象
+        AdoptionsVo vo = new AdoptionsVo();
+        vo.setAid(adoptions.getAid());
+        vo.setAdoptionDate(adoptions.getAdoptDate());
+        vo.setPid(pid);
+        return vo;
     }
     
     /**
      * 查询领养信息
+     * @param currentPage 当前页码
+     * @param pageSize 每页数量
+     * @return 领养信息列表
      */
     @Override
     public List<AdoptionsVo> adoptionInfo(Integer currentPage, Integer pageSize) {
@@ -81,6 +98,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
      * @param userId 用户ID
      * @param currentPage 当前页码
      * @param pageSize 每页数量
+     * @return 用户领养记录列表
      */
     @Override
     public List<AdoptionsVo> getUserAdoptions(Long userId, Integer currentPage, Integer pageSize) {
@@ -93,6 +111,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
      * @param userId 用户ID
      * @param currentPage 当前页码
      * @param pageSize 每页数量
+     * @return 用户领养记录列表
      */
     @Override
     public List<AdoptionsVo> getUserAdoptionsSimple(Long userId, Integer currentPage, Integer pageSize) {
@@ -105,6 +124,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
      * @param userId 用户ID
      * @param currentPage 当前页码
      * @param pageSize 每页数量
+     * @return 领养记录分页对象
      */
     @Override
     public IPage<AdoptionsVo> getUserAdoptionsWithPage(Long userId, Integer currentPage, Integer pageSize) {
@@ -120,6 +140,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
      * @param userId 用户ID
      * @param currentPage 当前页码
      * @param pageSize 每页数量
+     * @return 用户领养记录列表（带寄养状态）
      */
     @Override
     public List<AdoptionsWithFosterStatusVo> getUserAdoptionsWithFosterStatus(Long userId, Integer currentPage, Integer pageSize) {
@@ -194,6 +215,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
      * 获取宠物领养时间线
      * @param petId 宠物ID
      * @param userId 用户ID
+     * @return 领养时间线数据
      */
     @Override
     public AdoptionTimelineResponse getAdoptionTimeline(Integer petId, Long userId) {

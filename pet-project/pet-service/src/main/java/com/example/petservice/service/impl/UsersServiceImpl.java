@@ -41,6 +41,10 @@ import org.springframework.web.multipart.MultipartFile;
 import io.jsonwebtoken.Claims;
 
 
+/**
+ * 用户服务实现类
+ * 实现用户相关的业务逻辑，包括用户注册、登录、信息更新等
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Service

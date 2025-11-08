@@ -11,6 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+/**
+ * 健康服务实现类
+ * 实现宠物健康信息相关的业务逻辑
+ */
 @Service
 @RequiredArgsConstructor
 public class HealthServiceImpl extends ServiceImpl<PetHealthMapper, PetHealth> implements HealthService {
@@ -19,6 +23,8 @@ public class HealthServiceImpl extends ServiceImpl<PetHealthMapper, PetHealth> i
 
     /**
      * 创建宠物健康信息
+     * @param healthDto 健康信息DTO
+     * @return 是否创建成功
      */
     @Override
     public boolean createHealth(HealthDto healthDto) {
@@ -29,7 +35,7 @@ public class HealthServiceImpl extends ServiceImpl<PetHealthMapper, PetHealth> i
 
     /**
      * 根据用户ID查询宠物健康信息
-     * @return 宠物健康信息
+     * @return 宠物健康信息VO对象
      */
     @Override
     public HealthVo getHealth(){

@@ -3,6 +3,7 @@ package com.example.petservice.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.petpojo.dto.PetUpdateDto;
 import com.example.petpojo.entity.Pets;
+import com.example.petpojo.vo.PetListVo;
 
 import java.util.List;
 
@@ -16,11 +17,11 @@ public interface PetsService extends IService<Pets> {
      * 开始领养，修改宠物领养状态为已领养
      */
 
-    Pets adop(Long petId);
+    PetListVo adop(Long petId);
     /**
      * 更新宠物信息
      */
-    Pets update(PetUpdateDto petUpdateDto);
+    PetListVo update(PetUpdateDto petUpdateDto);
 
     /**
      * 已领养宠物列表
@@ -30,6 +31,6 @@ public interface PetsService extends IService<Pets> {
     /**
      * 获取用户已领养的宠物列表
      */
-    List<Pets> getUserAdoptedPets();
+    List<PetListVo> getUserAdoptedPets();
 
 }

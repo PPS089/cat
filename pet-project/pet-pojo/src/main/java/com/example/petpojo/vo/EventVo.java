@@ -32,10 +32,6 @@ public class EventVo {
     
     private String location;
     
-    private String mediaUrl;
-    
-    private String mediaType;
-    
     private List<MediaFileVo> mediaList;
     
     private LocalDateTime createdAt;

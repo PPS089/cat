@@ -9,10 +9,11 @@ import com.example.petpojo.dto.FosterRequest;
 import com.example.petpojo.dto.PetUpdateDto;
 import com.example.petpojo.entity.Fosters;
 import com.example.petpojo.entity.Pets;
+import com.example.petpojo.vo.FostersVo;
 import com.example.petservice.service.AdoptionsService;
 import com.example.petservice.service.FosterService;
 import com.example.petservice.service.ListPetsService;
-import com.example.petpojo.vo.ListPetsVo;
+import com.example.petpojo.vo.PetListVo;
 import com.example.petpojo.vo.PetsDetailsVo;
 
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
+import com.example.petpojo.entity.enums.CommonEnum;
 
 import com.example.petservice.service.PetsService;
 
@@ -60,8 +62,8 @@ public class PetsController {
     /**
      * listPetsVo 转换为 PetsDetailsVo
      */
-
-    private PetsDetailsVo convertToPetVO(ListPetsVo listPetsVo) { 
+    
+    private PetsDetailsVo convertToPetVO(PetListVo listPetsVo) { // 更改参数类型
           PetsDetailsVo pet = new PetsDetailsVo();
             pet.setId(listPetsVo.getPid());  // 使用pid作为id
             pet.setPid(listPetsVo.getPid()); // 使用pid作为pid
@@ -97,12 +99,21 @@ public class PetsController {
             @ApiResponse(responseCode = "200", description = "领养成功"),
             @ApiResponse(responseCode = "400", description = "领养失败，宠物可能已被领养或不存在")
     })
-    public Result<Pets> adoptPet(@Parameter(description = "宠物ID", required = true) @RequestParam Long petId) {
+    public Result<Map<String, Object>> adoptPet(@Parameter(description = "宠物ID", required = true) @RequestParam Long petId) {
         log.info("领养宠物ID: {}", petId);
         try {
-            Pets adopted = petsService.adop(petId);
+            PetListVo adopted = petsService.adop(petId);
             if (adopted != null) {
-                return Result.success(adopted);
+                // 只返回必要的宠物信息和领养状态
+                Map<String, Object> result = new HashMap<>();
+                result.put("petId", adopted.getPid());
+                result.put("petName", adopted.getName());
+                result.put("species", adopted.getSpecies());
+                result.put("breed", adopted.getBreed());
+                result.put("status", adopted.getStatus());
+                result.put("adoptionDate", LocalDateTime.now());
+                result.put("message", "领养成功");
+                return Result.success(result);
             } else {
                 return Result.error("领养失败");
             }
@@ -127,11 +138,11 @@ public class PetsController {
             @ApiResponse(responseCode = "200", description = "寄养成功"),
             @ApiResponse(responseCode = "400", description = "寄养失败")
     })
-    public Result<Fosters> fosterPet(
+    public Result<FostersVo> fosterPet(
             @Parameter(description = "宠物ID", required = true) @PathVariable Long petId, 
             @Parameter(description = "寄养请求信息", required = true) @RequestBody FosterRequest request) {
         log.info("寄养宠物ID: {}, 收容所ID: {}, 开始日期: {}", petId, request.getShelterId(), request.getStartDate());
-        Fosters fostered = fosterService.createFoster(petId, request.getShelterId(), request.getStartDate());
+        FostersVo fostered = fosterService.createFoster(petId, request.getShelterId(), request.getStartDate());
         if (fostered != null) {
             return Result.success(fostered);
         } else {
@@ -150,13 +161,19 @@ public class PetsController {
             @ApiResponse(responseCode = "200", description = "删除成功"),
             @ApiResponse(responseCode = "400", description = "删除失败")
     })
-    public Result<String> deletePetFoster(@Parameter(description = "寄养记录ID", required = true) @PathVariable Long id) {
+    public Result<String> deletePetFoster(@Parameter(description = "寄养记录ID", required = true) @PathVariable Integer id) {
         log.info("删除宠物寄养记录ID: {}", id);
-        boolean deleted = fosterService.deleteFoster(id);
-        if (deleted) {
-            return Result.success("宠物寄养记录删除成功");
-        } else {
-            return Result.error("宠物寄养记录删除失败");
+        CommonEnum.FosterDeleteResultEnum result = fosterService.deleteFoster(id);
+        
+        switch (result) {
+            case SUCCESS:
+                return Result.success("宠物寄养记录删除成功");
+            case PET_IS_FOSTERING:
+                return Result.error("宠物正在寄养中，无法删除记录");
+            case DELETE_FAILED:
+                return Result.error("宠物寄养记录删除失败");
+            default:
+                return Result.error("未知错误");
         }
     }
 
@@ -214,7 +231,7 @@ public class PetsController {
             @ApiResponse(responseCode = "200", description = "更新成功"),
             @ApiResponse(responseCode = "400", description = "更新失败，宠物不存在或参数错误")
     })
-    public Result<Pets> updatePet(
+    public Result<PetListVo> updatePet(
             @Parameter(description = "宠物ID", required = true) @PathVariable Long petId, 
             @Parameter(description = "宠物更新信息", required = true) @RequestBody PetUpdateDto petUpdateDto) {
         log.info("更新宠物信息，宠物ID: {}, 更新数据: {}", petId, petUpdateDto);
@@ -224,7 +241,7 @@ public class PetsController {
             petUpdateDto.setPid(petId);
             
             // 调用服务层更新宠物
-            Pets updatedPet = petsService.update(petUpdateDto);
+            PetListVo updatedPet = petsService.update(petUpdateDto);
             
             log.info("宠物信息更新成功，宠物ID: {}", petId);
             return Result.success(updatedPet);
@@ -250,7 +267,7 @@ public class PetsController {
         try {
             log.info("开始查询宠物详情，宠物ID: {}", id);
             // 使用ListPetsService从数据库查询宠物详情
-            ListPetsVo listPetsVo = listPetsService.getPetById(id.intValue());
+            PetListVo listPetsVo = listPetsService.getPetById(id.intValue()); // 更改为新的VO类
             
             if (listPetsVo == null) {
                 log.warn("未找到ID为{}的宠物", id);

@@ -39,4 +39,22 @@
         WHERE r.record_id = #{recordId}
     </select>
     
+    <!-- 根据宠物ID获取事件记录列表，直接映射为EventVo -->
+    <select id="getEventVosByPetId" resultType="com.example.petpojo.vo.EventVo">
+        SELECT 
+            r.record_id AS eid,
+            r.pid AS pid,
+            r.uid AS uid,
+            r.event_type AS eventType,
+            r.record_time AS eventTime,
+            r.mood AS mood,
+            r.description AS description,
+            r.location AS location,
+            r.created_at AS createdAt,
+            r.updated_at AS updatedAt
+        FROM pet_records r
+        WHERE r.pid = #{pid}
+        ORDER BY r.record_time DESC
+    </select>
+    
 </mapper>

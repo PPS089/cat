@@ -10,9 +10,17 @@ import com.example.petservice.mapper.SheltersMapper;
 import com.example.petservice.service.ShelterService;
 import com.example.petpojo.vo.ShelterVo;
 
+/**
+ * 收容所服务实现类
+ * 实现收容所相关的业务逻辑
+ */
 @Service
 public class ShelterServiceImpl extends ServiceImpl<SheltersMapper, Shelters> implements ShelterService {
 
+    /**
+     * 获取所有收容所名称列表
+     * @return 收容所VO列表
+     */
     @Override
     public List<ShelterVo> getShelterNames() {
         return lambdaQuery()

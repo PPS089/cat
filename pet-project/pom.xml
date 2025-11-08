@@ -72,6 +72,9 @@
         <!-- Swagger/OpenAPI版本 -->
         <springdoc-openapi.version>2.5.0</springdoc-openapi.version>
         
+        <!-- 阿里云OSS版本 -->
+        <aliyun.sdk.oss.version>3.17.4</aliyun.sdk.oss.version>
+        
         <!-- Commons BeanUtils版本 -->
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
     </properties>
@@ -94,6 +97,14 @@
                 <groupId>com.example</groupId>
                 <artifactId>pet-service</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+
+            <!--阿里云oss依赖-->
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun.sdk.oss.version}</version>
             </dependency>
             
             <!-- Kotlin 版本覆盖 -->

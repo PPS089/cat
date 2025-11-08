@@ -6,6 +6,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.petpojo.entity.Fosters;
+import com.example.petpojo.entity.enums.CommonEnum;
 import com.example.petpojo.vo.FostersVo;
 
 public interface FosterService extends IService<Fosters> {
@@ -14,9 +15,9 @@ public interface FosterService extends IService<Fosters> {
      * @param petId 宠物id
      * @param shelterId 收容所id
      * @param startDate 开始日期
-     * @return 寄养信息
+     * @return 寄养信息VO对象
      */
-    Fosters createFoster(Long petId, Long shelterId, LocalDate startDate);
+    FostersVo createFoster(Long petId, Long shelterId, LocalDate startDate);
     /**
      * 结束寄养（不删除记录，只更新状态和结束日期）
      * @param id 寄养信息id
@@ -26,9 +27,9 @@ public interface FosterService extends IService<Fosters> {
     /**
      * 删除寄养信息
      * @param id 寄养信息id
-     * @return 是否删除成功
+     * @return 删除结果状态
      */
-     boolean deleteFoster(Long id);
+     CommonEnum.FosterDeleteResultEnum deleteFoster(Integer id);
      /**
       * 查询寄养信息
       * @return 寄养信息

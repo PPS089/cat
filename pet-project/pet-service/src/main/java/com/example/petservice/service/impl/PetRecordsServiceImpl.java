@@ -34,24 +34,20 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
      * 获取用户的事件记录列表
      */
     @Override
-    public List<PetRecords> getUserRecords(Integer uid) {
+    public List<EventVo> getUserRecords(Integer uid) {
         log.info("获取用户事件记录列表，用户ID: {}", uid);
-        LambdaQueryWrapper<PetRecords> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(PetRecords::getUid, uid)
-                   .orderByDesc(PetRecords::getRecordTime);
-        return this.list(queryWrapper);
+        // 使用Mapper直接查询EventVo列表
+        return baseMapper.getEventVosByUserId(uid);
     }
     
     /**
      * 获取宠物的事件记录列表
      */
     @Override
-    public List<PetRecords> getPetRecords(Integer pid) {
+    public List<EventVo> getPetRecords(Integer pid) {
         log.info("获取宠物事件记录列表，宠物ID: {}", pid);
-        LambdaQueryWrapper<PetRecords> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(PetRecords::getPid, pid)
-                   .orderByDesc(PetRecords::getRecordTime);
-        return this.list(queryWrapper);
+        // 使用Mapper直接查询EventVo列表
+        return baseMapper.getEventVosByPetId(pid);
     }
     
     /**
@@ -92,7 +88,7 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
      * 创建事件记录
      */
     @Override
-    public PetRecords createRecord(RecordDto recordDto) {
+    public EventVo createRecord(RecordDto recordDto) {
         log.info("创建事件记录，用户ID: {}, 宠物ID: {}", recordDto.getUid(), recordDto.getPid());
         
         // 如果用户ID为空，使用当前登录用户ID
@@ -111,14 +107,16 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
         
         this.save(petRecords);
         log.info("事件记录创建成功，记录ID: {}", petRecords.getRecordId());
-        return petRecords;
+        
+        // 返回EventVo对象
+        return getEventVoById(petRecords.getRecordId());
     }
     
     /**
      * 更新事件记录
      */
     @Override
-    public PetRecords updateRecord(Integer recordId, RecordDto recordDto) {
+    public EventVo updateRecord(Integer recordId, RecordDto recordDto) {
         log.info("更新事件记录，记录ID: {}", recordId);
         
         PetRecords petRecords = this.getById(recordId);
@@ -141,7 +139,8 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
             log.warn("事件记录更新失败，记录ID: {}", recordId);
         }
         
-        return petRecords;
+        // 返回EventVo对象
+        return getEventVoById(recordId);
     }
     
     /**

@@ -14,6 +14,7 @@ import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -29,6 +30,18 @@ public class SwaggerConfig {
                 .in(SecurityScheme.In.HEADER)
                 .name("Authorization");
         
+        // 配置服务器地址列表
+        List<Server> servers = new ArrayList<>();
+        servers.add(new Server()
+                .url("http://localhost:8080/api")
+                .description("开发环境"));
+        servers.add(new Server()
+                .url("http://192.168.1.100:8080/api")
+                .description("测试环境"));
+        servers.add(new Server()
+                .url("https://api.yourdomain.com/api")
+                .description("生产环境"));
+
         return new OpenAPI()
                 .info(new Info()
                         .title("宠物管理系统 API 文档")
@@ -42,11 +55,7 @@ public class SwaggerConfig {
                                 .name("Apache 2.0")
                                 .url("https://www.apache.org/licenses/LICENSE-2.0.html"))
                 )
-                .servers(List.of(
-                        new Server()
-                                .url("/api")  // 全局前缀（必须和 application.yml 中配置一致）
-                                .description("开发环境（全局前缀：/api）")
-                ))
+                .servers(servers)
                 .components(new Components()
                         // 添加安全方案
                         .addSecuritySchemes("bearer-key", securityScheme)

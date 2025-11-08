@@ -64,6 +64,6 @@ export interface HealthAlertForm {
   healthType: string;              // 健康类型
   checkDate: string;               // 检查日期
   description: string;             // 健康描述
-  reminderTime: string;            // 提醒时间
+  reminderTime?: string | null;    // 提醒时间（可选）
   status: string;                  // 状态（normal/critical）
 }

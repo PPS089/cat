@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 媒体文件服务实现
+ * 实现媒体文件的上传、下载、删除等业务逻辑
  */
 @Service
 @Slf4j
@@ -58,6 +59,11 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         this.petRecordsMapper = petRecordsMapper;
     }
 
+    /**
+     * 根据记录ID获取媒体文件列表
+     * @param recordId 记录ID
+     * @return 媒体文件VO列表
+     */
     @Override
     public List<MediaFileVo> getMediaByRecordId(Integer recordId) {
         log.info("获取记录 {} 的媒体文件列表", recordId);
@@ -65,6 +71,11 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         return mediaFiles.stream().map(this::convertToVo).toList();
     }
 
+    /**
+     * 根据用户ID获取媒体文件列表
+     * @param uid 用户ID
+     * @return 媒体文件VO列表
+     */
     @Override
     public List<MediaFileVo> getMediaByUserId(Integer uid) {
         log.info("获取用户 {} 的媒体文件列表", uid);
@@ -72,6 +83,16 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         return mediaFiles.stream().map(this::convertToVo).toList();
     }
 
+    /**
+     * 保存媒体文件
+     * @param recordId 记录ID
+     * @param uid 用户ID（已废弃，实际使用UserContext中的用户ID）
+     * @param fileName 文件名
+     * @param filePath 文件路径
+     * @param mediaType 媒体类型
+     * @param fileSize 文件大小
+     * @return 媒体文件VO对象
+     */
     @Override
     public MediaFileVo saveMediaFile(Integer recordId, @Deprecated Integer uid, String fileName, String filePath, String mediaType, Long fileSize) {
         log.info("保存媒体文件: recordId={}, uid={}, fileName={}", recordId, uid, fileName);
@@ -96,6 +117,12 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         return convertToVo(mediaFiles);
     }
 
+    /**
+     * 上传媒体文件
+     * @param recordId 记录ID
+     * @param files 要上传的文件数组
+     * @return 上传成功的媒体文件VO列表
+     */
     @Override
     public List<MediaFileVo> uploadMediaFiles(Integer recordId, MultipartFile[] files) {
         log.info("上传媒体文件: 记录ID={}, 文件数量={}", recordId, files.length);
@@ -205,6 +232,11 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         return uploadedFiles;
     }
 
+    /**
+     * 删除媒体文件
+     * @param mid 媒体文件ID
+     * @return 是否删除成功
+     */
     @Override
     public boolean deleteMediaFile(Integer mid) {
         log.info("删除媒体文件: mid={}", mid);
@@ -234,6 +266,11 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         return false;
     }
 
+    /**
+     * 删除记录相关的所有媒体文件
+     * @param recordId 记录ID
+     * @return 是否删除成功
+     */
     @Override
     public boolean deleteMediaByRecordId(Integer recordId) {
         log.info("删除记录 {} 的所有媒体文件", recordId);

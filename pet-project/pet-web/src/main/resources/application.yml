@@ -13,9 +13,9 @@ spring:
   # 标准Spring Boot数据源配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/pet_project?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8
-    username: root
-    password: zx4221335
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:pet_project}?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:zx4221335}
     type: com.alibaba.druid.pool.DruidDataSource
   # SQL初始化配置
   sql:
@@ -32,22 +32,23 @@ server:
 # Redis配置
 pet:
   redis:
-    host: localhost
-    port: 6379
-    password: zx4221335
-    database: 0
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:zx4221335}
+    database: ${REDIS_DATABASE:0}
   jwt:
-    admin-secret-key: itcastSecretKeyThatIsLongEnoughForHS256AlgorithmRequirements
-    admin-ttl: 7200000
-    admin-token-name: token
-    user-secret-key: itheimaSecretKeyThatIsLongEnoughForHS256AlgorithmRequirements
-    user-ttl: 86400000
-    user-token-name: authentication
+    admin-secret-key: ${JWT_ADMIN_SECRET_KEY:itcastSecretKeyThatIsLongEnoughForHS256AlgorithmRequirements}
+    admin-ttl: ${JWT_ADMIN_TTL:7200000}
+    admin-token-name: ${JWT_ADMIN_TOKEN_NAME:token}
+    user-secret-key: ${JWT_USER_SECRET_KEY:itheimaSecretKeyThatIsLongEnoughForHS256AlgorithmRequirements}
+    user-ttl: ${JWT_USER_TTL:86400000}
+    user-token-name: ${JWT_USER_TOKEN_NAME:authentication}
 
 # MyBatis Plus 配置
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #开启驼峰命名
     map-underscore-to-camel-case: true
   global-config:
     db-config:
@@ -69,8 +70,8 @@ logging:
 
 # 应用配置
 app:
-  upload-dir: ${java.io.tmpdir}demo-project-uploads/media
-  upload-max-size: 52428850
+  upload-dir: ${UPLOAD_DIR:${java.io.tmpdir}demo-project-uploads/media}
+  upload-max-size: ${UPLOAD_MAX_SIZE:52428850}
 
 # SpringDoc OpenAPI 配置
 springdoc:
@@ -81,3 +82,14 @@ springdoc:
     path: /swagger-ui.html
     enabled: true
     disable-swagger-default-url: true
+  # 确保导出的OpenAPI规范包含服务器信息
+  writer-with-default-pretty-printer: true
+
+# 阿里云OSS配置
+aliyun:
+  oss:
+    endpoint: ${ALIYUN_OSS_ENDPOINT:oss-cn-hangzhou.aliyuncs.com}
+    access-key-id: ${ALIYUN_OSS_ACCESS_KEY_ID:LTAI5tPeFLzsPPT8gG3LPW64}
+    access-key-secret: ${ALIYUN_OSS_ACCESS_KEY_SECRET:U6k1brOZ8gaOIXv3nXbulGTUzy6Pd7}
+    bucket-name: ${ALIYUN_OSS_BUCKET_NAME:sky-take-out}
+    region: ${ALIYUN_OSS_REGION:cn-hangzhou}

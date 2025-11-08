@@ -717,6 +717,13 @@ export default {
     supportedFormats: '支持图片和视频文件，最多5个文件',
     uploadedFiles: '已上传文件',
     mediaViewer: '媒体查看器',
+    previousMedia: '上一个媒体文件',
+    nextMedia: '下一个媒体文件',
+    media: '媒体文件',
+    mediaIndex: '第 {current} 个，共 {total} 个',
+    createdAt: '创建时间',
+    updatedAt: '更新时间',
+    noMediaFiles: '此事件没有媒体文件',
     eventType: '事件类型',
     selectEventType: '请选择事件类型',
     description: '描述',
@@ -795,8 +802,6 @@ export default {
     upcoming: '即将到期',
     normal: '正常',
     recurringEvent: '宠物定期事件',
-    updatedAt: '更新于',
-    createdAt: '创建于',
     personalSettings: '个人设置',
     userCenter: '用户中心',
     information: '信息资讯',
@@ -1110,6 +1115,8 @@ export default {
     error: '注册失败'
   }
 }
+
+
 
 
 

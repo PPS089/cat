@@ -1,0 +1,62 @@
+package com.example.petpojo.vo;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+/**
+ * 健康提醒信息VO类
+ * 用于封装健康提醒的详细信息
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class HealthAlertsVo {
+    
+    /**
+     * 健康检查ID
+     */
+    private Integer healthId;
+    
+    /**
+     * 宠物ID
+     */
+    private Integer pid;
+    
+    /**
+     * 检查日期
+     */
+    private LocalDateTime checkDate;
+    
+    /**
+     * 健康类型
+     */
+    private String healthType;
+    
+    /**
+     * 健康描述
+     */
+    private String description;
+    
+    /**
+     * 提醒时间
+     */
+    private LocalDateTime reminderTime;
+    
+    /**
+     * 状态
+     */
+    private String status;
+    
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdAt;
+    
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updatedAt;
+}

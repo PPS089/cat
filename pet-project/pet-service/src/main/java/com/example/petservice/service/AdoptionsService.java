@@ -13,9 +13,9 @@ public interface AdoptionsService extends IService<Adoptions> {
     /**
      * 创建领养信息
      * @param pid 宠物id
-     * @return 领养信息
+     * @return 领养信息VO
      */
-    Adoptions createAdoption(Integer pid);
+    AdoptionsVo createAdoption(Integer pid);
 
     /**
      * 查询领养信息

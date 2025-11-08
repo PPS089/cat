@@ -16,12 +16,12 @@ public interface PetRecordsService extends IService<PetRecords> {
     /**
      * 获取用户的事件记录列表
      */
-    List<PetRecords> getUserRecords(Integer uid);
+    List<EventVo> getUserRecords(Integer uid);
     
     /**
      * 获取宠物的事件记录列表
      */
-    List<PetRecords> getPetRecords(Integer pid);
+    List<EventVo> getPetRecords(Integer pid);
     
     /**
      * 获取用户的事件记录列表，直接返回EventVo
@@ -36,12 +36,12 @@ public interface PetRecordsService extends IService<PetRecords> {
     /**
      * 创建事件记录
      */
-    PetRecords createRecord(RecordDto recordDto);
+    EventVo createRecord(RecordDto recordDto);
     
     /**
      * 更新事件记录
      */
-    PetRecords updateRecord(Integer recordId, RecordDto recordDto);
+    EventVo updateRecord(Integer recordId, RecordDto recordDto);
     
     /**
      * 删除事件记录

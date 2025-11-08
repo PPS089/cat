@@ -13,6 +13,10 @@ import java.util.List;
 public interface AdoptionsMapper extends BaseMapper<Adoptions> {
     /**
      *  分页查询领养记录
+     * @param offset 偏移量
+     * @param pageSize 每页数量
+     * @param id 用户ID
+     * @return 领养记录列表
      */
     List<AdoptionsVo> getAdoptionsInfo(Integer offset, Integer pageSize, Integer id);
 

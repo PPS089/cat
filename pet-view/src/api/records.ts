@@ -245,8 +245,11 @@ export const useMediaModal = () => {
   const showMediaModal = ref(false)
   const currentMediaList = ref<MediaFile[]>([])
   const mediaLoading = ref(false)
+  const currentMediaIndex = ref(0) // 添加当前媒体索引
 
   const openMediaModal = async (mediaList: MediaFile[], recordId?: number): Promise<void> => {
+    currentMediaIndex.value = 0 // 重置索引
+    
     if (recordId) {
       mediaLoading.value = true
       try {
@@ -280,14 +283,38 @@ export const useMediaModal = () => {
   const closeMediaModal = (): void => {
     showMediaModal.value = false
     currentMediaList.value = []
+    currentMediaIndex.value = 0
+  }
+  
+  // 添加切换媒体的方法
+  const nextMedia = (): void => {
+    if (currentMediaList.value.length > 1) {
+      currentMediaIndex.value = (currentMediaIndex.value + 1) % currentMediaList.value.length
+    }
+  }
+  
+  const prevMedia = (): void => {
+    if (currentMediaList.value.length > 1) {
+      currentMediaIndex.value = (currentMediaIndex.value - 1 + currentMediaList.value.length) % currentMediaList.value.length
+    }
+  }
+  
+  const selectMedia = (index: number): void => {
+    if (index >= 0 && index < currentMediaList.value.length) {
+      currentMediaIndex.value = index
+    }
   }
 
   return {
     showMediaModal,
     currentMediaList,
     mediaLoading,
+    currentMediaIndex, // 导出当前媒体索引
     openMediaModal,
-    closeMediaModal
+    closeMediaModal,
+    nextMedia, // 导出切换方法
+    prevMedia,
+    selectMedia
   }
 }
 
@@ -586,8 +613,27 @@ export const useRecords = (): UseRecordsReturn => {
   const { formatDate } = useDateFormatter()
   
   // 文件和模态框管理
-  const { filePreviews, handleFileUpload, removeFile, clearAllFiles, getUploadFiles, getFileIcon, formatFileSize } = useFileUpload()
-  const { showMediaModal, currentMediaList, mediaLoading, openMediaModal, closeMediaModal } = useMediaModal()
+  const { 
+    filePreviews, 
+    handleFileUpload, 
+    removeFile, 
+    clearAllFiles, 
+    getUploadFiles, 
+    getFileIcon, 
+    formatFileSize 
+  } = useFileUpload()
+  
+  const { 
+    showMediaModal, 
+    currentMediaList, 
+    mediaLoading, 
+    currentMediaIndex, // 添加当前媒体索引
+    openMediaModal, 
+    closeMediaModal,
+    nextMedia, // 添加切换方法
+    prevMedia,
+    selectMedia
+  } = useMediaModal()
   
   // 筛选和排序
   const { filters, filteredEvents } = useRecordFilters(events)
@@ -715,6 +761,7 @@ export const useRecords = (): UseRecordsReturn => {
     showEditModal,
     showMediaModal,
     mediaLoading,
+    currentMediaIndex, // 导出当前媒体索引
     
     // 表单数据
     formData,
@@ -741,6 +788,9 @@ export const useRecords = (): UseRecordsReturn => {
     formatFileSize,
     openMediaModal,
     closeMediaModal,
+    nextMedia, // 导出切换方法
+    prevMedia,
+    selectMedia,
     editEvent,
     deleteEvent,
     saveEvent: saveEventHandler,

@@ -41,4 +41,40 @@
         LEFT JOIN shelters s ON p.shelter_id = s.sid
         WHERE p.pid = #{petId}
     </select>
+    
+    <!-- 新增直接返回PetListVo的查询语句 -->
+    <select id="selectPetListByPage" resultType="com.example.petpojo.vo.PetListVo">
+        SELECT 
+            p.pid,
+            p.name,
+            p.species,
+            p.breed,
+            p.age,
+            p.gender,
+            p.img_url as imgUrl,
+            p.status,
+            s.name as shelterName,
+            s.location as shelterAddress
+        FROM pets p
+        LEFT JOIN shelters s ON p.shelter_id = s.sid
+        WHERE p.status = 'UNADOPTED'
+        ORDER BY p.pid
+    </select>
+    
+    <select id="selectPetListById" resultType="com.example.petpojo.vo.PetListVo">
+        SELECT 
+            p.pid,
+            p.name,
+            p.species,
+            p.breed,
+            p.age,
+            p.gender,
+            p.img_url as imgUrl,
+            p.status,
+            s.name as shelterName,
+            s.location as shelterAddress
+        FROM pets p
+        LEFT JOIN shelters s ON p.shelter_id = s.sid
+        WHERE p.pid = #{petId}
+    </select>
 </mapper>

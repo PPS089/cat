@@ -68,4 +68,19 @@ public class CommonEnum {
             this.code = code;
         }
     }
+
+    /* ===================== 寄养删除结果 ===================== */
+    @Getter
+    public enum FosterDeleteResultEnum {
+        SUCCESS("SUCCESS"),                    // 删除成功
+        PET_IS_FOSTERING("PET_IS_FOSTERING"),  // 宠物正在寄养中，无法删除
+        DELETE_FAILED("DELETE_FAILED");        // 数据库删除失败
+
+        @EnumValue
+        private final String code;
+
+        FosterDeleteResultEnum(String code) {
+            this.code = code;
+        }
+    }
 }

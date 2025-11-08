@@ -30,6 +30,4 @@ public class MediaFileVo {
     private Long fileSize;
     
     private LocalDateTime createdAt;
-    
-    private LocalDateTime updatedAt;
 }

@@ -23,7 +23,9 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
     }
     /**
      * 查询文章列表
-     * @return 文章列表
+     * @param currentPage 当前页码
+     * @param pageSize 每页数量
+     * @return 文章列表分页对象
      */
     @Override
     public IPage<ArticlesVo> getArticles(Integer currentPage, Integer pageSize) {
@@ -39,7 +41,7 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
     /**
      * 查询文章详情
      * @param id 文章ID
-     * @return 文章详情
+     * @return 文章详情VO对象
      */
     @Override
     public ArticlesVo getArticleDetail(int id) {
@@ -47,6 +49,11 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
         if (articles == null) {
             return null;
         }
+        
+        // 增加文章浏览次数
+        articles.setViewCount(articles.getViewCount() == null ? 1 : articles.getViewCount() + 1);
+        updateById(articles);
+        
         return convertToVo(articles);
     }
 

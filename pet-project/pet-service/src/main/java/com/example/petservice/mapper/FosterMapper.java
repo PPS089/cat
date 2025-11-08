@@ -11,8 +11,17 @@ import java.util.List;
 public interface FosterMapper extends BaseMapper<Fosters> {
     /**
      * 查询寄养信息
-     * @param id 用户id
-     * @return 寄养信息
+     * @param offset 偏移量
+     * @param pageSize 每页数量
+     * @param id 用户ID
+     * @return 寄养信息列表
      */
     List<FostersVo> getFostersInfo(Integer offset, Integer pageSize, Integer id);
+    
+    /**
+     * 根据寄养ID查询寄养信息
+     * @param id 寄养ID
+     * @return 寄养信息VO对象
+     */
+    FostersVo getFosterById(Integer id);
 }

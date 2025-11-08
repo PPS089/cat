@@ -394,6 +394,13 @@ export default {
     update: 'Update',
     updating: 'Updating',
     mediaViewer: 'Media Viewer',
+    previousMedia: 'Previous Media',
+    nextMedia: 'Next Media',
+    media: 'Media',
+    mediaIndex: 'Item {current} of {total}',
+    createdAt: 'Created at',
+    updatedAt: 'Updated at',
+    noMediaFiles: 'No media files for this event',
     confirmDelete: 'Are you sure you want to delete this event?',
     deleteSuccess: 'Deleted successfully',
     addSuccess: 'Added successfully',
@@ -478,6 +485,8 @@ export default {
     getStatsFailed: 'Failed to fetch statistics', getPetListFailed: 'Failed to fetch pet list', updateHealthAlertFailed: 'Failed to update health alert status', deleteHealthAlertFailed: 'Failed to delete health alert', saveHealthAlertFailed: 'Failed to save health alert', loginFailed: 'Login request failed', endFosterFailed: 'Failed to end foster', getFosterRecordsFailed: 'Failed to fetch foster records', getArticleDetailFailed: 'Failed to fetch article details', getUserInfoFailed: 'Failed to fetch user info', updateProfileFailed: 'Failed to update profile', adoptFailed: 'Adoption failed', getArticleListFailed: 'Failed to fetch article list', saveLanguageFailed: 'Failed to save language', clearLoginHistoryFailed: 'Error clearing login history', httpError: 'HTTP Error', getLoginHistoryFailed: 'Failed to fetch login history', loadPreferencesFailed: 'Error loading preferences', savePreferencesFailed: 'Error saving preferences', getShelterListFailed: 'Error fetching shelter list', fosterApiFailed: 'Foster API call failed', deletePetFailed: 'Failed to delete pet', getPetDetailFailed: 'Failed to fetch pet details', petDetail: 'Pet Details', species: 'Species', healthStatus: 'Health Status', vaccinated: 'Vaccinated', spayed: 'Spayed/Neutered', adoptionFee: 'Adoption Fee', fosterFee: 'Foster Fee', shelterInfo: 'Shelter Info', shelterName: 'Shelter Name', healthy: 'Healthy', good: 'Good', fair: 'Fair', needsAttention: 'Needs Attention', available: 'Available', adopted: 'Adopted', fostered: 'Fostered', unknown: 'Unknown', yes: 'Yes', no: 'No', browsePets: 'Browse Pets', getAdoptionRecordsFailed: 'Failed to fetch adoption records', getShelterListFailed2: 'Failed to fetch shelter list', fosterFailed: 'Foster failed', updateHealthAlertSuccess: 'Status updated successfully', deleteHealthAlertSuccess: 'Deleted successfully', pleaseLogin: 'Please login first', pleaseSelectPet: 'Please select a pet', createHealthAlertSuccess: 'Created successfully', operationFailed: 'Operation failed', confirmDeleteHealthAlert: 'Are you sure you want to delete this health alert?', deleteConfirmation: 'Delete Confirmation', confirm: 'Confirm', cancel: 'Cancel', invalidArticleId: 'Invalid article ID', likeSuccess: 'Favorited successfully', unlikeSuccess: 'Unfavorited successfully', linkCopied: 'Link copied to clipboard', unknownPet: 'Unknown Pet'
   }
 }
+
+
 
 
 
