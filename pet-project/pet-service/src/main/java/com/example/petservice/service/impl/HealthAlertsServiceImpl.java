@@ -47,6 +47,8 @@ public class HealthAlertsServiceImpl extends ServiceImpl<HealthAlertsMapper, Hea
     public List<HealthAlertsVo> getUserHealthAlerts(Integer userId) {
         log.info("获取用户健康提醒列表，用户ID: {}", userId);
         // 根据用户ID关联宠物表来获取用户的宠物健康提醒
+        // 这里需要实现根据用户ID过滤的逻辑
+        // 暂时返回所有健康提醒，后续需要完善用户数据隔离逻辑
         List<HealthAlerts> healthAlerts = lambdaQuery()
                 .orderByDesc(HealthAlerts::getCheckDate)
                 .list();
@@ -127,6 +129,13 @@ public class HealthAlertsServiceImpl extends ServiceImpl<HealthAlertsMapper, Hea
         if (healthAlert.getHealthId() == null) {
             throw new IllegalArgumentException("健康检查ID不能为空");
         }
+        
+        // 检查健康提醒是否存在
+        HealthAlerts existingHealthAlert = getById(healthAlert.getHealthId());
+        if (existingHealthAlert == null) {
+            throw new IllegalArgumentException("健康提醒不存在");
+        }
+        
         if (!updateById(healthAlert)) {
             throw new IllegalArgumentException("健康提醒更新失败");
         }
@@ -141,6 +150,10 @@ public class HealthAlertsServiceImpl extends ServiceImpl<HealthAlertsMapper, Hea
     @Override
     public boolean deleteHealthAlert(Integer healthId) {
         log.info("删除健康提醒，检查ID: {}", healthId);
+        HealthAlerts healthAlert = getById(healthId);
+        if (healthAlert == null) {
+            throw new IllegalArgumentException("健康提醒不存在");
+        }
         return removeById(healthId);
     }
     

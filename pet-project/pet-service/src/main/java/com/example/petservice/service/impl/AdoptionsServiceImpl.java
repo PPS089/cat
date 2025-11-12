@@ -23,6 +23,8 @@ import com.example.petpojo.vo.AdoptionsWithFosterStatusVo;
 import com.example.petpojo.vo.FostersVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.example.petcommon.exception.BizException;
+import com.example.petcommon.error.ErrorCode;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
         adoptions.setAdoptDate(LocalDateTime.now()); // 设置领养日期为当前时间
         boolean isSuccess = this.save(adoptions);
         if (!isSuccess) {
-            throw new RuntimeException("领养信息创建失败");
+            throw new BizException(ErrorCode.ADOPTION_CREATE_FAILED);
         }
         
         // 通过关联查询获取完整的领养信息
@@ -222,13 +224,13 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
         // 获取宠物信息
         Pets pet = petsMapper.selectById(petId);
         if (pet == null) {
-            throw new RuntimeException("宠物不存在");
+            throw new BizException(ErrorCode.PET_NOT_FOUND);
         }
         
         // 获取用户信息
         Users user = usersMapper.selectById(userId);
         if (user == null) {
-            throw new RuntimeException("用户不存在");
+            throw new BizException(ErrorCode.USER_NOT_FOUND);
         }
         
         List<AdoptionTimelineVo> timeline = new ArrayList<>();

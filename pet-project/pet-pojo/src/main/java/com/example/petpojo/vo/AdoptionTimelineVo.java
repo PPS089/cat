@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * 领养时间线项值对象
  * 用于封装领养过程中的各个时间点事件
@@ -16,51 +18,61 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "领养时间线项VO")
 public class AdoptionTimelineVo {
     
     /**
      * 时间线项ID
      */
+    @Schema(description = "时间线项ID")
     private Integer id;
     
     /**
      * 宠物ID
      */
+    @Schema(description = "宠物ID")
     private Integer petId;
     
     /**
      * 宠物名称
      */
+    @Schema(description = "宠物名称")
     private String petName;
     
     /**
      * 宠物品种
      */
+    @Schema(description = "宠物品种")
     private String petBreed;
     
     /**
      * 操作类型
      */
+    @Schema(description = "操作类型")
     private String action;
     
     /**
      * 操作日期
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Schema(description = "操作日期")
     private LocalDateTime actionDate;
     
     /**
      * 操作描述
      */
+    @Schema(description = "操作描述")
     private String description;
     
     /**
      * 收容所名称
      */
+    @Schema(description = "收容所名称")
     private String shelterName;
     
     /**
      * 状态
      */
+    @Schema(description = "状态")
     private String status;
 }

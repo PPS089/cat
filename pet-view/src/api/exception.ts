@@ -6,7 +6,7 @@ export const exception = () => {
   // 获取路由实例
   const router = useRouter();
   const route = useRoute();
-  let timerId: NodeJS.Timeout | null = null;
+  let timerId: ReturnType<typeof setTimeout> | null = null;
 
   // 立即跳转
   const immediateRedirect = () => {

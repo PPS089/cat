@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.petcommon.result.Result;
 import com.example.petpojo.entity.enums.CommonEnum;
 import com.example.petservice.service.FosterService;
+import com.example.petcommon.exception.BizException;
+import com.example.petcommon.error.ErrorCode;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +36,8 @@ public class FostersController {
      */
     @DeleteMapping("delete/{id}")
     @Operation(summary = "删除寄养记录", description = "根据ID删除寄养记录")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "删除成功"),
-        @ApiResponse(responseCode = "400", description = "删除失败"),
-        @ApiResponse(responseCode = "401", description = "未授权")
-    })
     public Result<String> deleteFoster(
-            @Parameter(description = "寄养记录ID", required = true) @PathVariable Integer id) {
+            @PathVariable Integer id) {
         log.info("删除寄养记录ID: {}", id);
         CommonEnum.FosterDeleteResultEnum result = fosterService.deleteFoster(id);
         
@@ -51,11 +45,11 @@ public class FostersController {
             case SUCCESS:
                 return Result.success("寄养记录删除成功");
             case PET_IS_FOSTERING:
-                return Result.error("宠物正在寄养中，无法删除记录");
+                throw new BizException(ErrorCode.BAD_REQUEST, "宠物正在寄养中，无法删除记录");
             case DELETE_FAILED:
-                return Result.error("寄养记录删除失败");
+                throw new BizException(ErrorCode.BAD_REQUEST, "删除失败，寄养记录不存在");
             default:
-                return Result.error("未知错误");
+                throw new BizException(ErrorCode.BAD_REQUEST, "删除失败，未知错误");
         }
     }
 

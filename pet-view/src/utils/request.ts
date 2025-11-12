@@ -43,7 +43,6 @@ service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // 获取token，优先使用jwt_token，如果没有则使用token
     const token = localStorage.getItem('jwt_token') 
-    const userId = localStorage.getItem('userId')
 
     // 请求头添加token
     // 精确匹配需要排除的登录接口，避免误伤其他包含'login'的接口
@@ -60,45 +59,37 @@ service.interceptors.request.use(
         } else {
           ;(config.headers as any).Authorization = `Bearer ${token}`
         }
-        console.log('DEBUG: 设置Authorization头:', `Bearer ${token}`)
-      } else {
-        console.warn('DEBUG: 未找到token，可能用户未登录')
-      }
-      
-      // 添加调试信息，确保使用正确的userId
-      if (userId) {
-        console.log('DEBUG: 当前用户ID:', userId)
-      } else {
-        console.warn('DEBUG: 未找到userId，可能用户未登录')
       }
     }
     
-    // 打印最终的请求头信息用于调试
-    console.log('DEBUG: 最终请求配置:', {
-      url: config.url,
-      method: config.method,
-      headers: config.headers
-    })
+    
 
     return config
   },
   (error) => Promise.reject(error)
 )
 
+const bizMessageMap: Record<number, string> = {
+  400000: '请求参数错误',
+  401000: '未授权，请先登录',
+  401001: '用户名或密码错误',
+  401002: '登录状态已过期，请重新登录',
+  403000: '没有权限访问',
+  404000: '资源不存在',
+  404001: '用户不存在',
+  404010: '宠物不存在',
+  500000: '服务器内部错误',
+  500001: '系统配置异常',
+  500010: '文件保存失败',
+  500011: '文件上传失败',
+  500012: '用户更新失败',
+  500020: '领养信息创建失败'
+}
+
 // ------------------------ 响应拦截器 ------------------------
 service.interceptors.response.use(
   (response: AxiosResponse) => {
-    // 记录当前用户ID，用于调试
-    const currentUserId = localStorage.getItem('userId')
-    console.log('DEBUG: 响应成功，当前用户ID:', currentUserId, 'URL:', response.config.url)
     
-    // 检查响应数据中的用户ID是否与当前登录用户ID一致
-    if (response.data && typeof response.data === 'object' && 'userId' in response.data) {
-      const responseUserId = response.data.userId
-      if (currentUserId && responseUserId && responseUserId.toString() !== currentUserId.toString()) {
-        console.error('DEBUG: 用户ID不匹配! localStorage userId:', currentUserId, '响应 userId:', responseUserId)
-      }
-    }
     
     const key = getRequestKey(response.config)
     removePending(key)
@@ -107,11 +98,9 @@ service.interceptors.response.use(
 
     // 未授权 / Token 过期 - 处理HTTP状态码和响应体中的错误码
     if ([401, 403].includes(response.status) || [401, 403].includes(data.code)) {
-      console.log('DEBUG: 检测到未授权响应，状态码:', response.status, '响应码:', data.code)
       
       // 正在刷新token或已经是刷新接口，此时直接清除token並跳转登录
       if (isRefreshingToken || response.config.url?.includes('/user/refresh-token')) {
-        console.log('DEBUG: 已经是刷新token请求或第一次刷新失败，直接清除token並跳转')
         localStorage.removeItem('jwt_token')
         localStorage.removeItem('token')
         localStorage.removeItem('userId')
@@ -122,13 +111,12 @@ service.interceptors.response.use(
       
       // 需要刷新token
       isRefreshingToken = true
-      console.log('DEBUG: 开始刷新token')
+      
       
       return new Promise((resolve, reject) => {
         service
           .post('/user/refresh-token', {})
           .then((res: any) => {
-            console.log('DEBUG: token刷新成功，新token:', res.data?.token?.substring(0, 20) + '...')
             const newToken = res.data?.token
             if (newToken) {
               // 保存新token
@@ -148,7 +136,6 @@ service.interceptors.response.use(
             }
           })
           .catch((error: any) => {
-            console.error('DEBUG: token刷新失败:', error.message)
             isRefreshingToken = false
             // 刷新失败，清除token并跳转登录
             localStorage.removeItem('jwt_token')
@@ -163,7 +150,8 @@ service.interceptors.response.use(
 
     // 业务逻辑错误
     if (data.code !== undefined && ![1, 200].includes(data.code)) {
-      const msg = data.msg || data.message || '请求失败'
+      const mapped = bizMessageMap[data.code]
+      const msg = mapped || data.msg || data.message || '请求失败'
       ElMessage.error(msg)
       return Promise.reject(new Error(msg))
     }

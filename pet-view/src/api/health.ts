@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import { ElMessageBox } from 'element-plus'
 
-import type { AdoptionRecord, AdoptionPageResponse, HealthAlert, HealthAlertForm } from '@/types/health'
+import type { AdoptionRecord, HealthAlert, HealthAlertForm } from '@/types/health'
 
 export const useHealth = () => {
   const { t } = useI18n()
@@ -83,15 +83,15 @@ export const useHealth = () => {
   const fetchHealthAlerts = async () => {
     loading.value = true
     try {
-      const response = await request.get('/user/health-alerts')
+      const response = await request.get<HealthAlert[]>('/user/health-alerts')
       
       await fetchPets()
       
       const userPetIds = pets.value.map(pet => pet.pid)
       console.log('用户拥有的宠物ID列表:', userPetIds)
       
-      if (response && (response as any).data && (response as any).data.alerts && Array.isArray((response as any).data.alerts)) {
-        const allAlerts = (response as any).data.alerts
+      if (response && response.data && Array.isArray(response.data)) {
+        const allAlerts = response.data
       
         healthAlerts.value = allAlerts
           .filter((alert: any) => {
@@ -130,7 +130,7 @@ export const useHealth = () => {
       let adoptionsResponse
       
       try {
-        adoptionsResponse = await request.get('/user/adoptions', {
+        adoptionsResponse = await request.get<import('@/types/api').PageResult<AdoptionRecord>>('/user/adoptions', {
           params: {
             current_page: 1,
             per_page: 100
@@ -150,7 +150,7 @@ export const useHealth = () => {
       console.log('领养记录API响应:', adoptionsResponse)
       
       if (adoptionsResponse.code === 200) {
-        const adoptions = (adoptionsResponse as AdoptionPageResponse).data.records
+        const adoptions = adoptionsResponse.data?.records ?? []
         console.log('处理领养记录数据:', adoptions)
       
         adoptions.forEach((adoption: AdoptionRecord) => {

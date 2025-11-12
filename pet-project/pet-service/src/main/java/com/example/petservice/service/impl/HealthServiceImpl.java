@@ -9,6 +9,7 @@ import com.example.petservice.service.HealthService;
 import com.example.petpojo.vo.HealthVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,7 +28,7 @@ public class HealthServiceImpl extends ServiceImpl<PetHealthMapper, PetHealth> i
      * @return 是否创建成功
      */
     @Override
-    public boolean createHealth(HealthDto healthDto) {
+    public boolean createHealth(@NonNull HealthDto healthDto) {
         PetHealth petHealth = new PetHealth();
         BeanUtils.copyProperties(healthDto, petHealth);
         return save(petHealth);

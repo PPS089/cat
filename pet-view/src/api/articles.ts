@@ -26,7 +26,7 @@ export const useArticles = () => {
   const fetchArticles = async (): Promise<void> => {
     loading.value = true
     try {
-      const response = await request.get('/articles', {
+      const response = await request.get<ArticlePageData>('/articles', {
         params: {
           currentPage: currentPage.value,
           pageSize: pageSize.value
@@ -68,7 +68,7 @@ export const useArticles = () => {
   // 获取文章详情
   const fetchArticleDetail = async (id: number): Promise<Article | null> => {
     try {
-      const response = await request.get(`/articles/${id}`)
+      const response = await request.get<Article>(`/articles/${id}`)
       const data = response.data as Article
       
       if (response.code === 200 && data) {

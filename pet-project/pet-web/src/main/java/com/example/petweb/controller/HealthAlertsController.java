@@ -2,22 +2,21 @@ package com.example.petweb.controller;
 
 import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
-import com.example.petpojo.entity.HealthAlerts;
+import com.example.petcommon.exception.BizException;
+import com.example.petcommon.error.ErrorCode;
 import com.example.petpojo.dto.HealthDto;
 import com.example.petpojo.vo.HealthAlertsVo;
 import com.example.petservice.service.HealthAlertsService;
 
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,17 +39,11 @@ public class HealthAlertsController {
      */
     @GetMapping
     @Operation(summary = "获取用户健康提醒列表", description = "获取当前用户的所有健康提醒列表")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "获取成功"),
-        @ApiResponse(responseCode = "401", description = "未授权")
-    })
-    public Result<Map<String, List<HealthAlertsVo>>> getHealthAlerts() {
+    public Result<List<HealthAlertsVo>> getHealthAlerts() {
         Long userId = UserContext.getCurrentUserId();
         log.info("获取用户健康提醒列表，用户ID: {}", userId);
-        
         List<HealthAlertsVo> alerts = healthAlertsService.getUserHealthAlerts(userId.intValue());
-        
-        return Result.success(Map.of("alerts", alerts));
+        return Result.success(alerts);
     }
 
     /**
@@ -58,22 +51,19 @@ public class HealthAlertsController {
      */
     @PutMapping("/{healthId}/status")
     @Operation(summary = "更新健康提醒状态", description = "更新指定健康提醒的状态")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "更新成功"),
-        @ApiResponse(responseCode = "400", description = "更新失败"),
-        @ApiResponse(responseCode = "401", description = "未授权")
-    })
-    public Result<String> updateAlertStatus(
-            @Parameter(description = "健康提醒ID", required = true) @PathVariable Integer healthId,
-            @Parameter(description = "状态值", required = true) @RequestParam String status) {
+    public Result<Map<String, Object>> updateAlertStatus(
+            @PathVariable Integer healthId,
+            @RequestParam String status) {
         log.info("更新健康提醒状态，提醒ID: {}, 状态: {}", healthId, status);
-        
         boolean updated = healthAlertsService.updateAlertStatus(healthId, status);
-        if (updated) {
-            return Result.success("状态更新成功");
-        } else {
-            return Result.error("状态更新失败");
+        if (!updated) {
+            throw new BizException(ErrorCode.BAD_REQUEST, "状态更新失败");
         }
+        Map<String, Object> result = new HashMap<>();
+        result.put("healthId", healthId);
+        result.put("status", status);
+        result.put("message", "状态更新成功");
+        return Result.success(result);
     }
 
     /**
@@ -81,21 +71,11 @@ public class HealthAlertsController {
      */
     @PostMapping
     @Operation(summary = "创建健康提醒", description = "创建一个新的健康提醒")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "创建成功"),
-        @ApiResponse(responseCode = "400", description = "创建失败"),
-        @ApiResponse(responseCode = "401", description = "未授权")
-    })
     public Result<HealthAlertsVo> createHealthAlert(
-            @Parameter(description = "健康提醒信息", required = true) @Valid @RequestBody HealthDto healthDto) {
+            @Valid @RequestBody HealthDto healthDto) {
         log.info("创建健康提醒: {}", healthDto);
-        
-        try {
-            HealthAlertsVo created = healthAlertsService.createHealthAlert(healthDto);
-            return Result.success(created);
-        } catch (IllegalArgumentException e) {
-            return Result.error(e.getMessage());
-        }
+        HealthAlertsVo created = healthAlertsService.createHealthAlert(healthDto);
+        return Result.success(created);
     }
 
     /**
@@ -103,22 +83,12 @@ public class HealthAlertsController {
      */
     @PutMapping("/{healthId}")
     @Operation(summary = "更新健康提醒", description = "更新指定的健康提醒信息")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "更新成功"),
-        @ApiResponse(responseCode = "400", description = "更新失败"),
-        @ApiResponse(responseCode = "401", description = "未授权")
-    })
     public Result<HealthAlertsVo> updateHealthAlert(
-            @Parameter(description = "健康提醒ID", required = true) @PathVariable Integer healthId,
-            @Parameter(description = "健康提醒信息", required = true) @Valid @RequestBody HealthDto healthDto) {
+            @PathVariable Integer healthId,
+            @Valid @RequestBody HealthDto healthDto) {
         log.info("更新健康提醒，提醒ID: {}, 数据: {}", healthId, healthDto);
-        
-        try {
-            HealthAlertsVo updated = healthAlertsService.updateHealthAlert(healthId, healthDto);
-            return Result.success(updated);
-        } catch (IllegalArgumentException e) {
-            return Result.error(e.getMessage());
-        }
+        HealthAlertsVo updated = healthAlertsService.updateHealthAlert(healthId, healthDto);
+        return Result.success(updated);
     }
 
     /**
@@ -126,20 +96,13 @@ public class HealthAlertsController {
      */
     @DeleteMapping("/{healthId}")
     @Operation(summary = "删除健康提醒", description = "删除指定的健康提醒")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "删除成功"),
-        @ApiResponse(responseCode = "400", description = "删除失败"),
-        @ApiResponse(responseCode = "401", description = "未授权")
-    })
     public Result<String> deleteHealthAlert(
-            @Parameter(description = "健康提醒ID", required = true) @PathVariable Integer healthId) {
+            @PathVariable Integer healthId) {
         log.info("删除健康提醒，提醒ID: {}", healthId);
-        
         boolean deleted = healthAlertsService.deleteHealthAlert(healthId);
-        if (deleted) {
-            return Result.success("删除成功");
-        } else {
-            return Result.error("删除失败");
+        if (!deleted) {
+            throw new BizException(ErrorCode.BAD_REQUEST, "删除失败");
         }
+        return Result.success("删除成功");
     }
 }

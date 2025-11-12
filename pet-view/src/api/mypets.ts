@@ -117,10 +117,10 @@ export function usePets() {
   
   // 分页事件处理函数
   const handlePageChange = async (page: number) => {
-    console.log('分页切换请求 - 页码:', page, '当前页:', currentPage.value, '总页数:', totalPages.value)
+    
     
     if (page < 1 || (totalPages.value > 0 && page > totalPages.value)) {
-      console.log('分页切换被拒绝 - 页码超出范围')
+      
       return
     }
     
@@ -129,7 +129,7 @@ export function usePets() {
   }
   
   const handlePageSizeChange = async (size: number) => {
-    console.log('每页数量变更 - 新尺寸:', size)
+    
     // 重置到第一页
     await fetchPets(1, size)
   }
@@ -149,7 +149,7 @@ export function usePets() {
       )
       
       // 结束寄养API
-      console.log(t('callingSimplifiedEndFosterApi'), pet.pid)
+      
       const response = await request.post<EndFosterResponse>(`/pets/${pet.pid}/foster/end`)
       
       // 检查响应状态 
@@ -172,7 +172,7 @@ export function usePets() {
       
     } catch (error: any) {
       if (error !== 'cancel') {
-        console.error(t('endFosterApiFailed'), error)
+      
           ElMessage.error( t('endFosterFailed'))
       }
     }
@@ -184,39 +184,39 @@ export function usePets() {
   const fetchPets = async (page = currentPage.value, size = pageSize.value) => {
     
     try {
-      console.log(`开始获取用户领养宠物数据 - 页码: ${page}, 每页数量: ${size}`)
+      
       
       // 参数验证
       if (page < 1) {
-        console.warn('页码不能小于1，自动调整为1')
+        
         page = 1
       }
       
       if (size < 1) {
-        console.warn('每页数量不能小于1，自动调整为5')
+        
         size = 5
       }
       
       // 使用新的API直接获取用户已领养的宠物（带分页）
       const response = await request.get<AdoptionResponse>(`/user/adoptions?current_page=${page}&per_page=${size}`)
       
-      console.log('获取到用户领养宠物分页结果:', response)
+      
       
       
       const responseData = response.data
       
-      console.log('响应数据结构:', JSON.stringify(responseData, null, 2))
+      
       
       if (!responseData.records || responseData.records.length === 0) {
         // 用户还没有领养任何宠物，显示空状态
-        console.log('用户还没有领养任何宠物')
+        
         pets.value = []
         total.value = responseData.total || 0
         totalPages.value = responseData.pages || 0
       } else {
         // 使用新的API获取的数据
         pets.value = responseData.records || []
-        console.log('获取到用户领养宠物数量:', responseData.records?.length || 0)
+        
         // 使用API返回的真实分页数据
         total.value = responseData.total || 0
         totalPages.value = responseData.pages || 0
@@ -226,10 +226,10 @@ export function usePets() {
       currentPage.value = page
       pageSize.value = size
       
-      console.log(`分页状态更新完成 - 当前页: ${currentPage.value}, 每页: ${pageSize.value}, 总数: ${total.value}, 总页数: ${totalPages.value}`)
+      
       
     } catch (error: any) {
-      console.error('获取宠物数据失败:', error)
+      
       if (error.name === 'AbortError') {
         return
       }
@@ -270,7 +270,6 @@ export function usePets() {
     handlePageSizeChange
   }
 }
-
 
 
 

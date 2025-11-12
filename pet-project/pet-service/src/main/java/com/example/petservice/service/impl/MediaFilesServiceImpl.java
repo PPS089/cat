@@ -24,9 +24,15 @@ import com.example.petpojo.vo.MediaFileVo;
 import com.example.petservice.mapper.MediaFilesMapper;
 import com.example.petservice.mapper.PetRecordsMapper;
 import com.example.petservice.service.MediaFilesService;
+import com.example.petcommon.exception.BizException;
+import com.example.petcommon.error.ErrorCode;
+import org.springframework.lang.NonNull;
+
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+
+
 
 /**
  * 媒体文件服务实现
@@ -173,15 +179,19 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
             
             try {
                 // 生成唯一文件名
-                String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                String fileExtension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf(".")) : "";
                 String savedFileName = UUID.randomUUID().toString() + fileExtension;
                 
                 // 保存文件
-                Path filePath = Paths.get(uploadDir, savedFileName);
-                file.transferTo(filePath.toFile());
+                Path savedFilePath = Paths.get(uploadDir, savedFileName);
+                File savedFile = savedFilePath.toFile();  // 保证非空
+                if (savedFile == null) {
+                    throw new BizException(ErrorCode.FILE_SAVE_FAILED, "无法创建文件对象: " + savedFileName);
+                }
+                file.transferTo(savedFile);
                 
                 // 验证文件是否保存成功
-                if (!Files.exists(filePath)) {
+                if (!Files.exists(savedFile.toPath())) {
                     log.error("文件保存失败: {}", savedFileName);
                     continue;
                 }
@@ -295,7 +305,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         return result;
     }
 
-    private MediaFileVo convertToVo(MediaFiles mediaFiles) {
+    private MediaFileVo convertToVo(@NonNull MediaFiles mediaFiles) {
         MediaFileVo vo = new MediaFileVo();
         BeanUtils.copyProperties(mediaFiles, vo);
         return vo;

@@ -423,7 +423,7 @@
                 </div>
               </div>
               <div class="upload-hint-text">
-                {{ filePreviews.length >= 5 ? '已到达最大文件数限制' : `还可上传 ${5 - filePreviews.length} 个文件` }}
+                {{ filePreviews.length >= 5 ? t('common.maxFilesExceeded') : t('records.supportedFormats') }}
               </div>
             </div>
           </div>
@@ -475,7 +475,7 @@
                     v-if="currentMediaList[currentMediaIndex]?.media_type === 'image'" 
                     :key="`img-${currentMediaIndex}`"
                     :src="currentMediaList[currentMediaIndex].media_url" 
-                    :alt="currentMediaList[currentMediaIndex].media_name || `媒体文件 ${currentMediaIndex + 1}`"
+                    :alt="currentMediaList[currentMediaIndex].media_name || `${t('records.media')} ${currentMediaIndex + 1}`"
                     class="media-image"
                   >
                   <video 
@@ -503,7 +503,7 @@
             <!-- 媒体信息和缩略图 -->
             <div class="media-viewer-footer" v-if="currentMediaList.length > 0">
               <div class="media-info">
-                <h4>{{ currentMediaList[currentMediaIndex]?.media_name || `媒体文件 ${currentMediaIndex + 1}` }}</h4>
+                <h4>{{ currentMediaList[currentMediaIndex]?.media_name || `${t('records.media')} ${currentMediaIndex + 1}` }}</h4>
                 <p v-if="currentMediaList[currentMediaIndex]?.created_at">
                   {{ t('records.createdAt') }}: {{ formatDate(currentMediaList[currentMediaIndex].created_at || '') }}
                 </p>
@@ -528,7 +528,7 @@
                   <img 
                     v-if="media.media_type === 'image'" 
                     :src="media.media_url" 
-                    :alt="media.media_name || `媒体文件 ${index + 1}`"
+                    :alt="media.media_name || `${t('records.media')} ${index + 1}`"
                   >
                   <div v-else class="video-thumbnail">
                     <span class="video-icon">🎬</span>

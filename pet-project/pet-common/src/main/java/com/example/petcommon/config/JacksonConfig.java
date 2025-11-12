@@ -2,6 +2,7 @@ package com.example.petcommon.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -20,10 +21,15 @@ public class JacksonConfig {
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
+        PropertyNamingStrategy namingStrategy = PropertyNamingStrategies.LOWER_CAMEL_CASE;
+        if (namingStrategy == null) {
+            throw new IllegalStateException("Property naming strategy cannot be null");
+        }
         return Jackson2ObjectMapperBuilder.json()
                 .modules(javaTimeModule())
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .propertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE)
+                .propertyNamingStrategy(namingStrategy)
+                .serializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                 .build();
     }
     

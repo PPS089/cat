@@ -12,6 +12,9 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
+
+
 
 /**
  * 用户上下文拦截器
@@ -46,7 +49,7 @@ public class UserContextInterceptor implements HandlerInterceptor {
                 if (userId == null || userName == null) {
                     log.warn("无法从claims中提取用户信息，返回401错误");
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("{\"code\":401,\"message\":\"Token中缺少用户信息\"}");
+                    response.getWriter().write("{\"code\":401,\"msg\":\"Token中缺少用户信息\",\"data\":null}");
                     return false;
                 }
                 
@@ -56,14 +59,14 @@ public class UserContextInterceptor implements HandlerInterceptor {
                 // token解析失败，返回401
                 log.warn("Token解析失败，请求URI: {}, 错误: {}", requestUri, e.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("{\"code\":401,\"message\":\"Token无效或已过期\"}");
+                response.getWriter().write("{\"code\":401,\"msg\":\"Token无效或已过期\",\"data\":null}");
                 return false;
             }
         } else {
             // 没有token，返回401
             log.warn("请求中没有token，请求URI: {}", requestUri);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"code\":401,\"message\":\"请先登录\"}");
+            response.getWriter().write("{\"code\":401,\"msg\":\"请先登录\",\"data\":null}");
             return false;
         }
         
@@ -71,7 +74,7 @@ public class UserContextInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, @NonNull Exception ex) throws Exception {
+    public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, @Nullable Exception ex) throws Exception {
         // 请求完成后清除ThreadLocal，防止内存泄漏
         UserContext.clear();
     }

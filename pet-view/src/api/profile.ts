@@ -3,9 +3,10 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
 import request from '@/utils/request'
+import dogImage from '@/assets/img/dog.jpg'
 
 // 常量定义
-const DEFAULT_AVATAR = '/src/assets/img/dog.jpg'
+const DEFAULT_AVATAR = dogImage
 const API_BASE = '/api/images/'
 const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
 const ALLOWED_FILE_TYPES = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']
@@ -29,7 +30,7 @@ export const fetchUserProfileFromAPI = async (): Promise<{ success: boolean; dat
     return { success: true, data: result, message: '获取用户资料成功' }
   }
   catch (error: any) {
-    console.error('从API获取用户资料失败:', error)
+    
     
     // 检查是否是401/403错误（未授权）
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
@@ -167,19 +168,13 @@ export const useProfile = () => {
   // 加载用户资料
   const loadUserProfile = async () => {
     try {
-      console.log('开始加载用户资料，store.info:', userStore.info)
-
       if (userStore.info && userStore.info.userId && userStore.info.userId !== 0) {
-        console.log('使用store中的用户信息:', userStore.info)
         fillProfileForm(userStore.info)
       } else {
-        console.log('store中用户信息不完整，从API获取...')
         const response = await fetchUserProfileFromAPI()
-        console.log('API响应:', response)
         
         if (response.success && response.data) {
           const userData = response.data
-          console.log('获取到的用户数据:', userData)
 
           fillProfileForm(userData, true)
           
@@ -192,18 +187,15 @@ export const useProfile = () => {
             introduce: userData.introduce
           })
         } else {
-          console.error('API返回数据无效:', response)
           ElMessage.error('获取用户资料失败')
         }
       } 
     } catch (error) {
-      console.error('获取用户信息失败:', error)
       ElMessage.error(t('message.getUserInfoFailed'))
     }
   }
 
-  // 定义用户信息字段的类型
-  type UserInfoField = 'userName' | 'email' | 'phone' | 'introduce';
+  
   
   const submitForm = async () => {
     if (!profileFormRef.value) return
@@ -212,7 +204,6 @@ export const useProfile = () => {
       if (valid) {
         loading.value = true
         try {
-          const currentUserInfo = userStore.info;
           const formData = new FormData()
           
           // 添加文件（如果有）
@@ -220,27 +211,18 @@ export const useProfile = () => {
             formData.append('avatar', pendingAvatarFile.value)
           }
           
-          // 检查字段变更并添加到FormData
-          const fieldChanges: { field: UserInfoField; formValue: string }[] = [
-            { field: 'userName', formValue: profileForm.userName || '' },
-            { field: 'email', formValue: profileForm.email || '' },
-            { field: 'phone', formValue: profileForm.phone || '' },
-            { field: 'introduce', formValue: profileForm.introduce || '' }
-          ]
-          
-          let hasChanges = !!pendingAvatarFile.value
-          
-          fieldChanges.forEach(({ field, formValue }) => {
-            if (formValue !== currentUserInfo[field]) {
-              formData.append(field, formValue)
-              hasChanges = true
-            }
-          })
-          
-          if (!hasChanges) {
-            ElMessage.info(t('user.noChanges'))
-            loading.value = false
-            return
+          // 添加用户信息字段
+          if (profileForm.userName) {
+            formData.append('userName', profileForm.userName)
+          }
+          if (profileForm.phone) {
+            formData.append('phone', profileForm.phone)
+          }
+          if (profileForm.introduce) {
+            formData.append('introduce', profileForm.introduce)
+          }
+          if (profileForm.email) {
+            formData.append('email', profileForm.email)
           }
           
           const response = await request.put('/user/profile', formData)
@@ -262,20 +244,14 @@ export const useProfile = () => {
             }
             
             if (newAvatarUrl?.trim()) {
-              console.log('检测到新头像，开始可用性验证:', newAvatarUrl)
-              
-              setTimeout(async () => {
-                console.log('延迟验证新头像可用性...')
-                
-                const isLoadable = await testImageLoad(newAvatarUrl)
+                setTimeout(async () => {
+                  const isLoadable = await testImageLoad(newAvatarUrl)
                 
                 if (isLoadable) {
-                  console.log('新头像验证成功，更新store')
                   profileUpdate.headPic = newAvatarUrl
                   userStore.setUserProfile(profileUpdate)
                   ElMessage.success(t('user.profileUpdated'))
                 } else {
-                  console.log('新头像验证失败，使用默认头像')
                   profileUpdate.headPic = userStore.info.headPic || DEFAULT_AVATAR
                   userStore.setUserProfile(profileUpdate)
                   ElMessage.warning('头像更新可能存在延迟，如长时间未显示请刷新页面')
@@ -291,7 +267,6 @@ export const useProfile = () => {
             ElMessage.error(response.message || t('user.updateFailed'))
           }
         } catch (error: any) {
-          console.error('资料更新失败:', error)
           ElMessage.error(error.response?.data?.message || t('user.updateFailed'))
         } finally {
           loading.value = false
@@ -324,4 +299,3 @@ export const useProfile = () => {
     resetForm
   }
 }
-

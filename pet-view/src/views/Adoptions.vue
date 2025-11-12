@@ -24,7 +24,7 @@
             <div class="pet-info">
               <h3>{{ adoption.pet.name }}</h3>
               <p class="pet-breed">{{ adoption.pet.breed }}</p>
-              <p class="pet-age">{{ adoption.pet.age }}岁 · {{ getDisplayGender(adoption.pet.gender) }}</p>
+              <p class="pet-age">{{ adoption.pet.age }}{{ t('user.yearsOld') }} · {{ getDisplayGender(adoption.pet.gender) }}</p>
             </div>
             <div class="adoption-info">
               <div class="info-item">
@@ -134,8 +134,6 @@ const getStatusText = (petStatus: any): string => {
   }
 }
 
-// 使用统一的性别显示函数（已移至专门的工具文件）
-
 onMounted(() => {
   loadAdoptions()
 })
@@ -145,5 +143,4 @@ onMounted(() => {
 <style scoped>
 @import '@/styles/adoptions.css';
 </style>
-
 

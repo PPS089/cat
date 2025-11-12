@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.example.petcommon.utils.JwtUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.petcommon.exception.BizException;
+import com.example.petcommon.error.ErrorCode;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,8 +37,6 @@ import com.example.petcommon.utils.LocationUtil;
 import com.example.petcommon.utils.TokenRefreshUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import io.jsonwebtoken.Claims;
 
@@ -63,7 +63,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         // 检查用户名是否已存在
         Users wq = lambdaQuery().eq(Users::getUserName, userdto.getUserName()).one();
         if(wq != null) {
-            throw new IllegalArgumentException("用户名已存在");
+            throw new BizException(ErrorCode.USERNAME_EXISTS);
         }
         
         try {
@@ -77,7 +77,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             // 验证JWT配置
             if (jwtProperties.getUserSecretKey() == null || jwtProperties.getUserTtl() <= 0) {
                 log.error("JWT配置异常，secretKey: {}, ttl: {}", jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl());
-                throw new IllegalArgumentException("JWT配置异常");
+                throw new BizException(ErrorCode.JWT_CONFIG_ERROR);
             }
             
             // 生成JWT token
@@ -105,7 +105,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         }
         catch (Exception e) {
             log.error("创建用户失败: {}", e.getMessage(), e);
-            throw new IllegalArgumentException("用户创建失败", e);
+            throw new BizException(ErrorCode.INTERNAL_ERROR, "用户创建失败");
         }
        
     }
@@ -149,7 +149,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             } catch (Exception e) {
                 log.error("插入用户名不存在登录失败历史记录失败: {}", e.getMessage(), e);
             }
-            throw new IllegalArgumentException("用户名不存在");
+            throw new BizException(ErrorCode.USER_NOT_FOUND);
         }
 
         // 验证密码
@@ -176,13 +176,13 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             } catch (Exception e) {
                 log.error("插入登录失败历史记录失败: {}", e.getMessage(), e);
             }
-            throw new IllegalArgumentException("密码错误");
+            throw new BizException(ErrorCode.PASSWORD_INCORRECT);
         }
 
         // 验证JWT配置
         if (jwtProperties.getUserSecretKey() == null || jwtProperties.getUserTtl() <= 0) {
             log.error("JWT配置异常，secretKey: {}, ttl: {}", jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl());
-            throw new IllegalArgumentException("JWT配置异常");
+            throw new BizException(ErrorCode.JWT_CONFIG_ERROR);
         }
 
         // 生成JWT token
@@ -235,19 +235,19 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
      * 更新用户信息
      */
     @Override
-    public UserVo updateUser(@ModelAttribute  UserUpdateDto userUpdateDto, @RequestPart MultipartFile file) {
+    public UserVo updateUser(UserUpdateDto userUpdateDto, MultipartFile file) {
         log.info("更新用户信息: {}", userUpdateDto);
         Long userId = UserContext.getCurrentUserId();
         Users user = lambdaQuery().eq(Users::getId, userId).one();
         if (user == null) {
-            throw new IllegalArgumentException("用户不存在");
+            throw new BizException(ErrorCode.USER_NOT_FOUND);
         }
         
         // 检查用户名唯一性（如果用户名发生变更且不为空）
         if (userUpdateDto.getUserName() != null && !userUpdateDto.getUserName().isEmpty() && !userUpdateDto.getUserName().equals(user.getUserName())) {
             Users existingUser = lambdaQuery().eq(Users::getUserName, userUpdateDto.getUserName()).ne(Users::getId, userId).one();
             if (existingUser != null) {
-                throw new IllegalArgumentException("该用户名已被其他用户使用");
+                throw new BizException(ErrorCode.USERNAME_EXISTS);
             }
             user.setUserName(userUpdateDto.getUserName());
         }
@@ -256,7 +256,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         if (userUpdateDto.getEmail() != null && !userUpdateDto.getEmail().isEmpty() && !userUpdateDto.getEmail().equals(user.getEmail())) {
             Users existingUser = lambdaQuery().eq(Users::getEmail, userUpdateDto.getEmail()).ne(Users::getId, userId).one();
             if (existingUser != null) {
-                throw new IllegalArgumentException("该邮箱已被其他用户使用");
+                throw new BizException(ErrorCode.BAD_REQUEST, "该邮箱已被其他用户使用");
             }
             user.setEmail(userUpdateDto.getEmail());
         }
@@ -298,7 +298,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
                 File savedFile = new File(filePath);
                 if (!savedFile.exists() || savedFile.length() == 0) {
                     log.error("文件保存验证失败，文件不存在或大小为0");
-                    throw new IllegalArgumentException("文件保存失败");
+                    throw new BizException(ErrorCode.FILE_SAVE_FAILED);
                 }
                 log.info("文件保存验证成功，文件路径: {}, 大小: {} bytes", savedFile.getAbsolutePath(), savedFile.length());
                 
@@ -306,14 +306,14 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
                 log.info("设置用户头像字段: {}", fileName);
             } catch (IOException e) {
                 log.error("文件上传失败: {}", e.getMessage(), e);
-                throw new IllegalArgumentException("文件上传失败", e);
+                throw new BizException(ErrorCode.FILE_UPLOAD_FAILED);
             }
         } else {
             log.info("没有上传新头像文件，file为null或为空");
         }
         boolean updated = this.updateById(user);
         if (!updated) {
-            throw new IllegalArgumentException("用户更新失败");
+            throw new BizException(ErrorCode.USER_UPDATE_FAILED);
         }
         
         log.info("用户信息更新成功，userId: {}, 头像文件名: {}", user.getId(), user.getHeadPic());
@@ -373,7 +373,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         Users user = lambdaQuery().eq(Users::getId, userId).one();
         if (user == null) {
             log.warn("用户不存在，userId: {}", userId);
-            throw new IllegalArgumentException("用户不存在");
+            throw new BizException(ErrorCode.USER_NOT_FOUND);
         }
         log.info("查询到的用户: id={}, userName={}", user.getId(), user.getUserName());
         UserVo userVo = new UserVo();
@@ -404,7 +404,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         
         if (token == null || token.isEmpty()) {
             log.error("无法从请求头获取token");
-            throw new IllegalArgumentException("请先登录");
+            throw new BizException(ErrorCode.UNAUTHORIZED);
         }
         
         // 移除Bearer前缀
@@ -427,7 +427,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             
             if (userId == null) {
                 log.error("无法从token中提取userId");
-                throw new IllegalArgumentException("token无效或已过期");
+                throw new BizException(ErrorCode.TOKEN_INVALID_OR_EXPIRED);
             }
             
             if (username == null) {
@@ -453,9 +453,12 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             response.setOk(true);
             
             return response;
+        } catch (IllegalArgumentException e) {
+            log.warn("刷新token参数错误: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("token刷新失败: {}", e.getMessage(), e);
-            throw new IllegalArgumentException("token刷新失败: " + e.getMessage());
+            throw new BizException(ErrorCode.INTERNAL_ERROR, "token刷新失败: " + e.getMessage());
         }
     }
 

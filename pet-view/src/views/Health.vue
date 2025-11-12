@@ -110,7 +110,7 @@
                 <strong>{{ t('healthAlerts.reminderTime') }}:</strong> {{ formatDate(alert.reminderTime) }}
               </span>
               <span v-if="alert.updatedAt && alert.updatedAt !== alert.checkDate" class="updated-time">
-                <strong>更新时间:</strong> {{ formatDate(alert.updatedAt) }}
+                <strong>{{ t('records.updatedAt') }}:</strong> {{ formatDate(alert.updatedAt) }}
               </span>
             </div>
           </div>
@@ -164,7 +164,7 @@
                       {{ getHealthTypeLabel(null) }}
                     </span>
                   </div>
-                  <p class="description">{{ alert.description || '(未填写)' }}</p>
+                  <p class="description">{{ alert.description || t('common.noData') }}</p>
                   <div class="timeline-status">
                     <span :class="(alert.status || '').toLowerCase()">
                       {{ getStatusLabel(alert.status) }}

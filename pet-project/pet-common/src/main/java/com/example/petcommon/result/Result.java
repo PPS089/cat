@@ -45,18 +45,12 @@ public class Result<T> {
     }
 
     /**
-     * 成功响应，自定义消息
-     */
-    public static <T> Result<T> success(String msg, T data) {
-        return new Result<>(200, msg, data);
-    }
-
-    /**
      * 错误响应
      */
     public static <T> Result<T> error(String msg) {
         return new Result<>(500, msg, null);
     }
+
 
     /**
      * 错误响应，自定义状态码

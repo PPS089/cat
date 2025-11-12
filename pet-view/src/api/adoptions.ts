@@ -30,20 +30,16 @@ export const useAdoptionTimeline = () => {
       selectedPetId.value = petId
       selectedPetName.value = petName
       
-      console.log(`开始获取宠物 ${petId} 的领养时间线...`)
-      const response = await request.get(`/pets/${petId}/adoption-timeline`)
-      console.log('API响应:', response)
+      const response = await request.get<AdoptionTimelineResponse>(`/pets/${petId}/adoption-timeline`)
       
       if (response.code === 200 && response.data.timeline !== undefined) {
         const result = response.data as AdoptionTimelineResponse
         timeline.value = result.timeline
         dialogVisible.value = true
       } else {
-        console.error('API返回错误:', response.message)
         ElMessage.error(response.message || t('user.loadTimelineFailed'))
       }
     } catch (error) {
-      console.error('获取领养记录时间线失败:', error)
       ElMessage.error(t('user.loadTimelineFailed'))
     } finally {
       loading.value = false
@@ -123,7 +119,7 @@ export const useLoadAdoptions = () => {
       pageSize.value = size
       
       // 获取领养记录
-      const response = await request.get(`/user/adoptions`, {
+      const response = await request.get<import('@/types/api').PageResult<any>>(`/user/adoptions`, {
         params: {
           current_page: page,
           per_page: size
@@ -147,7 +143,7 @@ export const useLoadAdoptions = () => {
             breed: item.breed,
             age: item.age,
             gender: item.gender,
-            image: item.image ? (item.image.startsWith('http') ? item.image : `http://localhost:8082/api/images/${item.image}`) : '/src/assets/img/dog.jpg',
+            image: item.image ? (item.image.startsWith('http') ? item.image : `/api/images/${item.image}`) : '/src/assets/img/dog.jpg',
             status: item.petStatus 
             },
             shelter: {
@@ -157,11 +153,9 @@ export const useLoadAdoptions = () => {
             }
         }
     })
-        console.log('转换后的数组领养记录:', convertedAdoptions)
         adoptions.value = convertedAdoptions
     }
 } catch (error) {
-      console.error('加载领养记录失败:', error)
       ElMessage.error(t('user.loadAdoptionsFailed'))
     }
   }

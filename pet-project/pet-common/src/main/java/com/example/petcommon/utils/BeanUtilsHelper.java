@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtilsBean;
-import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,9 +18,6 @@ public class BeanUtilsHelper {
 
     @Autowired
     private BeanUtilsBean beanUtilsBean;
-
-    @Autowired
-    private ConvertUtilsBean convertUtilsBean;
 
     @Autowired
     private PropertyUtilsBean propertyUtilsBean;

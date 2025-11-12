@@ -97,7 +97,7 @@ public class PetsServiceImpl extends ServiceImpl<PetsMapper, Pets> implements Pe
 
         if (petId == null) {
             log.error("宠物ID为空，无法执行领养操作");
-            throw new RuntimeException("宠物ID为空，无法执行领养操作");
+            throw new IllegalArgumentException("宠物ID为空，无法执行领养操作");
         }
 
         Pets pet = this.getById(petId);

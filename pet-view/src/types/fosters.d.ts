@@ -45,5 +45,7 @@ export interface FosterData {
     current: number, 
     pages: number 
 }
-       
 
+import type { PageResult } from './api'
+export type FosterPageResult = PageResult<Foster>
+       

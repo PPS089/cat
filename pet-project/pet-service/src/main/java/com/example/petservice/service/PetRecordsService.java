@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.petpojo.dto.RecordDto;
 import com.example.petpojo.entity.PetRecords;
 import com.example.petpojo.vo.EventVo;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public interface PetRecordsService extends IService<PetRecords> {
     /**
      * 更新事件记录
      */
-    EventVo updateRecord(Integer recordId, RecordDto recordDto);
+    EventVo updateRecord(@NonNull Integer recordId, @NonNull RecordDto recordDto);
     
     /**
      * 删除事件记录

@@ -3,7 +3,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import request from '@/utils/request'
 import { useThemeStore } from '@/stores/theme'
-import type { Foster,FosterData} from '@/types/fosters'
+import type { Foster } from '@/types/fosters'
+import dogImage from '@/assets/img/dog.jpg'
 
 
 /**
@@ -50,7 +51,6 @@ export const useDeleteFoster = () => {
         setTimeout(() => loadFosters(), 500)
       } 
     } catch (error: any) {
-      console.error(t('user.deleteFosterFailed'), error)
       ElMessage.error(t('user.deleteFosterFailed'))
     }
   }
@@ -80,7 +80,7 @@ export const useLoadFosters = () => {
       })
     
       // 检查实际的响应数据结构
-      let actualData= response.data as FosterData
+      let actualData = response.data as import('@/types/api').PageResult<any>
       
       // MyBatis-Plus IPage分页格式 (records + total)
       if (actualData.records && actualData.total !== undefined) {
@@ -99,7 +99,7 @@ export const useLoadFosters = () => {
               breed: foster.pet?.breed ,
               age: foster.pet?.age ,
               gender: foster.pet?.gender ,
-              image: foster.pet?.image ? (foster.pet.image.startsWith('http') ? foster.pet.image : `http://localhost:8082/api/images/${foster.pet.image}`) : '/src/assets/img/dog.jpg'
+              image: foster.pet?.image ? (foster.pet.image.startsWith('http') ? foster.pet.image : `/api/images/${foster.pet.image}`) : dogImage
             },
             shelter: {
               sid: foster.shelter?.sid,
@@ -112,7 +112,7 @@ export const useLoadFosters = () => {
           }
         })
         
-        console.log('DEBUG: 转换后的数据:', fosters.value)
+        
       } 
       else {
         fosters.value = []

@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.petcommon.result.Result;
 import com.example.petservice.service.ListPetsService;
+import com.example.petcommon.exception.BizException;
+import com.example.petcommon.error.ErrorCode;
 import com.example.petpojo.vo.PetListVo; // 更改为新的VO类
 
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -44,14 +43,9 @@ public class MyPetsController {
      */
     @GetMapping("/available")
     @Operation(summary = "分页查询宠物列表", description = "分页查询可领养的宠物列表")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "查询成功"),
-        @ApiResponse(responseCode = "401", description = "未授权")
-    })
     public Result<IPage<PetListVo>> listPets(
-            @Parameter(description = "当前页码", required = true) @RequestParam("current_page") Integer currentPage,
-            @Parameter(description = "每页数量", required = true) @RequestParam("per_page") Integer pageSize) {
-
+            @RequestParam("current_page") Integer currentPage,
+            @RequestParam("per_page") Integer pageSize) {
         IPage<PetListVo> petsPage = listPetsService.listPets(currentPage, pageSize);
         return Result.success(petsPage);
 
@@ -67,22 +61,13 @@ public class MyPetsController {
      */
     @GetMapping("/available/{petId}")
     @Operation(summary = "根据ID获取宠物详情", description = "根据宠物ID获取可领养宠物的详细信息")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "查询成功"),
-        @ApiResponse(responseCode = "401", description = "未授权"),
-        @ApiResponse(responseCode = "404", description = "宠物不存在")
-    })
     public Result<PetListVo> getPetById(
-            @Parameter(description = "宠物ID", required = true) @PathVariable("petId") Integer petId) {
+            @PathVariable("petId") Integer petId) {
         log.info("获取宠物详情，宠物ID: {}", petId);
-        
-        // 调用service方法获取宠物详情
         PetListVo pet = listPetsService.getPetById(petId);
-        
         if (pet == null) {
-            return Result.error("未找到该宠物");
+            throw new BizException(ErrorCode.PET_NOT_FOUND);
         }
-        
         return Result.success(pet);
     }
 

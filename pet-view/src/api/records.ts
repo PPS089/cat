@@ -144,25 +144,26 @@ const validateFile = (file: File): { valid: boolean; error?: string } => {
 
 // 文件上传管理
 export const useFileUpload = () => {
+  const { t } = useI18n()
   const filePreviews = ref<FilePreview[]>([])
 
   const handleFileUpload = async (event: Event): Promise<void> => {
     const target = event.target as HTMLInputElement
     const files = Array.from(target.files || [])
     
-    console.log(`用户选择了 ${files.length} 个文件`)
+    
 
     if (filePreviews.value.length + files.length > 5) {
-      ElMessage.error('最多只能上传5个文件')
+      ElMessage.error(t('common.maxFilesExceeded'))
       return
     }
 
     for (const file of files) {
-      console.log(`处理文件: ${file.name}, 大小: ${file.size}, 类型: ${file.type}`)
+      
       
       const validation = validateFile(file)
       if (!validation.valid) {
-        ElMessage.error(`文件 "${file.name}" 验证失败：${validation.error}`)
+        ElMessage.error(`${t('records.uploadFailed')}: ${validation.error}`)
         continue
       }
 
@@ -179,16 +180,15 @@ export const useFileUpload = () => {
           isValid: true
         })
 
-        console.log(`文件 "${file.name}" 已添加到预览列表`)
-        ElMessage.success(`文件 "${file.name}" 添加成功`)
+        
+        ElMessage.success(t('records.uploadSuccess'))
       } catch (error) {
-        console.error(`处理文件 "${file.name}" 失败:`, error)
-        ElMessage.error(`文件 "${file.name}" 处理失败：${error instanceof Error ? error.message : '未知错误'}`)
+        ElMessage.error(t('records.uploadFailed'))
       }
     }
 
     target.value = ''
-    console.log(`当前预览列表中共有 ${filePreviews.value.length} 个文件`)
+    
   }
 
   const removeFile = (index: number): void => {
@@ -197,7 +197,7 @@ export const useFileUpload = () => {
       URL.revokeObjectURL(preview.previewUrl)
     }
     filePreviews.value.splice(index, 1)
-    ElMessage.success('文件已删除')
+    ElMessage.success(t('common.deleteSuccess'))
   }
 
   const clearAllFiles = (): void => {
@@ -211,7 +211,7 @@ export const useFileUpload = () => {
 
   const getUploadFiles = (): File[] => {
     const files = filePreviews.value.map((preview) => preview.file)
-    console.log(`获取上传文件列表，共 ${files.length} 个文件`)
+    
     return files
   }
 
@@ -267,7 +267,7 @@ export const useMediaModal = () => {
           currentMediaList.value = []
         }
       } catch (error) {
-        console.error(`加载媒体文件失败:`, error)
+        
         ElMessage.error('加载媒体文件失败')
         currentMediaList.value = []
       } finally {
@@ -353,7 +353,7 @@ export const useEventData = () => {
         events.value = []
       }
     } catch (error) {
-      console.error('获取事件失败:', error)
+      
       ElMessage.error(t('api.getEventsFailed'))
       events.value = []
     } finally {
@@ -398,7 +398,7 @@ export const usePetData = () => {
       }
     } catch (error) {
       ElMessage.error(t('api.getPetsFailed'))
-      console.error('Error fetching pets:', error)
+      
       pets.value = []
     } finally {
       loading.value = false
@@ -434,8 +434,8 @@ export const useEventOperations = (eventData?: { fetchEvents: () => Promise<void
   const deleteEvent = async (recordId: number): Promise<void> => {
     try {
       if (!recordId || recordId <= 0) {
-        console.error('Invalid recordId:', recordId)
-        ElMessage.error('无效的记录ID')
+        
+        ElMessage.error(t('common.operationFailed'))
         return
       }
       
@@ -451,7 +451,7 @@ export const useEventOperations = (eventData?: { fetchEvents: () => Promise<void
     } catch (error) {
       if (error !== 'cancel') {
         ElMessage.error(t('api.deleteFailed'))
-        console.error('Error deleting event:', error)
+        
       }
     }
   }
@@ -585,7 +585,7 @@ export const useRecordForm = () => {
         }
       }
     } catch (error) {
-      console.error('Error parsing date:', error, event.record_time)
+      
     }
     
     Object.assign(formData, {
@@ -712,21 +712,21 @@ export const useRecords = (): UseRecordsReturn => {
       // 只有在成功创建/更新事件后才上传媒体文件
       if (recordId) {
         const uploadFiles = getUploadFiles()
-        console.log(`准备上传的文件数量: ${uploadFiles ? uploadFiles.length : 0}`)
+        
         
         if (uploadFiles && uploadFiles.length > 0) {
           try {
             // 确保所有文件一次性上传，并关联到同一个记录ID
-            console.log('开始上传媒体文件...')
-            const uploadResult = await uploadMediaFiles(uploadFiles, recordId)
-            console.log('媒体文件上传结果:', uploadResult)
+            
+            await uploadMediaFiles(uploadFiles, recordId)
+            
             ElMessage.success('事件保存成功，媒体文件上传完成')
           } catch (uploadError) {
-            console.warn('流程警告：事件保存成功，但媒体文件上传失败', uploadError)
+            
             ElMessage.warning('事件保存成功，但媒体文件上传失败')
           }
         } else {
-          console.log('没有文件需要上传')
+          
         }
       }
       
@@ -735,7 +735,7 @@ export const useRecords = (): UseRecordsReturn => {
       closeModal()
     } catch (error) {
       ElMessage.error(showEditModal.value ? '事件更新失败' : '事件添加失败')
-      console.error('Error saving event:', error)
+      
     } finally {
       // 确保无论成功还是失败，都重置提交状态
       isSubmitting.value = false

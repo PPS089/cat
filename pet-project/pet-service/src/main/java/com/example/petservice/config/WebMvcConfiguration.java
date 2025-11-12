@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Autowired
+    @NonNull
     private UserContextInterceptor userContextInterceptor;
 
     @Value("${app.upload-dir:./uploads/media}")
@@ -62,6 +63,10 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         
+                        // Knife4j相关接口
+                        "/doc.html",
+                        "/webjars/**",
+                        
                         // 健康检查接口
                         "/health"
                 );
@@ -83,5 +88,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         
         // 添加classpath静态资源映射
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        
+        // 添加Knife4j静态资源映射
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
     }
 }

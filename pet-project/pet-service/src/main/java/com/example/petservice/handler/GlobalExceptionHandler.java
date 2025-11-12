@@ -1,8 +1,11 @@
 package com.example.petservice.handler;
 
 import com.example.petcommon.result.Result;
+import com.example.petcommon.exception.BizException;
+import com.example.petcommon.error.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -41,7 +44,7 @@ public class GlobalExceptionHandler {
         
         // 返回所有错误信息拼接作为消息，所有错误作为数据
         String allErrors = errors.values().stream().collect(Collectors.joining(", "));
-        return Result.error(400, allErrors, errors);
+        return Result.error(ErrorCode.VALIDATION_ERROR.getCode(), allErrors, errors);
     }
 
     /**
@@ -60,7 +63,14 @@ public class GlobalExceptionHandler {
         
         // 返回第一个错误信息作为消息，所有错误作为数据
         String firstError = errors.values().iterator().next();
-        return Result.error(400, firstError, errors);
+        return Result.error(ErrorCode.VALIDATION_ERROR.getCode(), firstError, errors);
+    }
+
+    @ExceptionHandler(BizException.class)
+    public ResponseEntity<Result<String>> handleBizException(BizException e) {
+        log.error("业务异常：{}", e.getMessage());
+        Result<String> body = Result.error(e.getCode(), e.getMessage());
+        return new ResponseEntity<>(body, e.getStatus());
     }
 
     /**
@@ -70,7 +80,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 添加这行，返回400状态码
     public Result<String> handleIllegalArgumentException(IllegalArgumentException e) {
         log.error("参数异常：", e);
-        return Result.error(e.getMessage());
+        return Result.error(ErrorCode.BAD_REQUEST.getCode(), e.getMessage());
     }
 
     /**
@@ -80,7 +90,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 添加这行，返回500状态码
     public Result<String> handleRuntimeException(RuntimeException e) {
         log.error("运行时异常：", e);
-        return Result.error("运行时异常：" + e.getMessage());
+        return Result.error(ErrorCode.INTERNAL_ERROR.getCode(), "运行时异常：" + e.getMessage());
     }
 
     /**
@@ -90,7 +100,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         log.error("请求参数缺失异常: {}", e.getMessage());
-        return Result.error(400, "请求参数缺失: " + e.getParameterName());
+        return Result.error(ErrorCode.BAD_REQUEST.getCode(), "请求参数缺失: " + e.getParameterName());
     }
 
     /**
@@ -106,7 +116,7 @@ public class GlobalExceptionHandler {
             String simpleName = requiredType.getSimpleName();
             requiredTypeName = (simpleName != null && !simpleName.isEmpty()) ? simpleName : "未知类型";
         }
-        return Result.error(400, "参数类型错误: " + e.getName() + " 应该是 " + requiredTypeName + " 类型");
+        return Result.error(ErrorCode.BAD_REQUEST.getCode(), "参数类型错误: " + e.getName() + " 应该是 " + requiredTypeName + " 类型");
     }
 
     /**
@@ -116,13 +126,14 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("请求体解析异常: {}", e.getMessage());
-        return Result.error(400, "请求体格式错误，请检查JSON格式");
+        return Result.error(ErrorCode.BAD_REQUEST.getCode(), "请求体格式错误，请检查JSON格式");
     }
 
     /**
      * 处理所有未捕获的异常
      */
     @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<String> handleException(Exception e) {
 
         
@@ -137,9 +148,9 @@ public class GlobalExceptionHandler {
         // 如果是特定的异常，返回更详细的信息
         if (exceptionMessage != null && exceptionMessage.contains("No endpoint")) {
             log.error("检测到 'No endpoint' 错误，这通常是自定义异常消息");
-            return Result.error("系统异常：" + exceptionMessage + " (异常类型: " + exceptionType + ")");
+            return Result.error(ErrorCode.INTERNAL_ERROR.getCode(), "系统异常：" + exceptionMessage + " (异常类型: " + exceptionType + ")");
         }
         
-        return Result.error("系统异常：" + exceptionMessage);
+        return Result.error(ErrorCode.INTERNAL_ERROR.getCode(), "系统异常：" + exceptionMessage);
     }
 }

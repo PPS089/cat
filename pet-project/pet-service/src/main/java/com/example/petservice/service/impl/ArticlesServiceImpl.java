@@ -9,6 +9,7 @@ import com.example.petservice.mapper.ArticlesMapper;
 import com.example.petservice.service.ArticlesService;
 import com.example.petpojo.vo.ArticlesVo;
 import org.springframework.beans.BeanUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> implements ArticlesService {
 
 
-    private ArticlesVo convertToVo(Articles articles) {
+    private ArticlesVo convertToVo(@NonNull Articles articles) {
         ArticlesVo articlesVo = new ArticlesVo();
         BeanUtils.copyProperties(articles, articlesVo);
         return articlesVo;

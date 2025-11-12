@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * 领养时间线响应DTO
  * 用于封装领养时间线的响应数据
@@ -16,25 +18,30 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "领养时间线响应DTO")
 public class AdoptionTimelineResponse {
     
     /**
      * 时间线列表
      */
+    @Schema(description = "时间线列表")
     private List<AdoptionTimelineVo> timeline;
     
     /**
      * 总记录数
      */
+    @Schema(description = "总记录数")
     private Integer total;
     
     /**
      * 宠物名称
      */
+    @Schema(description = "宠物名称")
     private String petName;
     
     /**
      * 宠物品种
      */
+    @Schema(description = "宠物品种")
     private String petBreed;
 }

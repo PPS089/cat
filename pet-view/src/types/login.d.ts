@@ -5,7 +5,7 @@ export interface LoginResponse {
   message: string;
   token: string;
   userId: number;
-  userName: string;
+  username: string;
   expireTime: number;
 }
 

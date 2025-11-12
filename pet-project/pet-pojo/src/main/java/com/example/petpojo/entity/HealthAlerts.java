@@ -33,7 +33,6 @@ public class HealthAlerts {
     @NotBlank(message = "描述不能为空")
     private String description;
     
-    @NotNull(message = "提醒时间不能为空")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime reminderTime;
     

@@ -19,23 +19,9 @@ export interface AdoptionRecord {
 }
 
 // API响应类型
-export interface ApiResponse<T = any> {
-  code: number;
-  data: T;
-  message?: string;
-}
+import type { ApiResult, PageResult } from './api'
 
-// 分页响应类型
-export interface PageResponse<T> {
-  records: T[];
-  total: number;
-  size: number;
-  current: number;
-  pages: number;
-}
-
-// 领养记录分页响应
-export interface AdoptionPageResponse extends ApiResponse<PageResponse<AdoptionRecord>> {}
+export interface AdoptionPageResponse extends ApiResult<PageResult<AdoptionRecord>> {}
 
 // 健康提醒类型（与后端 pet_health 表结构对应）
 export interface HealthAlert {

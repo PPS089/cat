@@ -14,14 +14,13 @@ export interface Article {
 
 // 分页响应数据类型
 export interface ArticlePageData {
-  records: ArticleItem[]
+  records: Article[]
   total: number
   size: number
   current: number
   pages: number
   searchCount?: boolean
 }
-
 
 
 

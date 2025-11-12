@@ -41,8 +41,5 @@ export interface EndFosterResponse {
 }
 
 
-export interface AdoptionResponse {
-  records: Pet[]
-  total: number
-  pages: number
-}
+import type { PageResult } from './api'
+export type AdoptionResponse = PageResult<Pet>

@@ -28,14 +28,10 @@ export const uploadMediaFiles = async (
   // 添加一个标识，表明这是批量上传
   formData.append('batchUpload', 'true')
   
-  console.log(`开始批量上传 ${files.length} 个文件到记录 ${recordId}`)
-  
   try {
     const response = await request.post('/media/upload', formData)
-    console.log('批量上传完成，响应:', response)
     return response
   } catch (error) {
-    console.error('批量上传失败:', error)
     throw error
   }
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.petpojo.entity.PetHealth;
 import com.example.petpojo.dto.HealthDto;
 import com.example.petpojo.vo.HealthVo;
+import org.springframework.lang.NonNull;
 
 /**
  * 健康服务接口
@@ -19,7 +20,7 @@ public interface HealthService extends IService<PetHealth> {
      * @param healthDto 健康信息DTO
      * @return 是否创建成功
      */
-    boolean createHealth(HealthDto healthDto);
+    boolean createHealth(@NonNull HealthDto healthDto);
 
     /**
      * 获取宠物健康信息

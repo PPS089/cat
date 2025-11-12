@@ -1,7 +1,7 @@
 <template>
   <div class="pets-container" :class="{ 'dark': themeStore.preferences.theme === 'dark' }">
     <header class="pets-header">
-      <h1>我的领养宠物</h1>
+      <h1>{{ t('nav.myPets') }}</h1>
     </header>
     
     <main class="pets-main">
@@ -11,24 +11,22 @@
         </div> -->
         
         <div v-if="pets.length === 0" class="empty-state">
-          <p>暂无领养的宠物</p>
-          <button @click="addPet" class="add-first-pet-btn">去领养宠物</button>
+          <p>{{ t('user.noAdoptionRecords') }}</p>
+          <button @click="addPet" class="add-first-pet-btn">{{ t('user.goAdoptPet') }}</button>
         </div>
         
         <div v-else class="pets-grid">
           <div v-for="pet in pets" :key="pet.pid" class="pet-card">
             <div class="pet-image">
               <img :src="pet.image || '/src/assets/img/dog.jpg'" :alt="pet.name" />
-              <div class="pet-type-badge adoption">
-                领养
-              </div>
+              <div class="pet-type-badge adoption">{{ t('message.adoption') }}</div>
             </div>
             <div class="pet-info">
               <h3>{{ pet.name }}
-                <span v-if="pet.petStatus === 'FOSTERING' || pet.isFostering" class="fostering-indicator">(寄养中)</span>
+                <span v-if="pet.petStatus === 'FOSTERING' || pet.isFostering" class="fostering-indicator">({{ t('message.fostering') }})</span>
               </h3>
               <p class="pet-breed">{{ pet.breed }}</p>
-              <p class="pet-age">{{ pet.age }}岁</p>
+              <p class="pet-age">{{ pet.age }}{{ t('message.yearsOld') }}</p>
               <p v-if="pet.adoptionDate" class="pet-date">
                 {{ t('message.adoptDate') }}: {{ pet.adoptionDate }}
               </p>
@@ -81,10 +79,10 @@
       <el-form-item :label="t('message.selectShelter')">
         <el-select 
           v-model="selectedShelter" 
-          :placeholder="'请选择收容所'"
+          :placeholder="t('message.selectShelter')"
           style="width: 100%"
         >
-          <el-option label="请选择收容所" :value="null" />
+          <el-option :label="t('message.selectShelter')" :value="null" />
           <el-option 
             v-for="shelter in shelters" 
             :key="shelter.sid" 

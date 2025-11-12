@@ -7,7 +7,6 @@ import com.aliyun.oss.common.comm.SignVersion;
 import com.example.petcommon.properties.AliyunOSSProperties;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
