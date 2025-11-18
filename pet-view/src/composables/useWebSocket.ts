@@ -36,14 +36,9 @@ export const useWebSocket = () => {
     
     userId.value = id
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    
-    // 动态端口适配：如果当前端口不是5174，使用当前端口
-    const currentPort = window.location.port
-    const targetPort = currentPort && currentPort !== '5174' ? currentPort : '5174'
-    const targetHost = targetPort ? `${window.location.hostname}:${targetPort}` : window.location.host
-    
-    // 使用/api前缀通过Vite代理连接WebSocket
-    wsUrl.value = `${protocol}//${targetHost}/api/ws/${id}`
+    const host = window.location.host
+    const wsUrlValue = `${protocol}//${host}/api/ws/${id}`
+    wsUrl.value = wsUrlValue
     console.log(`WebSocket连接URL: ${wsUrl.value}`)
     
     try {
