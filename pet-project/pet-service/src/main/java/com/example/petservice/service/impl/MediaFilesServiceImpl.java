@@ -1,14 +1,8 @@
 package com.example.petservice.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,21 +12,19 @@ import org.springframework.web.multipart.MultipartFile;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.petcommon.context.UserContext;
+import com.example.petcommon.exception.BizException;
+import com.example.petcommon.error.ErrorCode;
 import com.example.petpojo.entity.MediaFiles;
 import com.example.petpojo.entity.PetRecords;
 import com.example.petpojo.vo.MediaFileVo;
 import com.example.petservice.mapper.MediaFilesMapper;
 import com.example.petservice.mapper.PetRecordsMapper;
 import com.example.petservice.service.MediaFilesService;
-import com.example.petcommon.exception.BizException;
-import com.example.petcommon.error.ErrorCode;
+import com.example.petservice.config.AliyunOSSOperator;
 import org.springframework.lang.NonNull;
 
-
-import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-
 
 /**
  * 媒体文件服务实现
@@ -40,30 +32,15 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFiles> implements MediaFilesService {
 
     private final MediaFilesMapper mediaFilesMapper;
     private final PetRecordsMapper petRecordsMapper;
-
-    @Value("${app.upload-dir:./uploads/media}")
-    private String uploadDirConfig;
+    private final AliyunOSSOperator ossOperator;
     
-    private String uploadDir;
-
-    @Value("${app.upload-max-size:52428800}")
+    @Value("${app.upload-max-size:524288500}")
     private long maxFileSize;
-
-    @PostConstruct
-    public void initUploadDir() {
-        // 处理路径中的环境变量
-        uploadDir = uploadDirConfig.replace("${java.io.tmpdir}", System.getProperty("java.io.tmpdir"));
-        log.info("上传目录已初始化: {}", uploadDir);
-    }
-
-    public MediaFilesServiceImpl(MediaFilesMapper mediaFilesMapper, PetRecordsMapper petRecordsMapper) {
-        this.mediaFilesMapper = mediaFilesMapper;
-        this.petRecordsMapper = petRecordsMapper;
-    }
 
     /**
      * 根据记录ID获取媒体文件列表
@@ -92,25 +69,25 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     /**
      * 保存媒体文件
      * @param recordId 记录ID
-     * @param uid 用户ID（已废弃，实际使用UserContext中的用户ID）
      * @param fileName 文件名
-     * @param filePath 文件路径
+     * @param filePath 文件路径（OSS URL）
      * @param mediaType 媒体类型
      * @param fileSize 文件大小
      * @return 媒体文件VO对象
      */
     @Override
-    public MediaFileVo saveMediaFile(Integer recordId, @Deprecated Integer uid, String fileName, String filePath, String mediaType, Long fileSize) {
-        log.info("保存媒体文件: recordId={}, uid={}, fileName={}", recordId, uid, fileName);
-        
-        // 从UserContext获取当前用户ID，如果为null则使用传入的uid参数
+    public MediaFileVo saveMediaFile(Integer recordId, String fileName, String filePath, String mediaType, Long fileSize) {
         Long userId = UserContext.getCurrentUserId();
-        Integer currentUserId = (userId != null) ? userId.intValue() : uid;
+        if (userId == null) {
+            throw new BizException(ErrorCode.UNAUTHORIZED);
+        }
         
-        // 创建MediaFiles对象，显式设置uid
+        log.info("保存媒体文件: recordId={}, userId={}, fileName={}", recordId, userId, fileName);
+        
+        // 创建MediaFiles对象
         MediaFiles mediaFiles = MediaFiles.builder()
                 .recordId(recordId)
-                .uid(currentUserId)
+                .uid(userId.intValue())
                 .fileName(fileName)
                 .filePath(filePath)
                 .mediaType(mediaType)
@@ -124,32 +101,19 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     }
 
     /**
-     * 上传媒体文件
+     * 上传媒体文件到OSS
      * @param recordId 记录ID
      * @param files 要上传的文件数组
      * @return 上传成功的媒体文件VO列表
      */
     @Override
     public List<MediaFileVo> uploadMediaFiles(Integer recordId, MultipartFile[] files) {
-        log.info("上传媒体文件: 记录ID={}, 文件数量={}", recordId, files.length);
+        log.info("上传媒体文件到OSS: 记录ID={}, 文件数量={}", recordId, files.length);
         
-        if (files.length == 0) {
-            throw new IllegalArgumentException("请选择要上传的文件");
-        }
+        validateUploadRequest(files);
         
-        if (files.length > 5) {
-            throw new IllegalArgumentException("单次最多上传5个文件");
-        }
-        
-        // 从UserContext获取当前用户ID
         Long userId = UserContext.getCurrentUserId();
         log.info("当前用户ID: {}", userId);
-        
-        // 创建上传目录
-        File uploadDirFile = new File(uploadDir);
-        if (!uploadDirFile.exists()) {
-            uploadDirFile.mkdirs();
-        }
         
         List<MediaFileVo> uploadedFiles = new ArrayList<>();
         
@@ -159,104 +123,137 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
                 continue;
             }
             
-            String originalFilename = file.getOriginalFilename();
-            String contentType = file.getContentType();
-            long fileSize = file.getSize();
-            
-            log.info("处理文件: {}, ContentType: {}, Size: {} bytes", originalFilename, contentType, fileSize);
-            
-            // 验证文件大小
-            if (fileSize > maxFileSize) {
-                log.warn("文件过大: {} ({}MB, 限制{}MB)", originalFilename, fileSize / 1024 / 1024, maxFileSize / 1024 / 1024);
-                continue;
-            }
-            
-            // 验证文件类型
-            if (!isValidMediaType(contentType)) {
-                log.warn("不支持的文件类型: {} (ContentType: {})", originalFilename, contentType);
-                continue;
-            }
-            
-            try {
-                // 生成唯一文件名
-                String fileExtension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf(".")) : "";
-                String savedFileName = UUID.randomUUID().toString() + fileExtension;
-                
-                // 保存文件
-                Path savedFilePath = Paths.get(uploadDir, savedFileName);
-                File savedFile = savedFilePath.toFile();  // 保证非空
-                if (savedFile == null) {
-                    throw new BizException(ErrorCode.FILE_SAVE_FAILED, "无法创建文件对象: " + savedFileName);
-                }
-                file.transferTo(savedFile);
-                
-                // 验证文件是否保存成功
-                if (!Files.exists(savedFile.toPath())) {
-                    log.error("文件保存失败: {}", savedFileName);
-                    continue;
-                }
-                
-                // 确定媒体类型
-                String mediaType = getMediaType(contentType);
-                
-                // 保存到数据库
-                String filePathStr = "/media/download/" + savedFileName;  // 不含 /api 前缀，上传的是相对于 /api 的路径
-                MediaFileVo mediaFileVo = saveMediaFile(
-                        recordId,
-                        userId != null ? userId.intValue() : null,  // 传递当前用户ID，如果为null则传递null
-                        originalFilename,
-                        filePathStr,
-                        mediaType,
-                        file.getSize()
-                );
-                
-                uploadedFiles.add(mediaFileVo);
-                log.info("文件上传成功: {} -> {}", originalFilename, savedFileName);
-                
-            } catch (IOException e) {
-                log.error("保存文件失败: {}", file.getOriginalFilename(), e);
+            MediaFileVo uploadedFile = processSingleFile(recordId,file);
+            if (uploadedFile != null) {
+                uploadedFiles.add(uploadedFile);
             }
         }
         
         if (uploadedFiles.isEmpty()) {
-            throw new RuntimeException("文件上传失败，请检查文件格式和大小");
+            throw new BizException(ErrorCode.MEDIA_FILE_UPLOAD_FAILED);
         }
         
-        // 如果有文件上传成功，更新关联记录的更新时间
-        if (!uploadedFiles.isEmpty()) {
-            try {
-                // 获取关联的记录信息
-                PetRecords petRecords = petRecordsMapper.selectById(recordId);
-                if (petRecords != null) {
-                    // 手动设置更新时间，确保updatedAt字段被更新
-                    petRecords.setUpdatedAt(LocalDateTime.now());
-                    petRecordsMapper.updateById(petRecords);
-                    log.info("批量删除媒体文件成功，更新关联记录，记录ID: {}", recordId);
-                }
-            } catch (Exception e) {
-                log.warn("更新关联记录失败，记录ID: {}", recordId, e);
-                // 不影响文件上传的主要功能，只记录警告
-            }
-        }
+        updateRelatedRecord(recordId);
         
+        log.info("文件上传完成: 成功上传{}个文件", uploadedFiles.size());
         return uploadedFiles;
+    }
+    
+    /**
+     * 验证上传请求
+     */
+    private void validateUploadRequest(MultipartFile[] files) {
+        if (files.length == 0) {
+            log.warn("没有文件需要上传");
+            throw new BizException(ErrorCode.VALIDATION_ERROR);
+        }
+        
+        if (files.length > 5) {
+            log.warn("上传文件数量超过限制: {}", files.length);
+            throw new BizException(ErrorCode.MEDIA_FILE_COUNT_EXCEEDED);
+        }
+    }
+    
+    /**
+     * 处理单个文件上传
+     */
+    private MediaFileVo processSingleFile(Integer recordId,MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        String contentType = file.getContentType();
+        long fileSize = file.getSize();
+        
+        log.info("处理文件: {}, ContentType: {}, Size: {} bytes", originalFilename, contentType, fileSize);
+        
+        validateFile(originalFilename, contentType, fileSize);
+        
+        try {
+            String fileUrl = uploadToOss(file, originalFilename);
+            String mediaType = getMediaType(contentType);
+            
+            return saveMediaFile(
+                    recordId,
+                    originalFilename,
+                    fileUrl,
+                    mediaType,
+                    file.getSize()
+            );
+        } catch (Exception e) {
+            log.error("文件上传到OSS失败: {}", e.getMessage(), e);
+            throw new BizException(ErrorCode.MEDIA_FILE_UPLOAD_FAILED);
+        }
+    }
+    
+    /**
+     * 验证文件
+     */
+    private void validateFile(String originalFilename, String contentType, long fileSize) {
+        if (fileSize > maxFileSize) {
+            log.warn("文件过大: {} ({}MB, 限制{}MB)", 
+                originalFilename, 
+                String.format("%.2f", fileSize / 1024.0 / 1024.0), 
+                String.format("%.2f", maxFileSize / 1024.0 / 1024.0));
+            throw new BizException(ErrorCode.MEDIA_FILE_SIZE_EXCEEDED);
+        }
+        
+        if (!isValidMediaType(contentType)) {
+            log.warn("不支持的文件类型: {} (ContentType: {})", originalFilename, contentType);
+            throw new BizException(ErrorCode.MEDIA_FILE_TYPE_UNSUPPORTED);
+        }
+    }
+    
+    /**
+     * 上传文件到OSS
+     */
+    private String uploadToOss(MultipartFile file, String originalFilename) throws Exception {
+        log.info("开始上传文件到OSS: {}", originalFilename);
+        String fileUrl = ossOperator.upload(file.getBytes(), originalFilename);
+        log.info("文件上传OSS成功: {} -> {}", originalFilename, fileUrl);
+        return fileUrl;
+    }
+    
+    /**
+     * 更新关联记录
+     */
+    private void updateRelatedRecord(Integer recordId) {
+        try {
+            PetRecords petRecords = petRecordsMapper.selectById(recordId);
+            if (petRecords != null) {
+                petRecords.setUpdatedAt(LocalDateTime.now());
+                petRecordsMapper.updateById(petRecords);
+                log.info("文件上传成功，更新关联记录，记录ID: {}", recordId);
+            }
+        } catch (Exception e) {
+            log.warn("更新关联记录失败，记录ID: {}", recordId, e);
+        }
     }
 
     /**
-     * 删除媒体文件
+     * 删除OSS上的媒体文件
      * @param mid 媒体文件ID
      * @return 是否删除成功
      */
     @Override
     public boolean deleteMediaFile(Integer mid) {
-        log.info("删除媒体文件: mid={}", mid);
+        log.info("删除OSS上的媒体文件: mid={}", mid);
         
         // 获取媒体文件信息
         MediaFiles mediaFile = this.getById(mid);
         if (mediaFile != null) {
+            try {
+                // 直接使用文件URL删除OSS上的文件
+                String fileUrl = mediaFile.getFilePath();
+                if (fileUrl != null && (fileUrl.startsWith("https://") || fileUrl.startsWith("http://"))) {
+                    ossOperator.delete(fileUrl);
+                    log.info("成功删除OSS上的媒体文件: {}", fileUrl);
+                }
+            } catch (Exception e) {
+                log.warn("删除OSS文件失败: {}", e.getMessage(), e);
+                throw new BizException(ErrorCode.MEDIA_FILE_DELETE_FAILED);
+            }
+            
             boolean result = this.removeById(mid);
             if (result) {
-                // 删除成功后，更新关联记录，让MyBatis Plus自动填充updatedAt
+                // 删除成功后，更新关联记录
                 try {
                     PetRecords petRecords = petRecordsMapper.selectById(mediaFile.getRecordId());
                     if (petRecords != null) {
@@ -277,15 +274,35 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     }
 
     /**
-     * 删除记录相关的所有媒体文件
+     * 删除记录相关的所有OSS媒体文件
      * @param recordId 记录ID
      * @return 是否删除成功
      */
     @Override
     public boolean deleteMediaByRecordId(Integer recordId) {
-        log.info("删除记录 {} 的所有媒体文件", recordId);
+        log.info("删除记录 {} 的所有OSS媒体文件", recordId);
+        
+        // 先获取所有要删除的文件，以便删除OSS上的文件
         LambdaQueryWrapper<MediaFiles> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MediaFiles::getRecordId, recordId);
+        List<MediaFiles> mediaFiles = this.list(wrapper);
+        
+        // 删除OSS上的文件
+        for (MediaFiles mediaFile : mediaFiles) {
+            try {
+                // 直接使用文件URL删除OSS上的文件
+                String fileUrl = mediaFile.getFilePath();
+                if (fileUrl != null && (fileUrl.startsWith("https://") || fileUrl.startsWith("http://"))) {
+                    ossOperator.delete(fileUrl);
+                    log.info("成功删除OSS上的媒体文件: {}", fileUrl);
+                }
+            } catch (Exception e) {
+                log.warn("删除OSS文件失败: {}", e.getMessage(), e);
+                throw new BizException(ErrorCode.MEDIA_FILE_DELETE_FAILED);
+            }
+        }
+        
+        // 从数据库中删除记录
         boolean result = this.remove(wrapper);
         
         if (result) {

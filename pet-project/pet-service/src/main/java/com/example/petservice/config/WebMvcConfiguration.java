@@ -44,6 +44,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         "/user/login",
                         "/user/register",
                         "/user",
+                        "/user/refresh-token",
                         
                         // 公开的文章接口
                         "/articles/**",
@@ -66,9 +67,12 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         // Knife4j相关接口
                         "/doc.html",
                         "/webjars/**",
-                        
+
                         // 健康检查接口
-                        "/health"
+                        "/health",
+                        
+                        // 错误页面接口
+                        "/error"
                 );
     }
 

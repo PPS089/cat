@@ -7,36 +7,26 @@ import dogImage from '@/assets/img/dog.jpg'
 
 // 常量定义
 const DEFAULT_AVATAR = dogImage
-const API_BASE = '/api/images/'
-const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
+// 图片基础路径不再直接使用
+const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB 
 const ALLOWED_FILE_TYPES = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']
 const PHONE_REGEX = /^1[3-9]\d{9}$/
 const AVATAR_VALIDATION_TIMEOUT = 5000
-const AVATAR_UPDATE_DELAY = 1000
 
 // 从API获取用户完整资料
-export const fetchUserProfileFromAPI = async (): Promise<{ success: boolean; data: any; message: string }> => {
+  export const fetchUserProfileFromAPI = async (): Promise<{ success: boolean; data: any; message: string }> => {
   try {
-    const userId = localStorage.getItem('userId')
     const token = localStorage.getItem('jwt_token')
-    if (!token || !userId) {
-      console.warn('用户未登录或缺少必要信息')
+    if (!token) {
       return { success: false, data: null, message: '用户未登录或缺少必要信息' }
     }
-    
     const response = await request.get('/user/profile')
     const result = response.data
-  
     return { success: true, data: result, message: '获取用户资料成功' }
-  }
-  catch (error: any) {
-    
-    
-    // 检查是否是401/403错误（未授权）
+  } catch (error: any) {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
       return { success: false, data: null, message: '用户未登录或缺少必要信息' }
     }
-    
     return { success: false, data: null, message: '获取用户资料失败' }
   }
 }
@@ -122,6 +112,14 @@ export const useProfile = () => {
     reader.readAsDataURL(file)
   }
 
+  // 处理图片加载错误
+  const handleImageError = () => {
+    // 只有当当前显示的不是默认头像时，才切换到默认头像
+    if (profileForm.headPic && profileForm.headPic !== DEFAULT_AVATAR) {
+      profileForm.headPic = DEFAULT_AVATAR
+    }
+  }
+
   /**
    * 测试图片是否可加载
    * @param url 图片URL
@@ -132,12 +130,10 @@ export const useProfile = () => {
       const testImg = new Image()
       
       testImg.onload = () => {
-        console.log('头像测试加载成功:', url)
         resolve(true)
       }
 
       testImg.onerror = () => {
-        console.log('头像测试加载失败:', url)
         resolve(false)
       }
 
@@ -145,53 +141,56 @@ export const useProfile = () => {
 
       // 设置超时
       setTimeout(() => {
-        console.log('头像测试加载超时:', url)
         resolve(false)
       }, AVATAR_VALIDATION_TIMEOUT)
     })
   }
 
   // 填充表单数据
-  const fillProfileForm = (userData: any, isFromAPI = false) => {
-    profileForm.userName = userData.userName || ''
-    profileForm.email = userData.email || ''
-    profileForm.phone = userData.phone || ''
-    profileForm.introduce = userData.introduce || ''
+  const fetchAvatarUrl = async (fileNameOrUrl: string): Promise<string> => {
+    try {
+      // 如果已经是完整的URL（包含http或https），直接返回
+      if (fileNameOrUrl.startsWith('http') || fileNameOrUrl.startsWith('https')) {
+        return fileNameOrUrl;
+      }
+      // 如果是base64数据URI，直接返回
+      if (fileNameOrUrl.startsWith('data:image')) {
+        return fileNameOrUrl;
+      }
+      // 如果是文件名，构造本地访问URL
+      if (fileNameOrUrl) {
+        return `/images/${fileNameOrUrl}`;
+      }
+      // 否则返回默认头像
+      return DEFAULT_AVATAR;
+    } catch {
+      return DEFAULT_AVATAR;
+    }
+  };
+
+  const fillProfileForm = async (userData: any, isFromAPI = false) => {
+    profileForm.userName = userData.userName || '';
+    profileForm.email = userData.email || '';
+    profileForm.phone = userData.phone || '';
+    profileForm.introduce = userData.introduce || '';
     
     if (isFromAPI && userData.headPic) {
-      profileForm.headPic = `${API_BASE}${userData.headPic}`
+      profileForm.headPic = await fetchAvatarUrl(userData.headPic);
     } else {
-      profileForm.headPic = userData.headPic || DEFAULT_AVATAR
+      // 如果userData.headPic为空或未定义，使用默认头像
+      profileForm.headPic = userData.headPic || DEFAULT_AVATAR;
     }
   }
 
   // 加载用户资料
   const loadUserProfile = async () => {
     try {
-      if (userStore.info && userStore.info.userId && userStore.info.userId !== 0) {
-        fillProfileForm(userStore.info)
-      } else {
-        const response = await fetchUserProfileFromAPI()
-        
-        if (response.success && response.data) {
-          const userData = response.data
-
-          fillProfileForm(userData, true)
-          
-          // 同时更新store中的数据
-          userStore.setUserProfile({
-            userName: userData.userName,
-            headPic: userData.headPic ? `${API_BASE}${userData.headPic}` : DEFAULT_AVATAR,
-            email: userData.email,
-            phone: userData.phone,
-            introduce: userData.introduce
-          })
-        } else {
-          ElMessage.error('获取用户资料失败')
-        }
-      } 
+      await userStore.fetchProfile()
+      await fillProfileForm(userStore.info, true)
     } catch (error) {
       ElMessage.error(t('message.getUserInfoFailed'))
+      // 加载失败时使用默认头像
+      profileForm.headPic = DEFAULT_AVATAR;
     }
   }
 
@@ -227,7 +226,9 @@ export const useProfile = () => {
           
           const response = await request.put('/user/profile', formData)
           
-          if (response.code === 200) {
+          // 检查响应是否成功
+          if (response && response.code === 200) {
+            // 请求成功，处理响应数据
             const profileUpdate = {
               userName: profileForm.userName,
               email: profileForm.email,
@@ -236,38 +237,25 @@ export const useProfile = () => {
             } as any
             
             // 处理头像更新
-            let newAvatarUrl: string | undefined
-            if (response.data?.headPic) {
-              newAvatarUrl = `${API_BASE}${response.data.headPic}`
-            } else if (pendingAvatarFile.value) {
-              newAvatarUrl = profileForm.headPic || undefined
+            // 优先使用服务器返回的头像URL，避免将base64数据存储到localStorage
+            if (response?.data?.headPic) {
+              profileUpdate.headPic = response.data.headPic;
+            } else {
+              profileUpdate.headPic = DEFAULT_AVATAR;
             }
             
-            if (newAvatarUrl?.trim()) {
-                setTimeout(async () => {
-                  const isLoadable = await testImageLoad(newAvatarUrl)
-                
-                if (isLoadable) {
-                  profileUpdate.headPic = newAvatarUrl
-                  userStore.setUserProfile(profileUpdate)
-                  ElMessage.success(t('user.profileUpdated'))
-                } else {
-                  profileUpdate.headPic = userStore.info.headPic || DEFAULT_AVATAR
-                  userStore.setUserProfile(profileUpdate)
-                  ElMessage.warning('头像更新可能存在延迟，如长时间未显示请刷新页面')
-                }
-                
-                pendingAvatarFile.value = null
-              }, AVATAR_UPDATE_DELAY)
-            } else {
-              userStore.setUserProfile(profileUpdate)
-              ElMessage.success(t('user.profileUpdated'))
-            }
+            // 只存储服务器返回的头像URL，不存储base64数据
+            userStore.setUserProfile(profileUpdate);
+            ElMessage.success(t('user.profileUpdated'));
+            
+            // 清除待上传的头像文件引用
+            pendingAvatarFile.value = null;
           } else {
-            ElMessage.error(response.message || t('user.updateFailed'))
+            // 请求失败，显示错误信息
+            throw new Error(response?.message || t('user.updateFailed'))
           }
         } catch (error: any) {
-          ElMessage.error(error.response?.data?.message || t('user.updateFailed'))
+          ElMessage.error(error.message || error.response?.data?.message || t('user.updateFailed'))
         } finally {
           loading.value = false
         }
@@ -275,8 +263,8 @@ export const useProfile = () => {
     })
   }
 
-  function resetForm() {
-    fillProfileForm(userStore.info)
+  async function resetForm() {
+    await fillProfileForm(userStore.info)
     ElMessage.success(t('user.formReset'))
   }
 
@@ -293,6 +281,7 @@ export const useProfile = () => {
     computedRules,
     beforeImageUpload,
     handleImageUpload,
+    handleImageError,
     testImageLoad,
     loadUserProfile,
     submitForm,

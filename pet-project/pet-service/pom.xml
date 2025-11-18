@@ -51,10 +51,7 @@
         </dependency>
         
         <!-- PageHelper 分页插件 -->
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper</artifactId>
-        </dependency>
+        
         
         <!-- Jakarta Validation API -->
         <dependency>
@@ -67,6 +64,13 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
+        </dependency>
+        
+        <!-- FreeTTS for text-to-speech -->
+        <dependency>
+            <groupId>net.sf.sociaal</groupId>
+            <artifactId>freetts</artifactId>
+            <version>1.2.2</version>
         </dependency>
     </dependencies>
 </project>

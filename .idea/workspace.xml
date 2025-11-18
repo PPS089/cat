@@ -1,16 +1,256 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
+    <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d91dc103-88d7-48b9-aa39-2004eff9e789" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/MarsCodeWorkspaceAppSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MarsCodeWorkspaceAppSettings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pet-project/pet-common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-common/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/config/BeanUtilsConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/config/JwtProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/properties/JwtProperties.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/config/MyMetaObjectHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/config/MyMetaObjectHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/error/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/error/ErrorCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/exception/BizException.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/exception/BizException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/properties/AliyunOSSProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/properties/AliyunOSSProperties.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/result/CommonResultSchemas.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/result/Result.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/result/Result.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/result/UserLoginResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/utils/BeanUtilsHelper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/utils/DeviceUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/utils/DeviceUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/utils/IpUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/utils/IpUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/utils/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/utils/JwtUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/utils/LocationUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/java/com/example/petcommon/utils/TokenRefreshUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/test/java/com/example/petcommon/PetCommonApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/test/java/com/example/petcommon/config/MyMetaObjectHandlerUpdateTimeTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/test/java/com/example/petcommon/utils/FullJwtProcessTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-common/src/test/java/com/example/petcommon/utils/JwtUtilTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-pojo/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-pojo/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-pojo/src/main/java/com/example/petpojo/dto/PetUpdateDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-pojo/src/main/java/com/example/petpojo/dto/PetUpdateDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-pojo/src/main/java/com/example/petpojo/dto/RecordDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-pojo/src/main/java/com/example/petpojo/dto/RecordDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-pojo/src/main/java/com/example/petpojo/vo/AdoptionsVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-pojo/src/main/java/com/example/petpojo/vo/AdoptionsVo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-pojo/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-pojo/src/test/java/com/example/petpojo/PetPojoApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/PetServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/PetServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/config/AliyunOSSOperator.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/config/AliyunOSSOperator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/config/WebMvcConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/config/WebMvcConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/handler/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/handler/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/interceptor/UserContextInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/interceptor/UserContextInterceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/mapper/ListPetsMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/mapper/ListPetsMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/FosterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/FosterService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/HealthAlertsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/HealthAlertsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/HealthService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/ListPetsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/ListPetsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/MediaFilesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/MediaFilesService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/PetsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/PetsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/UsersService.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/UsersService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/AdoptionsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/AdoptionsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/ArticlesServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/ArticlesServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/FosterServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/FosterServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/HealthAlertsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/HealthAlertsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/HealthServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/ListPetsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/ListPetsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/LoginHistoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/LoginHistoryServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/MediaFilesServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/MediaFilesServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/PetRecordsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/PetRecordsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/PetsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/PetsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/ShelterServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/ShelterServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/UsersServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/service/impl/UsersServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/task/HealthAlertTask.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/task/PetTask.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/task/WebSocketTask.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/websocket/WebSocketServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/java/com/example/petservice/websocket/WebSocketServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/mapper/AdoptionMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/mapper/AdoptionMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/mapper/FosteMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/mapper/ListPetsMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/mapper/ListPetsMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/mapper/PetHealthMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/mapper/PetHealthMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/mapper/UsersMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/mapper/UsersMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/test/java/com/example/petservice/service/TestConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/test/resources/application-test.properties" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/test/resources/application-test.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/PetWebApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/PetWebApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/ArticlesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/ArticlesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/FostersController.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/FostersController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/HealthAlertsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/HealthAlertsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/MediaFilesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/MediaFilesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/MyPetsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/MyPetsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/PetRecordsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/PetRecordsController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/PetsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/PetsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/UsersController.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/java/com/example/petweb/controller/UsersController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/application-prod.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/0f85d521-027c-4de3-b5a8-2fccc46b1e1b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/12d50ae3-e406-4346-b836-2ef50101f324.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/16d53ee3-e6d7-4e5b-9a8e-ce5d66cf58d7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/1ea69996-30ae-4b8f-9f50-4c78495b9258.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/2d5cc702-c521-4713-ae36-e419e4631ec5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/308cbcea-6965-48d5-bcff-eac98ac3053b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/3708d41a-60a2-4e36-a1cb-b91d1a320129.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/3ab329ec-b4e0-4ad9-84ae-258d1807ad78.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/3bfb3d9e-a13a-481e-919b-02ea8b4099bc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/3cc540f2-497e-4a65-934e-c1a16c6e28a3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/4827d139-da42-41b2-8ef4-1d82ebaa1349.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/48d89ab3-4532-47ec-8823-9c42a72eec31.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/4c4a6d65-5736-45d5-8d66-c9e02213f35f.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/4fdf36e9-7bd9-4b90-a3ac-4bc1fe818f2b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/53a12748-ce30-41e6-b950-e722d2f40955.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/53f5140e-a468-484f-ae3e-6004d6c37477.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/55524a58-54d1-46d0-b80a-04e1165b581a.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/56345cf0-7f25-448b-b83a-6b90a3e5f9ee.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/5ad19927-b768-4bbb-a10f-c724e6b33476.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/655c36fe-37ec-414e-a95c-d2917e3e539f.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/8621e8db-d367-4c9f-bebb-418383415a96.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/8b7d3e9a-6814-4684-902c-1946946d73d2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/9afd71df-1607-4caf-9e3c-00a4dcbb759e.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/a23e84c0-27b3-493f-88b4-20edddd5642d.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/a6dcbd97-0cc7-4b5c-8805-1293fbaee57c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/a721b017-9198-466e-af68-313ca3c41d5b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/ab14cae6-cb04-489e-8d3f-8cbd72511a0c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/ac121426-5bcf-4cd8-be23-f7783195fff6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/b0f5ee74-3f69-4ddf-93e0-84df5f12f3fc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/b2338d18-147d-49b1-a562-82aec59d1952.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/c32670f9-dfc9-4baa-b11a-eb954df71eea.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/c45860e9-a6f1-4b2d-8009-8a2816b694a6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/c466fd9d-ce46-43bc-9b3d-ac7d7e13e8d8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/cb979a1a-f501-4dee-93f4-ce13c9f779ff.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/cf7b7a10-c3cb-4050-8791-19d82768a688.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/cffdde80-83bd-4986-a6ac-6be524a322df.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/ddc1f54d-2735-4842-9988-54e6545da79f.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/e140fff3-a5ad-4b2a-b3fe-2de5f4d1801f.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/e210db1f-97e5-4c16-b7bf-368a37c04563.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/e7940af8-35ca-4342-9984-74e7e8401bd3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/e9f4f8c4-50ca-424d-9f1c-a966fa5e7cd7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/efbe17f6-f7b5-4c8e-ae38-d2c6232f2ff5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/src/main/resources/static/images/fe3cfdff-990f-4d37-807b-6ac63af15b8e.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/pet-web/startup.log" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pet-project/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/src/main/java/com/example/petproject/PetProjectApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/src/main/java/com/example/petproject/PetProjectApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/src/test/java/com/example/petproject/PetProjectApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/uploads/media/074ed308-7a92-4c5d-9ce4-145ac3679fac.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-project/uploads/media/463fe996-77e8-451c-82ad-2770621d46d1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/.env" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Adoptions-CKnOMS6U.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Adoptions-DQjssI1c.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/AdoptionsPets-C4lddRJ-.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Articledetail-DoFrAeiY.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Articles-1sYqevDQ.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Articles-bAuGljg1.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Editpet-C3756HyT.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Exception-B8Ii3yqu.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Exception-BdK2rbDL.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Fosters-OSMyblGC.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Fosters-PWqN2WiD.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Health-BxRQolaa.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Health-DsEtmnWv.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Login-Cee8RSN4.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Main-Cm3Xh4Ji.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Main-ZnxnyCbN.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Mypets-CO9r6jhO.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Mypets-REbFhPsl.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Pagination-0xkjxAsg.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/PetDetail-DFpiqCDC.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Profile-CxEIh7jj.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Profile-NXhff7mW.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Records-B4LZcdKZ.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Records-jHbcvbdr.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Register-mI3ymJSv.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Setting-BJHWM3ZM.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/Welcome-aoZUHlQi.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/genderConverter-CAxqKJGy.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/genderDisplay-DkcuqKsU.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/index-BlHuAfJX.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/index-BrRsyrLM.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/request-DVyWtN3q.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/theme-nJHyLohD.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/assets/user-fUdRYWgh.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/dist/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/node_modules/.tmp/tsconfig.app.tsbuildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/node_modules/.tmp/tsconfig.app.tsbuildinfo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/node_modules/.vite/deps/_metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/node_modules/.vite/deps/_metadata.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/node_modules/.vite/deps/chunk-XDUQARWH.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/node_modules/.vite/deps/chunk-XDUQARWH.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/node_modules/.vite/deps/element-plus.js" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/node_modules/.vite/deps/element-plus.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/node_modules/.vite/deps/element-plus.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/node_modules/.vite/deps/element-plus.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/node_modules/.vite/deps/element-plus_es_components_form_index__mjs.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/node_modules/.vite/deps/element-plus_es_components_form_index__mjs.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/adoptions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/adoptions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/adoptionspets.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/adoptionspets.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/articledetail.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/articledetail.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/articles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/articles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/editpet.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/editpet.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/exception.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/fosters.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/fosters.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/health.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/health.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/login.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/login.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/main.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/media.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/media.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/mypets.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/mypets.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/petdetail.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/petdetail.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/profile.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/profile.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/records.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/records.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/register.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/register.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/api/setting.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/setting.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/components/WebSocketReminderScheduler.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/composables/useHeaderActions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/composables/useHeaderActions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/composables/useWebSocket.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/composables/useWebSocket.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/layout/Aside.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/layout/Aside.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/layout/Header.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/layout/Header.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/locales/en-US.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/locales/en-US.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/locales/zh-CN.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/locales/zh-CN.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/router/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/stores/pets.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/stores/pets.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/stores/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/stores/user.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/styles/exception.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/styles/header.css" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/styles/header.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/styles/health.css" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/styles/health.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/styles/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/styles/main.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/styles/records.css" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/styles/records.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/adoptions.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/adoptionspets.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/api.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/articledetail.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/articles.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/axios.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/editpet.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/fosters.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/health.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/login.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/mypets.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/petdetail.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/profile.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/records.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/register.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/request.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/setting.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/types/welcome.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/utils/genderConverter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/utils/genderConverter.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/utils/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/utils/request.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/utils/request.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/utils/theme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/utils/theme.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/views/Adoptions.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/views/Adoptions.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/views/Articles.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/views/Articles.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/views/Exception.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/views/Fosters.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/views/Fosters.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/views/Health.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/views/Health.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/views/Main.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/views/Main.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/views/Mypets.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/views/Mypets.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/views/Profile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/views/Profile.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/src/views/Records.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/views/Records.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/validate-locales.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet-view/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/vite.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,25 +260,43 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="353I8H38SneGN3W5tX9pjJNYuzE" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Maven.pet-web [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.pet-web [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.petproject [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.petproject [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.petproject [validate].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.PetWebApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/33185/Desktop/project&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.build.tools.auto.reload&quot;: &quot;ALL&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;build.tools&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\33185\\Desktop\\project\\pet-view\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="PetWebApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="pet-web" />
@@ -51,8 +309,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.29188.11" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.29188.11" />
       </set>
     </attachedChunks>
   </component>
@@ -64,10 +322,26 @@
       <option name="presentableId" value="Default" />
       <updated>1762332168867</updated>
       <workItem from="1762332170538" duration="31000" />
+      <workItem from="1763215386556" duration="1247000" />
+      <workItem from="1763216699956" duration="662000" />
+      <workItem from="1763217383222" duration="320000" />
+      <workItem from="1763217720069" duration="30000" />
+      <workItem from="1763271365605" duration="1870000" />
+      <workItem from="1763274286413" duration="44143000" />
+      <workItem from="1763393690067" duration="3485000" />
+      <workItem from="1763428976893" duration="7620000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pet-view/src/types/profile.d.ts" />
+        <option value="$PROJECT_DIR$/pet-view/src/types/editpet.d.ts" />
+        <option value="$PROJECT_DIR$/pet-view/src/types/axios.d.ts" />
+        <option value="$PROJECT_DIR$/pet-view/src/types/index.d.ts" />
+      </list>
+    </option>
   </component>
 </project>

@@ -10,6 +10,11 @@ import java.util.List;
 public interface HealthAlertsService extends IService<HealthAlerts> {
     
     /**
+     * 获取用户的健康提醒列表（包含所有状态，用于清理任务）
+     */
+    List<HealthAlertsVo> getAllUserHealthAlerts(Integer userId);
+    
+    /**
      * 获取用户的健康提醒列表
      */
     List<HealthAlertsVo> getUserHealthAlerts(Integer userId);
@@ -20,27 +25,12 @@ public interface HealthAlertsService extends IService<HealthAlerts> {
     List<HealthAlertsVo> getHealthAlertsByPetId(Integer pid);
     
     /**
-     * 更新健康提醒状态
-     */
-    boolean updateAlertStatus(Integer healthId, String status);
-    
-    /**
      * 创建健康提醒
-     */
-    HealthAlertsVo createHealthAlert(HealthAlerts healthAlert);
-    
-    /**
-     * 通过DTO创建健康提醒
      */
     HealthAlertsVo createHealthAlert(HealthDto healthDto);
     
     /**
      * 更新健康提醒
-     */
-    HealthAlertsVo updateHealthAlert(HealthAlerts healthAlert);
-    
-    /**
-     * 通过DTO更新健康提醒
      */
     HealthAlertsVo updateHealthAlert(Integer healthId, HealthDto healthDto);
     

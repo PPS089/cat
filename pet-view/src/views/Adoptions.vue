@@ -27,26 +27,15 @@
               <p class="pet-age">{{ adoption.pet.age }}{{ t('user.yearsOld') }} · {{ getDisplayGender(adoption.pet.gender) }}</p>
             </div>
             <div class="adoption-info">
-              <div class="info-item">
-                <span class="label">{{ t('user.adoptionDate') }}：</span>
-                <span class="value">{{ formatDate(adoption.adoptDate) }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">{{ t('user.shelter') }}：</span>
-                <span class="value">{{ adoption.shelter.name }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">{{ t('user.status') }}：</span>
-                <el-tag 
-                  :type="'warning'"
-                >
-                  {{ getStatusText(adoption.pet.status) }}
-                </el-tag>
-
-              </div>
+              <span class="label">{{ t('user.shelter') }}:</span>
+              <span class="value">{{ adoption.shelter.sname }}</span>
+            </div>
+            <div class="adoption-info">
+              <span class="label">{{ t('user.status') }}:</span>
+              <span class="value">{{ getStatusText(adoption.pet.petStatus) }}</span>
             </div>
             <div class="adoption-actions">
-              <el-button type="primary" size="small" @click="viewAdoptionTimeline(adoption.pet.id, adoption.pet.name)">
+              <el-button type="primary" size="small" @click="viewAdoptionTimeline(adoption.pet.pid, adoption.pet.name)">
                 {{ t('user.viewAdoptionTimeline') }}
               </el-button>
             </div>
@@ -79,15 +68,12 @@ import { onMounted, provide } from 'vue'
 import { Star } from '@element-plus/icons-vue'
 import { useAdoptions, useAdoptionTimeline } from '@/api/adoptions'
 import { useI18n } from 'vue-i18n'
-import { useFormatDate } from '@/utils/index'
 import { getDisplayGender } from '@/utils/genderDisplay'
 import Dialog from '@/components/Dialog.vue'
 import Pagination from '@/components/Pagination.vue'
 
 // 使用领养记录组合式函数
 const { t } = useI18n()
-
-const formatDate = useFormatDate().formatDate
 
 // 使用领养时间线组合式函数 - 共享整个实例
 const adoptionTimeline = useAdoptionTimeline()

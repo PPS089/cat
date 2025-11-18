@@ -52,8 +52,8 @@ export const useArticles = () => {
         }))
         
         // 处理分页数据
-        total.value = response.data.total || 0
-        totalPages.value = response.data.pages || 0
+        total.value = data.total || 0
+        totalPages.value = data.pages || 0
       } else {
         ElMessage.error(t('api.getArticleListFailed'))
       }
@@ -122,7 +122,7 @@ export const useArticles = () => {
   // 处理图片加载错误
   const handleImageError = (event: Event): void => {
     const img = event.target as HTMLImageElement
-    img.src = '/images/default-article.jpg'
+    img.src = '/pet.png'
   }
 
 

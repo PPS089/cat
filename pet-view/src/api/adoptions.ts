@@ -3,6 +3,7 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import request from '@/utils/request'
 import type { AdoptionTimelineItem, AdoptionTimelineResponse, Adoption } from '../types/adoptions'
+import type { PageResult } from '@/types/api'
 import { useRouter } from 'vue-router'
 import { useThemeStore } from '@/stores/theme'
 
@@ -119,7 +120,7 @@ export const useLoadAdoptions = () => {
       pageSize.value = size
       
       // 获取领养记录
-      const response = await request.get<import('@/types/api').PageResult<any>>(`/user/adoptions`, {
+      const response = await request.get<PageResult<Adoption>>(`/user/adoptions`, {
         params: {
           current_page: page,
           per_page: size
@@ -132,30 +133,32 @@ export const useLoadAdoptions = () => {
         
         total.value = result.total
         
+        // 转换API数据格式到组件需要的格式
         const convertedAdoptions = result.records.map((item: any) => {
-        return {
+          return {
             id: item.aid,
             adoptDate: item.adoptionDate,
             foster_status: 'available',
             pet: {
-            id: item.pid,
-            name: item.name,
-            breed: item.breed,
-            age: item.age,
-            gender: item.gender,
-            image: item.image ? (item.image.startsWith('http') ? item.image : `/api/images/${item.image}`) : '/src/assets/img/dog.jpg',
-            status: item.petStatus 
+              pid: item.pid,
+              name: item.name,
+              species: item.species || '',
+              breed: item.breed,
+              age: item.age,
+              gender: item.gender,
+              image: item.image ? (item.image.startsWith('http') ? item.image : `/api/images/${item.image}`) : '/src/assets/img/dog.jpg',
+              petStatus: item.petStatus || ''
             },
             shelter: {
-            id: item.sid,
-            name: item.sname,
-            location: item.location
+              sid: item.sid,
+              sname: item.sname || '',
+              location: item.location || ''
             }
-        }
-    })
+          }
+        })
         adoptions.value = convertedAdoptions
-    }
-} catch (error) {
+      }
+    } catch (error) {
       ElMessage.error(t('user.loadAdoptionsFailed'))
     }
   }

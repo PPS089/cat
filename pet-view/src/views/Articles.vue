@@ -73,7 +73,7 @@
 
     <!-- 分页 -->
     <Pagination
-      v-if="totalPages > 1"
+      v-if="totalPages >=1"
       :current-page="currentPage"
       :page-size="pageSize"
       :total="total"

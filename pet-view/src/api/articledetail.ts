@@ -30,9 +30,9 @@ export const useArticleDetail = () => {
     try {
       const response = await request.get(`/articles/${articleId}`)
       // 检查响应结构 - 支持不同的响应格式
-      if ((response as any).code === 200 && (response as any).data) {
+      if (response.code === 200 && response.data) {
         // 将后端camelCase字段转换为前端snake_case字段
-        const articleData = (response as any).data
+        const articleData = response.data
         article.value = {
           id: articleData.id || 0,
           title: articleData.title || '',

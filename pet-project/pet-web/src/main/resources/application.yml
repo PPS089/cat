@@ -1,8 +1,16 @@
+# 公共配置（开发/生产都能用）
 spring:
   application:
     name: pet-web
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}  # 核心：用环境变量激活环境，默认开发环境
   main:
     allow-circular-references: true
+  web:
+    resources:
+      static-locations:
+        - classpath:/static/
+        - file:${app.upload-dir}/images/
   # DevTools 热部署配置
   devtools:
     restart:
@@ -10,39 +18,33 @@ spring:
       # 排除不需要触发重启的资源
       exclude: static/**,public/**,*.log
       additional-exclude: target/classes/com/example/demo/entity/**,target/classes/com/example/demo/mapper/**
-  # 标准Spring Boot数据源配置
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:pet_project}?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8&allowPublicKeyRetrieval=true
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:zx4221335}
-    type: com.alibaba.druid.pool.DruidDataSource
-  # SQL初始化配置
-  sql:
-    init:
-      mode: always
-      continue-on-error: true
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
 
 # 服务器配置
 server:
   port: 8080
+  address: 0.0.0.0
   servlet:
     context-path: /api
 
 # Redis配置
 pet:
-  redis:
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:zx4221335}
-    database: ${REDIS_DATABASE:0}
+  # redis:
+  #   host: ${REDIS_HOST:localhost}
+  #   port: ${REDIS_PORT:6379}
+  #   password: ${REDIS_PASSWORD:zx4221335}
+  #   database: ${REDIS_DATABASE:0}
   jwt:
-    admin-secret-key: ${JWT_ADMIN_SECRET_KEY:itcastSecretKeyThatIsLongEnoughForHS256AlgorithmRequirements}
-    admin-ttl: ${JWT_ADMIN_TTL:7200000}
-    admin-token-name: ${JWT_ADMIN_TOKEN_NAME:token}
     user-secret-key: ${JWT_USER_SECRET_KEY:itheimaSecretKeyThatIsLongEnoughForHS256AlgorithmRequirements}
-    user-ttl: ${JWT_USER_TTL:86400000}
-    user-token-name: ${JWT_USER_TOKEN_NAME:authentication}
+    refresh-secret-key: ${JWT_REFRESH_SECRET_KEY:itheimaRefreshSecretKeyThatIsLongEnoughForHS256AlgorithmRequirements}
+    user-ttl: ${JWT_USER_TTL:7200000}
+    refresh-ttl: ${JWT_REFRESH_TTL:604800000}
+#    user-ttl: ${JWT_USER_TTL:60000}
+#    refresh-ttl: ${JWT_REFRESH_TTL:120000}
 
 # MyBatis Plus 配置
 mybatis-plus:
@@ -71,7 +73,7 @@ logging:
 # 应用配置
 app:
   upload-dir: ${UPLOAD_DIR:${java.io.tmpdir}demo-project-uploads/media}
-  upload-max-size: ${UPLOAD_MAX_SIZE:52428850}
+  upload-max-size: ${UPLOAD_MAX_SIZE:524288500}  # 500MB
 
 # SpringDoc OpenAPI 配置
 springdoc:
@@ -85,11 +87,61 @@ springdoc:
   # 确保导出的OpenAPI规范包含服务器信息
   writer-with-default-pretty-printer: true
 
-# 阿里云OSS配置
+# Knife4j配置
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+    enable-swagger-models: true
+    enable-document-manage: true
+    swagger-model-name: Swagger Models
+    enable-version: false
+    enable-reload-cache-parameter: false
+    enable-after-script: true
+    enable-filter-multipart-api-method-type: POST
+    enable-filter-multipart-apis: false
+    enable-request-cache: true
+    enable-host: false
+    enable-host-text: ''
+    enable-terms-of-service: false
+    enable-include-pattern: ''
+    enable-plus: false
+    enable-footer: false
+    enable-footer-custom: false
+    footer-custom-content: ''
+    enable-search: false
+    enable-open-api: false
+    enable-group: false
+
+# 阿里云OSS配置 
 aliyun:
   oss:
+    # OSS接入点，根据实际地域修改
     endpoint: ${ALIYUN_OSS_ENDPOINT:oss-cn-hangzhou.aliyuncs.com}
-    access-key-id: ${ALIYUN_OSS_ACCESS_KEY_ID:LTAI5tPeFLzsPPT8gG3LPW64}
-    access-key-secret: ${ALIYUN_OSS_ACCESS_KEY_SECRET:U6k1brOZ8gaOIXv3nXbulGTUzy6Pd7}
-    bucket-name: ${ALIYUN_OSS_BUCKET_NAME:sky-take-out}
+    # Bucket名称
+    bucket-name: ${ALIYUN_OSS_BUCKET_NAME:cjs-pet-project}
+    # 地域ID
     region: ${ALIYUN_OSS_REGION:cn-hangzhou}
+    # 访问路径前缀
+    url-prefix: ${ALIYUN_OSS_URL_PREFIX:https://cjs-pet-project.oss-cn-hangzhou.aliyuncs.com/}
+    # 访问密钥ID和密钥
+    access-key-id: ${ALIYUN_OSS_ACCESS_KEY_ID:LTAI5tDw2XP2rTZdtFtmAyZV}
+    access-key-secret: ${ALIYUN_OSS_ACCESS_KEY_SECRET:woB6fu72wLJNAplv4B9AQHPRPzdoqF}
+
+# 健康提醒清理配置
+health:
+  reminder:
+    cleanup:
+      # 不同健康类型的过期天数配置
+      expiry-days:
+        default: 1
+        疫苗接种: 7
+        驱虫: 5
+        体检: 3
+        洗澡: 2
+      # 归档阈值（过期后多少天归档）
+      archive-threshold-days: 30
+      # 是否启用自动删除超长期归档记录
+      enable-deletion: true
+      # 删除阈值（归档后多少天删除）
+      deletion-threshold-days: 365

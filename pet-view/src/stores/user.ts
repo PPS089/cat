@@ -1,23 +1,42 @@
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
-import type{ userInfo } from '@/types/profile'
+import type { UserInfo } from '@/types/profile'
 import { fetchUserProfileFromAPI } from '@/api/profile'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import dogImage from '@/assets/img/dog.jpg'
 
+// 常量定义
+const DEFAULT_AVATAR = dogImage
+
 
 export const useUserStore = defineStore('user', () => {
+  // 清理localStorage中的base64数据
+  const cleanStoredUserInfo = (userInfoStr: string | null) => {
+    if (!userInfoStr) return null;
+    
+    try {
+      const userInfo = JSON.parse(userInfoStr);
+      // 如果头像是base64数据，替换为默认头像
+      if (userInfo.headPic && userInfo.headPic.startsWith('data:image')) {
+        userInfo.headPic = DEFAULT_AVATAR;
+      }
+      return userInfo;
+    } catch (e) {
+      return null;
+    }
+  };
+  
   // 从localStorage读取初始数据
-  const storedInfo = localStorage.getItem('userInfo')
+  const storedInfo = cleanStoredUserInfo(localStorage.getItem('userInfo'));
   const storedUserId = localStorage.getItem('userId')
   const storedUserName = localStorage.getItem('userName')
   
   // 如果有存储的用户信息，使用存储的，否则创建初始对象
-  let initialInfo: userInfo
+  let initialInfo: UserInfo
   if (storedInfo) {
     try {
-      initialInfo = JSON.parse(storedInfo)
+      initialInfo = storedInfo;
       // 确保userId存在且有效
       if (!initialInfo.userId && storedUserId) {
         initialInfo.userId = parseInt(storedUserId)
@@ -48,7 +67,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   // 状态管理
-  const info = reactive<userInfo>(initialInfo)
+  const info = reactive<UserInfo>(initialInfo)
   
   // 请求锁，防止重复请求
   let isFetchingProfile = false
@@ -60,13 +79,6 @@ export const useUserStore = defineStore('user', () => {
     if (isFetchingProfile && fetchPromise) {
       return fetchPromise
     }
-    
-    // 如果已经有完整的用户信息，直接返回
-    if (info.userId && info.userId !== 0 && info.userName && info.userName !== '') {
-      return Promise.resolve()
-    }
-    
-    // 如果只有userId但其他信息为空，仍然需要获取完整资料
     
     
     // 设置请求锁
@@ -87,7 +99,8 @@ export const useUserStore = defineStore('user', () => {
             
             // 设置新的用户信息
             info.userName = result.data.userName || ''
-            info.headPic = result.data.headPic  ? `/api/images/${result.data.headPic}` : dogImage
+            // 直接使用返回的头像URL，可能是OSS完整URL或文件名
+            info.headPic = result.data.headPic || dogImage
             info.email = result.data.email || ''
             info.phone = result.data.phone || ''
             info.introduce = result.data.introduce || ''
@@ -102,8 +115,13 @@ export const useUserStore = defineStore('user', () => {
             }
           }
           
-          // 持久化到localStorage
-          localStorage.setItem('userInfo', JSON.stringify(info))
+          // 持久化到localStorage，但不存储base64数据
+          const userInfoToStore = {
+            ...info,
+            // 如果头像是base64数据，存储默认头像或空字符串
+            headPic: info.headPic.startsWith('data:image') ? DEFAULT_AVATAR : info.headPic
+          };
+          localStorage.setItem('userInfo', JSON.stringify(userInfoToStore))
         } else {
           // 只有在真正获取用户资料失败时才显示错误消息
           if (result.message !== '用户未登录或缺少必要信息') {
@@ -151,12 +169,19 @@ export const useUserStore = defineStore('user', () => {
         localStorage.setItem('userName', info.userName)
       }
       if (profile.headPic) {
-        info.headPic = profile.headPic
-        localStorage.setItem('headPic', info.headPic)
+        // 只存储服务器返回的头像URL，不存储base64数据
+        if (profile.headPic.startsWith('data:image')) {
+          // 如果是base64数据，只在内存中更新，不存储到localStorage
+          info.headPic = profile.headPic
+        } else {
+          // 如果是URL，同时更新内存和localStorage
+          info.headPic = profile.headPic
+          localStorage.setItem('headPic', info.headPic)
+        }
       }
       if (profile.email !== undefined) {
         info.email = profile.email
-        localStorage.setItem('email', profile.email)
+        localStorage.setItem('email', info.email)
       }
       if (profile.phone !== undefined) {
         info.phone = profile.phone
@@ -167,8 +192,13 @@ export const useUserStore = defineStore('user', () => {
         localStorage.setItem('introduce', profile.introduce)
       }
       
-      // 同步更新完整的userInfo到localStorage
-      localStorage.setItem('userInfo', JSON.stringify(info))
+      // 同步更新完整的userInfo到localStorage，但不包含base64数据
+      const userInfoToStore = {
+        ...info,
+        // 如果头像是base64数据，存储默认头像或空字符串
+        headPic: info.headPic.startsWith('data:image') ? DEFAULT_AVATAR : info.headPic
+      };
+      localStorage.setItem('userInfo', JSON.stringify(userInfoToStore))
     }
 
   // 设置用户名
@@ -179,5 +209,21 @@ export const useUserStore = defineStore('user', () => {
 
 
   // 必须返回info供组件使用
-  return { info, fetchProfile , changePassword , setUserProfile, setUsername}
+  const resetUser = () => {
+    info.userId = 0
+    info.userName = ''
+    info.headPic = dogImage
+    info.email = ''
+    info.phone = ''
+    info.introduce = ''
+    localStorage.removeItem('userInfo')
+    localStorage.removeItem('userName')
+    localStorage.removeItem('headPic')
+    localStorage.removeItem('email')
+    localStorage.removeItem('phone')
+    localStorage.removeItem('introduce')
+    localStorage.removeItem('jwt_token')
+  }
+
+  return { info, fetchProfile , changePassword , setUserProfile, setUsername, resetUser}
 })

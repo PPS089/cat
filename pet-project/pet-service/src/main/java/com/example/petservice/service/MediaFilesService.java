@@ -30,14 +30,13 @@ public interface MediaFilesService extends IService<MediaFiles> {
     /**
      * 保存媒体文件
      * @param recordId 记录ID
-     * @param uid 用户ID（已废弃，实际使用UserContext中的用户ID）
      * @param fileName 文件名
      * @param filePath 文件路径
      * @param mediaType 媒体类型
      * @param fileSize 文件大小
      * @return 媒体文件信息
      */
-    MediaFileVo saveMediaFile(Integer recordId, @Deprecated Integer uid, String fileName, String filePath, String mediaType, Long fileSize);
+    MediaFileVo saveMediaFile(Integer recordId, String fileName, String filePath, String mediaType, Long fileSize);
     
     /**
      * 上传媒体文件

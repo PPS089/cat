@@ -6,7 +6,6 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.petpojo.entity.Fosters;
-import com.example.petpojo.entity.enums.CommonEnum;
 import com.example.petpojo.vo.FostersVo;
 
 public interface FosterService extends IService<Fosters> {
@@ -27,9 +26,8 @@ public interface FosterService extends IService<Fosters> {
     /**
      * 删除寄养信息
      * @param id 寄养信息id
-     * @return 删除结果状态
      */
-     CommonEnum.FosterDeleteResultEnum deleteFoster(Integer id);
+     void deleteFoster(Integer id);
      /**
       * 查询寄养信息
       * @return 寄养信息

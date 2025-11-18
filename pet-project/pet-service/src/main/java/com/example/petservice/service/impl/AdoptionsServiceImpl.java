@@ -21,8 +21,8 @@ import com.example.petpojo.vo.AdoptionTimelineVo;
 import com.example.petpojo.vo.AdoptionsVo;
 import com.example.petpojo.vo.AdoptionsWithFosterStatusVo;
 import com.example.petpojo.vo.FostersVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.example.petcommon.exception.BizException;
 import com.example.petcommon.error.ErrorCode;
 
@@ -32,24 +32,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions> implements AdoptionsService {
 
-    @Autowired
-    private AdoptionsMapper adoptionsMapper;
-    
-    @Autowired
-    private FosterMapper fosterMapper;
-    
-    @Autowired
-    private PetsMapper petsMapper;
-    
-    @Autowired
-    private SheltersMapper sheltersMapper;
-    
-    @Autowired
-    private UsersMapper usersMapper;
+    private final AdoptionsMapper adoptionsMapper;
+    private final FosterMapper fosterMapper;
+    private final PetsMapper petsMapper;
+    private final SheltersMapper sheltersMapper;
+    private final UsersMapper usersMapper;
     
     /**
      * 创建领养信息
@@ -89,6 +82,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
      * @return 领养信息列表
      */
     @Override
+    @Transactional(readOnly = true)
     public List<AdoptionsVo> adoptionInfo(Integer currentPage, Integer pageSize) {
         Integer offset = (currentPage - 1) * pageSize;
         List<AdoptionsVo> adoptionsVo =adoptionsMapper.getAdoptionsInfo(offset, pageSize, UserContext.getCurrentUserId().intValue());
@@ -103,6 +97,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
      * @return 用户领养记录列表
      */
     @Override
+    @Transactional(readOnly = true)
     public List<AdoptionsVo> getUserAdoptions(Long userId, Integer currentPage, Integer pageSize) {
         Integer offset = (currentPage - 1) * pageSize;
         return adoptionsMapper.getUserAdoptions(userId.intValue(), offset, pageSize);
@@ -116,6 +111,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
      * @return 用户领养记录列表
      */
     @Override
+    @Transactional(readOnly = true)
     public List<AdoptionsVo> getUserAdoptionsSimple(Long userId, Integer currentPage, Integer pageSize) {
         Integer offset = (currentPage - 1) * pageSize;
         return adoptionsMapper.getUserAdoptionsSimple(userId.intValue(), offset, pageSize);
@@ -129,6 +125,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
      * @return 领养记录分页对象
      */
     @Override
+    @Transactional(readOnly = true)
     public IPage<AdoptionsVo> getUserAdoptionsWithPage(Long userId, Integer currentPage, Integer pageSize) {
         // 创建分页对象
         Page<AdoptionsVo> page = new Page<>(currentPage, pageSize);
@@ -145,6 +142,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
      * @return 用户领养记录列表（带寄养状态）
      */
     @Override
+    @Transactional(readOnly = true)
     public List<AdoptionsWithFosterStatusVo> getUserAdoptionsWithFosterStatus(Long userId, Integer currentPage, Integer pageSize) {
         // 1. 获取用户的领养记录
         Integer offset = (currentPage - 1) * pageSize;
@@ -220,6 +218,7 @@ public class AdoptionsServiceImpl extends ServiceImpl<AdoptionsMapper, Adoptions
      * @return 领养时间线数据
      */
     @Override
+    @Transactional(readOnly = true)
     public AdoptionTimelineResponse getAdoptionTimeline(Integer petId, Long userId) {
         // 获取宠物信息
         Pets pet = petsMapper.selectById(petId);

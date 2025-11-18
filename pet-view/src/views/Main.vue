@@ -28,16 +28,7 @@ useUserLayout()
 
 <style scoped>
 .user-layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-.layout-container {
-  display: flex;
-  flex: 1;
-  min-height: 0;
 }
 
 .sidebar-container {
@@ -45,28 +36,37 @@ useUserLayout()
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border-right: 1px solid rgba(228, 231, 237, 0.5);
+  border-right: none;
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.08);
-  position: relative;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: hidden;
   z-index: 10;
 }
 
 .main-content {
-    flex: 1;
-    min-width: 0;
-    padding: 0;
-    position: relative;
-    overflow: hidden;
-  }
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-left: 260px;
+  height: calc(100vh - 80px);
+  overflow-y: hidden;
+}
 
 .content-wrapper {
-  height: 100%;
+  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   background: transparent;
   padding: 1rem;
   box-sizing: border-box;
   max-width: 100%;
+  height: 100%;
 }
 
 /* 暗色主题支持 */
@@ -76,7 +76,27 @@ useUserLayout()
 
 :deep(.dark) .sidebar-container {
   background: rgba(30, 30, 40, 0.95);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: none;
+}
+
+/* 确保布局高度正确 */
+html, body, #app {
+  height: 100%;
+  overflow: hidden;
+}
+
+.user-layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  height: calc(100vh - 80px);
+  margin-top: 80px;
 }
 
 /* 响应式设计 */
@@ -89,7 +109,7 @@ useUserLayout()
     width: 100%;
     height: auto;
     max-height: 200px;
-    overflow-y: auto;
+    overflow-y: hidden;
   }
   
 /* 小屏幕上移除宽度限制 */

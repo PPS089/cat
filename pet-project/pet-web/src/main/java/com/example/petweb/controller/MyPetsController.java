@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.petcommon.result.Result;
 import com.example.petservice.service.ListPetsService;
-import com.example.petcommon.exception.BizException;
-import com.example.petcommon.error.ErrorCode;
-import com.example.petpojo.vo.PetListVo; // 更改为新的VO类
+import com.example.petpojo.vo.PetListVo; 
+import com.example.petpojo.vo.PetsDetailsVo;
 
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 @SecurityRequirement(name = "bearer-key")
 public class MyPetsController {
 
-    /* 1. 注入 Service，用 Lombok 的 @RequiredArgsConstructor 生成构造器 */
     private final ListPetsService listPetsService;
 
     /**
@@ -51,9 +49,6 @@ public class MyPetsController {
 
     }
 
-
-   
-
     /**
      * 我的宠物界面根据ID获取宠物详情，用于编辑
      * @param petId 宠物ID
@@ -61,13 +56,10 @@ public class MyPetsController {
      */
     @GetMapping("/available/{petId}")
     @Operation(summary = "根据ID获取宠物详情", description = "根据宠物ID获取可领养宠物的详细信息")
-    public Result<PetListVo> getPetById(
+    public Result<PetsDetailsVo> getPetById(
             @PathVariable("petId") Integer petId) {
         log.info("获取宠物详情，宠物ID: {}", petId);
-        PetListVo pet = listPetsService.getPetById(petId);
-        if (pet == null) {
-            throw new BizException(ErrorCode.PET_NOT_FOUND);
-        }
+        PetsDetailsVo pet = listPetsService.getPetById(petId);
         return Result.success(pet);
     }
 

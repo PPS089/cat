@@ -22,6 +22,8 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         this.fillStrategy(metaObject, "createdAt", now);
         this.fillStrategy(metaObject, "created_at", now);
         this.fillStrategy(metaObject, "gmtCreate", now);
+        // 添加对Users实体类createAt字段的支持
+        this.fillStrategy(metaObject, "createAt", now);
         
         // 填充开始日期（针对fosters表的start_date字段）
         this.fillStrategy(metaObject, "startDate", now);

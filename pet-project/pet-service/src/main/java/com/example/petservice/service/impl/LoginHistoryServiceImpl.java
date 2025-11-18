@@ -2,6 +2,8 @@ package com.example.petservice.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.petcommon.context.UserContext;
+import com.example.petcommon.error.ErrorCode;
+import com.example.petcommon.exception.BizException;
 import com.example.petpojo.entity.LoginHistory;
 import com.example.petservice.mapper.LoginHistoryMapper;
 import com.example.petservice.service.LoginHistoryService;
@@ -39,8 +41,8 @@ public class LoginHistoryServiceImpl extends ServiceImpl<LoginHistoryMapper, Log
             // 将枚举转换为字符串
             vo.setStatus(loginHistory.getStatus() != null ? loginHistory.getStatus().name() : "SUCCESS");
         } catch (Exception e) {
-            // 捕获属性复制异常，包装为运行时异常抛出
-            throw new RuntimeException("登录记录转换为VO失败", e);
+            // 捕获属性复制异常，使用统一的错误处理抛出业务异常
+            throw new BizException(ErrorCode.LOGIN_HISTORY_CONVERT_FAILED);
         }
         return vo;
     }
@@ -58,7 +60,7 @@ public class LoginHistoryServiceImpl extends ServiceImpl<LoginHistoryMapper, Log
         }
 
         List<LoginHistory> loginHistories = lambdaQuery()
-                .eq(LoginHistory::getUserId, currentUserId.longValue())
+                .eq(LoginHistory::getUserId, currentUserId)
                 .ge(LoginHistory::getLoginTime, LocalDateTime.now().minusDays(7))
                 .orderByDesc(LoginHistory::getLoginTime)
                 .list();
@@ -74,10 +76,9 @@ public class LoginHistoryServiceImpl extends ServiceImpl<LoginHistoryMapper, Log
     @Override
     public void clearLoginHistory() {
         Long currentUserId = UserContext.getCurrentUserId();
-        
         // 删除当前用户的所有登录历史记录
         lambdaUpdate()
-                .eq(LoginHistory::getUserId, currentUserId.longValue())
+                .eq(LoginHistory::getUserId, currentUserId)
                 .remove();
     }
 

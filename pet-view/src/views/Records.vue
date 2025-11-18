@@ -31,8 +31,6 @@
     </div>
 
     <!-- 控制栏 -->
-
-    <!-- 控制栏 -->
     <div class="controls-section">
       <div class="filter-group">
         <div style="position: relative;">
@@ -148,12 +146,14 @@
                   @click="openMediaModal([], event.record_id)"
                   style="cursor: pointer;"
                 >
-                <video 
+                <div 
                   v-else-if="media.media_type === 'video'" 
-                  :src="media.media_url"
+                  class="video-thumbnail"
                   @click="openMediaModal([], event.record_id)"
                   style="cursor: pointer;"
-                ></video>
+                >
+                  <span class="video-icon">🎬</span>
+                </div>
               </div>
               <div 
                 v-if="event.media_list.length > 3" 
@@ -244,7 +244,7 @@
             :key="date"
             class="timeline-group"
           >
-            <div class="timeline-date">{{ formatDate(date) }}</div>
+            <div class="timeline-date">{{ date }}</div>
             <div class="timeline-items">
               <div 
                 v-for="event in events" 
@@ -359,10 +359,49 @@
             ></textarea>
           </div>
 
+          <!-- 已有媒体文件（仅在编辑时显示） -->
+          <div class="form-group" v-if="showEditModal && formData.record_id && currentMediaList.length">
+            <label>{{ t('records.existingMedia') }}</label>
+            <div class="existing-media-grid">
+              <div 
+                v-for="media in currentMediaList" 
+                :key="media.id" 
+                class="existing-media-item"
+              >
+                <div class="media-thumb" @click="openMediaModal(currentMediaList, Number(formData.record_id))">
+                  <img 
+                    v-if="media.media_type === 'image'" 
+                    :src="media.media_url" 
+                    :alt="media.media_name"
+                  >
+                  <div v-else class="video-placeholder">
+                    <span>🎬</span>
+                  </div>
+                </div>
+                <div class="media-actions">
+                  <button 
+                    type="button" 
+                    class="delete-media-btn" 
+                    @click="handleDeleteMedia(media.id)"
+                    :title="t('records.deleteMedia')"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="form-group">
             <label>{{ t('records.mediaFiles') }}</label>
             <div class="media-upload">
-              <div class="upload-area">
+              <div 
+                class="upload-area"
+                @drop="handleDrop"
+                @dragover.prevent="handleDragOver"
+                @dragleave="handleDragLeave"
+                :class="{ 'drag-over': isDragOver }"
+              >
                 <input 
                   type="file" 
                   multiple 
@@ -483,8 +522,12 @@
                     :key="`video-${currentMediaIndex}`"
                     :src="currentMediaList[currentMediaIndex].media_url"
                     controls
+                    controlsList="nodownload noplaybackrate"
                     class="media-video"
-                    :autoplay="true"
+                    preload="metadata"
+                    @loadedmetadata="onVideoLoaded"
+                    @error="onVideoError"
+                    @volumechange="onVolumeChange"
                   ></video>
                 </Transition>
               </div>
@@ -535,6 +578,7 @@
                   </div>
                 </div>
               </div>
+
             </div>
             
             <!-- 空状态 -->
@@ -550,7 +594,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, nextTick } from 'vue'
+import { onMounted, nextTick, onUnmounted } from 'vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useRecords } from '@/api/records'
 import { useThemeStore } from '@/stores/theme'
@@ -582,6 +627,7 @@ const {
   // 表单数据
   formData,
   filePreviews,
+  isDragOver,
   currentMediaList,
   
   // 计算属性
@@ -598,21 +644,80 @@ const {
   getMoodClass,
   formatDate,
   handleFileUpload,
+  handleDragOver,
+  handleDragLeave,
+  handleDrop,
   removeFile,
   getFileIcon,
   formatFileSize,
   openMediaModal,
+  refreshMediaList,
   closeMediaModal,
   nextMedia, // 添加切换方法
   prevMedia,
   selectMedia,
   editEvent,
   deleteEvent,
+  deleteMediaFile,
   saveEvent,
   closeModal
 } = useRecords()
 
- onMounted(async () => {
+const handleDeleteMedia = async (mid: number) => {
+  try {
+    await ElMessageBox.confirm(
+      t('records.confirmDeleteMedia'),
+      t('common.deleteConfirmation'),
+      { confirmButtonText: t('common.confirm'), cancelButtonText: t('common.cancel'), type: 'warning' }
+    )
+    await deleteMediaFile(mid)
+    // 删除成功后重新拉取当前事件的媒体列表
+    if (formData.record_id) {
+      await refreshMediaList(Number(formData.record_id))
+    }
+    // 重新获取事件列表以更新媒体数量显示
+    await fetchEvents()
+  } catch (err) {
+    if (err !== 'cancel') console.error(err)
+  }
+}
+
+// 视频加载完成事件处理
+const onVideoLoaded = (event: Event) => {
+  const video = event.target as HTMLVideoElement;
+  console.log('视频加载完成:', video.src);
+  
+  // 恢复用户之前的音量设置
+  const savedVolume = localStorage.getItem('videoVolume');
+  if (savedVolume) {
+    video.volume = parseFloat(savedVolume);
+  }
+  
+  // 确保视频不会自动播放
+  video.autoplay = false;
+}
+
+// 视频播放错误处理
+const onVideoError = (event: Event) => {
+  const video = event.target as HTMLVideoElement;
+  console.error('视频播放出错:', video.src, event);
+  ElMessage.error('视频播放出错，请检查文件格式或网络连接');
+}
+
+// 音量变化处理
+const onVolumeChange = (event: Event) => {
+  const video = event.target as HTMLVideoElement;
+  console.log('视频音量变化:', video.volume);
+  // 可以在这里保存用户的音量偏好到本地存储
+  localStorage.setItem('videoVolume', video.volume.toString());
+}
+
+// 组件卸载时清理localStorage中的视频音量设置
+onUnmounted(() => {
+  localStorage.removeItem('videoVolume');
+})
+
+onMounted(async () => {
     // 先获取宠物数据
     await fetchPets()
     
@@ -625,6 +730,4 @@ const {
 </script>
 
 
-<style scoped>
-@import '../styles/records.css'
-</style>
+<style src="../styles/records.css"></style>

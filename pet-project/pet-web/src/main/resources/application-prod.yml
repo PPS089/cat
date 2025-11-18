@@ -5,33 +5,41 @@ server:
 spring:
   # 生产环境数据源配置
   datasource:
-    url: jdbc:mysql://localhost:3306/pet_project?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:pet_project}?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:zx4221335}
-    driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
+  # SQL初始化配置
+  sql:
+    init:
+      mode: always
+      continue-on-error: true
     
   # Redis配置
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:zx4221335}
-      database: ${REDIS_DATABASE:0}
-      timeout: 5000ms
-      lettuce:
-        pool:
-          max-active: 20
-          max-idle: 10
-          min-idle: 5
-          max-wait: -1ms
+  # data:
+  #   redis:
+  #     host: ${REDIS_HOST:localhost}
+  #     port: ${REDIS_PORT:6379}
+  #     password: ${REDIS_PASSWORD:zx4221335}
+  #     database: ${REDIS_DATABASE:0}
+  #     timeout: 5000ms
+  #     lettuce:
+  #       pool:
+  #         max-active: 20
+  #         max-idle: 10
+  #         min-idle: 5
+  #         max-wait: -1ms
 
 # 日志级别
 logging:
   level:
     com.example: info
     org.springframework: info
+    org.springframework.web: info
+    org.springframework.boot.autoconfigure: info
     com.baomidou.mybatisplus: info
+    com.example.petcommon: info
     root: warn
 
 # 生产环境特定标志

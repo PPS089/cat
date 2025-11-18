@@ -71,42 +71,6 @@ export const getLanguage = () => {
   return themeStore.preferences.language
 }
 
-// 主题工具类
-export class ThemeUtils {
-  private themeStore = useThemeStore()
-  
-  get preferences() {
-    return this.themeStore.preferences
-  }
-  
-  updatePreferences(preferences: Partial<ThemePreferences>) {
-    this.themeStore.updatePreferences(preferences)
-  }
-  
-  updatePreference<K extends keyof ThemePreferences>(
-    key: K,
-    value: ThemePreferences[K]
-  ) {
-    this.themeStore.updatePreference(key, value)
-  }
-  
-  resetToDefault() {
-    this.themeStore.resetToDefault()
-  }
-  
-  applyTheme() {
-    this.themeStore.applyTheme()
-  }
-  
-  isDarkTheme() {
-    return isDarkTheme()
-  }
-  
-  isCompactMode() {
-    return this.themeStore.preferences.compactMode
-  }
-}
-
 export default {
   useTheme,
   updateTheme,
@@ -117,6 +81,5 @@ export default {
   isDarkTheme,
   isCompactMode,
   getFontSize,
-  getLanguage,
-  ThemeUtils
+  getLanguage
 }

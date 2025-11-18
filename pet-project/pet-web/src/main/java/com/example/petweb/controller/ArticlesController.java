@@ -1,21 +1,21 @@
 package com.example.petweb.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.example.petcommon.result.Result;
-import com.example.petcommon.exception.BizException;
-import com.example.petcommon.error.ErrorCode;
-import com.example.petservice.service.ArticlesService;
-import com.example.petpojo.vo.ArticlesVo;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.example.petcommon.result.Result;
+import com.example.petpojo.vo.ArticlesVo;
+import com.example.petservice.service.ArticlesService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 文章管理控制器
@@ -46,9 +46,6 @@ public class ArticlesController {
     public Result<ArticlesVo> getArticleDetail(
             @PathVariable Integer id) {
         ArticlesVo articles = articlesService.getArticleDetail(id);
-        if (articles == null) {
-            throw new BizException(ErrorCode.NOT_FOUND, "文章不存在");
-        }
         return Result.success(articles);
     }
 

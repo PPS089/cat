@@ -24,7 +24,7 @@ export const convertFrontendToBackendGender = (frontendGender: FrontendGender): 
     'female': '母'
   }
   
-  return genderMap[frontendGender] || '公' // 默认返回'公'
+  return genderMap[frontendGender]
 }
 
 /**
@@ -38,52 +38,65 @@ export const convertBackendToFrontendGender = (backendGender: BackendGender): Fr
     '母': 'female'
   }
   
-  return genderMap[backendGender] || 'male' // 默认返回'male'
+  return genderMap[backendGender]
 }
 
 /**
- * 验证性别格式是否有效
+ * 安全转换性别值，支持多种格式
  * @param gender 性别值
- * @param type 验证类型 ('frontend' | 'backend')
- * @returns 是否有效
- */
-export const isValidGender = (gender: string, type: 'frontend' | 'backend'): boolean => {
-  if (type === 'frontend') {
-    return gender === 'male' || gender === 'female'
-  } else {
-    return gender === '公' || gender === '母'
-  }
-}
-
-/**
- * 安全的性别转换（带错误处理）
- * @param gender 性别值
- * @param fromType 源格式 ('frontend' | 'backend')
- * @param toType 目标格式 ('frontend' | 'backend')
- * @returns 转换后的性别值，如果转换失败则返回默认值
+ * @param from 来源类型 ('frontend' | 'backend')
+ * @param to 目标类型 ('frontend' | 'backend')
+ * @returns 转换后的性别值
  */
 export const safeConvertGender = (
   gender: string, 
-  fromType: 'frontend' | 'backend', 
-  toType: 'frontend' | 'backend'
-): string => {
-  try {
-    if (fromType === toType) {
-      return gender
-    }
-    
-    if (fromType === 'frontend' && toType === 'backend') {
+  from: 'frontend' | 'backend', 
+  to: 'frontend' | 'backend'
+): FrontendGender | BackendGender => {
+  // 如果来源和目标相同，直接返回
+  if (from === to) {
+    return gender as FrontendGender | BackendGender
+  }
+  
+  // 从前端转换为后端
+  if (from === 'frontend' && to === 'backend') {
+    if (gender === 'male' || gender === 'female') {
       return convertFrontendToBackendGender(gender as FrontendGender)
     }
-    
-    if (fromType === 'backend' && toType === 'frontend') {
+    return '公' // 默认值
+  }
+  
+  // 从后端转换为前端
+  if (from === 'backend' && to === 'frontend') {
+    if (gender === '公' || gender === '母') {
       return convertBackendToFrontendGender(gender as BackendGender)
     }
-    
-    return gender
-  } catch (error) {
-    console.error('性别转换失败:', error)
-    // 返回默认值
-    return toType === 'frontend' ? 'male' : '公'
+    return 'male' // 默认值
   }
+  
+  // 如果无法识别，根据目标类型返回默认值
+  return to === 'backend' ? '公' : 'male'
+}
+
+/**
+ * 将任意性别值转换为PetGender类型
+ * @param gender 任意性别值
+ * @returns PetGender类型的值
+ */
+export const convertToPetGender = (gender: string): 'male' | 'female' | 'unknown' => {
+  // 处理前端格式
+  if (gender === 'male' || gender === 'female') {
+    return gender as 'male' | 'female'
+  }
+  
+  // 处理后端格式
+  if (gender === '公') {
+    return 'male'
+  }
+  if (gender === '母') {
+    return 'female'
+  }
+  
+  // 无法识别的值
+  return 'unknown'
 }

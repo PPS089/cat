@@ -20,7 +20,7 @@
         JOIN adoptions a ON h.pid = a.pid
         <where>
             <if test="userId != null">
-                uid = #{userId}
+                a.uid = #{userId}
             </if>
         </where>
     </select>

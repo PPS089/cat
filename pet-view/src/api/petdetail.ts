@@ -1,5 +1,6 @@
 import request from '@/utils/request'
-import type {  PetGender,petDetailResponse} from '@/types/petdetail'
+import type { PetGender } from '@/types/common'
+import type { petDetailResponse } from '@/types/petdetail'
 
 
 
@@ -26,12 +27,10 @@ export const fetchPetDetail = async (pid: number)=>{
       
       if (response.code === 200) {
         const result = response.data as petDetailResponse
-        console.log('成功获取宠物数据:', response.data)
         return result
       }
       return null
     } catch (error) {
-      console.error('根据ID获取宠物时出错:', error)
       return null
     }
   }

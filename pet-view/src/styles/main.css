@@ -218,15 +218,7 @@
   color: #f56c6c;
 }
 
-/* 主容器 */
-.main-container {
-  display: flex;
-  flex: 1;
-  margin-top: 80px;
-  height: calc(100vh - 80px);
-  overflow: hidden;
-  width: 100%;
-}
+/* 主容器 - 移除了固定高度计算 */
 
 /* 侧边栏 */
 .sidebar {
@@ -237,8 +229,8 @@
   position: fixed;
   left: 0;
   top: 80px;
-  bottom: 0;
-  overflow-y: auto;
+  height: calc(100vh - 80px);
+  overflow-y: hidden;
   z-index: 999;
   border-right: 1px solid var(--el-border-color-light, #e4e7ed);
   backdrop-filter: blur(10px);
@@ -273,7 +265,7 @@
 }
 
 .nav-item {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.1rem;
   position: relative;
 }
 
@@ -281,7 +273,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.85rem 1.25rem;
+  padding: 0.5rem 1rem;
   color: var(--el-text-color-regular, #606266);
   text-decoration: none;
   border-radius: 8px;
@@ -449,11 +441,11 @@
   color: #e6a23c;
 }
 
-/* 内容区域 */
+/* 内容区域 - 移除了固定高度计算 */
 .content-area {
   flex: 1;
   padding: 0;
-  overflow-y: auto;
+  overflow-y: hidden;
   margin-left: 280px;
   animation: fadeIn 0.6s ease-out;
   width: calc(100% - 280px);
@@ -462,14 +454,7 @@
   position: relative;
 }
 
-.content-area > * {
-  min-height: 100%;
-}
-
-.content-area > router-view {
-  display: block;
-  height: 100%;
-}
+/* 内容区域 - 移除了固定高度计算 */
 
 @keyframes fadeIn {
   from {

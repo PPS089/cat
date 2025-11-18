@@ -87,7 +87,7 @@ public class AdoptionsVo {
      * 宠物状态
      */
     @Schema(description = "宠物状态")
-    private String petStatus;
+    private String status;
 
 }
 

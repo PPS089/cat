@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.2</version>
+        <version>3.2.0</version>
         <relativePath/>
     </parent>
 
@@ -35,30 +35,25 @@
         
         <!-- 核心框架版本 -->
         <lombok.version>1.18.38</lombok.version>
-        <fastjson.version>2.0.42</fastjson.version>
-        <commons.lang.version>2.6</commons.lang.version>
+        
         
         <!-- 数据访问版本 -->
         <druid.version>1.2.20</druid.version>
         <mybatis.plus.version>3.5.8</mybatis.plus.version>
         <jsqlparser.version>4.7</jsqlparser.version>
-        <pagehelper.version>5.3.3</pagehelper.version>
         
         <!-- 工具库版本 -->
-        <aspectj.version>1.9.20.1</aspectj.version>
+        
         <jjwt.version>0.11.5</jjwt.version>
         <aliyun.sdk.oss.version>3.17.4</aliyun.sdk.oss.version>
-        <poi.version>5.2.5</poi.version>
+        
         
         <!-- JAXB版本 -->
-        <jaxb-api.version>3.0.1</jaxb-api.version>
-        <jaxb-runtime.version>4.0.5</jaxb-runtime.version>
+        
         
         <!-- 构建插件版本 -->
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         
-        <!-- Kotlin版本 -->
-        <kotlin.version>1.9.22</kotlin.version>
         
         <!-- Jakarta Servlet API版本 -->
         <jakarta.servlet-api.version>6.0.0</jakarta.servlet-api.version>
@@ -70,13 +65,12 @@
         <mybatis-spring.version>3.0.3</mybatis-spring.version>
         
         <!-- Swagger/OpenAPI版本 -->
-        <springdoc-openapi.version>2.5.0</springdoc-openapi.version>
+        <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
         
         <!-- 阿里云OSS版本 -->
         <aliyun.sdk.oss.version>3.17.4</aliyun.sdk.oss.version>
         
-        <!-- Commons BeanUtils版本 -->
-        <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        
     </properties>
 
     <!-- ========= 依赖管理（只管版本，不自动引入） ========= -->
@@ -107,26 +101,9 @@
                 <version>${aliyun.sdk.oss.version}</version>
             </dependency>
             
-            <!-- Kotlin 版本覆盖 -->
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-stdlib-jdk8</artifactId>
-                <version>${kotlin.version}</version>
-            </dependency>
             
-            <!-- JAXB API 版本覆盖 -->
-            <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>${jaxb-api.version}</version>
-            </dependency>
             
-            <!-- JAXB Runtime 版本覆盖 -->
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>${jaxb-runtime.version}</version>
-            </dependency>
+            
             
             <!-- Lombok 版本覆盖 -->
             <dependency>
@@ -189,26 +166,7 @@
                 <scope>runtime</scope>
             </dependency>
             
-            <!-- FastJSON -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>${fastjson.version}</version>
-            </dependency>
             
-            <!-- Commons BeanUtils -->
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>${commons-beanutils.version}</version>
-            </dependency>
-            
-            <!-- PageHelper 分页插件 -->
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper</artifactId>
-                <version>${pagehelper.version}</version>
-            </dependency>
             
             <!-- JSqlParser -->
             <dependency>
@@ -217,7 +175,6 @@
                 <version>${jsqlparser.version}</version>
             </dependency>
                     
-
             <!-- Swagger3 / OpenAPI3 支持 -->
             <dependency>
                 <groupId>org.springdoc</groupId>
@@ -233,6 +190,14 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- JSR-305 注解（提供编译期可见的 javax.annotation.meta.When 等） -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
             <scope>provided</scope>
         </dependency>
 
@@ -256,13 +221,15 @@
 
                 <!-- 编译插件 -->
                 <plugin>
-                    <groupId>org.apache.maven.apache.plugins</groupId>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
                         <encoding>UTF-8</encoding>
+                        <compilerArgs>
+                        </compilerArgs>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>

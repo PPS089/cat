@@ -223,7 +223,7 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.alert-card.normal {
+.alert-card.pending {
   border-left-color: #27ae60;
 }
 
@@ -231,9 +231,8 @@
   border-left-color: #e74c3c;
 }
 
-.alert-card.completed {
-  border-left-color: #95a5a6;
-  opacity: 0.8;
+.alert-card.attention {
+  border-left-color: #f39c12;
 }
 
 .alert-header {
@@ -290,7 +289,7 @@
   font-weight: 600;
 }
 
-.alert-status.正常 {
+.alert-status.待处理 {
   background: #d4edda;
   color: #155724;
 }
@@ -440,7 +439,7 @@
   box-shadow: 0 0 0 3px #3498db;
 }
 
-.timeline-item.normal .timeline-marker {
+.timeline-item.pending .timeline-marker {
   background: #27ae60;
   box-shadow: 0 0 0 3px #27ae60;
 }
@@ -450,9 +449,9 @@
   box-shadow: 0 0 0 3px #e74c3c;
 }
 
-.timeline-item.completed .timeline-marker {
-  background: #95a5a6;
-  box-shadow: 0 0 0 3px #95a5a6;
+.timeline-item.attention .timeline-marker {
+  background: #f39c12;
+  box-shadow: 0 0 0 3px #f39c12;
 }
 
 .timeline-content {
@@ -466,7 +465,7 @@
   background: #4a5568;
 }
 
-.timeline-item.normal .timeline-content {
+.timeline-item.pending .timeline-content {
   border-left-color: #27ae60;
 }
 
@@ -474,8 +473,8 @@
   border-left-color: #e74c3c;
 }
 
-.timeline-item.completed .timeline-content {
-  border-left-color: #95a5a6;
+.timeline-item.attention .timeline-content {
+  border-left-color: #f39c12;
 }
 
 .timeline-header {

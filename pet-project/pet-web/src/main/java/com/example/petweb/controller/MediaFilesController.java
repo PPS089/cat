@@ -2,7 +2,6 @@ package com.example.petweb.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +17,6 @@ import com.example.petcommon.error.ErrorCode;
 import com.example.petpojo.vo.MediaFileVo;
 import com.example.petservice.service.MediaFilesService;
 
-import jakarta.annotation.PostConstruct;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,18 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 public class MediaFilesController {
 
     private final MediaFilesService mediaFilesService;
-
-    @Value("${app.upload-dir:./uploads/media}")
-    private String uploadDirConfig;
-    
-    private String uploadDir;
-
-    @PostConstruct
-    public void initUploadDir() {
-        // 处理路径中的环境变量
-        uploadDir = uploadDirConfig.replace("${java.io.tmpdir}", System.getProperty("java.io.tmpdir"));
-        log.info("上传目录已初始化: {}", uploadDir);
-    }
 
 
     /**

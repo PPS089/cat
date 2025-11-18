@@ -1,7 +1,7 @@
 package com.example.petservice.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.petcommon.result.UserLoginResponse;
+import com.example.petpojo.vo.UserLoginVo;
 import com.example.petpojo.dto.ChangePasswordDto;
 import com.example.petpojo.dto.UserUpdateDto;
 import com.example.petpojo.dto.UsersCreateDto;
@@ -22,14 +22,9 @@ public interface UsersService extends IService<Users> {
      * @param userdto 用户创建信息
      * @return 用户登录响应信息
      */
-    UserLoginResponse createUser(UsersCreateDto userdto);
+    UserLoginVo createUser(UsersCreateDto userdto);
     
-    /**
-     * 用户登录
-     * @param userLoginDto 用户登录信息
-     * @return 用户登录响应信息
-     */
-    UserLoginResponse userLogin(UserLoginDto userLoginDto);
+
     
     /**
      * 用户登录（带请求信息）
@@ -37,7 +32,7 @@ public interface UsersService extends IService<Users> {
      * @param request HTTP请求对象
      * @return 用户登录响应信息
      */
-    UserLoginResponse userLogin(UserLoginDto userLoginDto, HttpServletRequest request);
+    UserLoginVo userLogin(UserLoginDto userLoginDto, HttpServletRequest request);
     
     /**
      * 更新用户信息
@@ -65,6 +60,6 @@ public interface UsersService extends IService<Users> {
      * @param request HTTP请求对象
      * @return 用户登录响应信息
      */
-    UserLoginResponse refreshToken(HttpServletRequest request);
+    UserLoginVo refreshToken(HttpServletRequest request);
 
 }

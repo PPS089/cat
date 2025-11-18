@@ -60,11 +60,7 @@
         </dependency>
         
         <!-- Jakarta Servlet API -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        
         
         <!-- Jakarta Validation API -->
         <dependency>
@@ -72,17 +68,7 @@
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
         
-        <!-- FastJSON -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-        </dependency>
         
-        <!-- Commons BeanUtils -->
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-        </dependency>
         
         <!-- JWT -->
         <dependency>
@@ -106,11 +92,36 @@
             <artifactId>mybatis-spring</artifactId>
         </dependency>
         
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
         <!-- H2 Database for testing -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.lionsoul</groupId>
+            <artifactId>ip2region</artifactId>
+            <version>2.7.0</version>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>com.example.petcommon.utils.IpLocationUtilTest</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

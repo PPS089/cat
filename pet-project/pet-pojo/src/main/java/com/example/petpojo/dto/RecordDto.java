@@ -15,9 +15,6 @@ public class RecordDto {
     @Schema(description = "宠物ID")
     private Integer pid;
     
-    @Schema(description = "用户ID")
-    private Integer uid;
-    
     @Schema(description = "事件类型")
     private String eventType;
     

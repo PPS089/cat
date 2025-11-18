@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
-import {request} from '../utils'
+import request from '@/utils/request'
 import type { LoginHistoryItem, PasswordForm, Preferences } from '@/types/setting'
 import { onMounted } from 'vue'
 import router from '@/router'
@@ -80,6 +80,8 @@ export const useSettings = () => {
       //跳转到登录页
       ElMessage.success(t('settings.passwordChanged'))
       localStorage.removeItem('jwt_token');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
       localStorage.removeItem('userId');
       localStorage.removeItem('rememberedUsername');
       localStorage.removeItem('rememberedPassword');
@@ -94,10 +96,9 @@ export const useSettings = () => {
     // 获取登录历史
   const fetchLoginHistory = async () => {
     try {
-      
       const response = await request.get('/login-history')
       
-      if(response.code == 200) {
+      if(response.code == 200 && Array.isArray(response.data)) {
           loginHistory.value = response.data.map((item: any) => ({
             id: item.id,
             userId: item.userId,
@@ -106,14 +107,11 @@ export const useSettings = () => {
             location: item.location || 'Unknown Location',
             ipAddress: item.ipAddress || '0.0.0.0',
             status: item.status || 'SUCCESS'
-      }))
-          console.log('登录历史处理完成，记录数:', loginHistory.value.length)
+          }))
         } else {
-          console.warn('登录历史数据不是数组格式，使用空数组')
           loginHistory.value = []
         }
     } catch (error: any) {
-      console.error('获取登录历史失败:', error)
       loginHistory.value = []
       // 更友好的错误处理
       if (error.message === '未授权') {

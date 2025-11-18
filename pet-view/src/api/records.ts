@@ -8,13 +8,9 @@ import type {
   PetInfo,
   RecordFormData,
   RecordFilters,
-  ViewMode,
-  SortField,
-  MediaFile,
-  FilePreview,
-  FileValidationConfig,
   UseRecordsReturn
 } from '@/types/records'
+import type { ViewMode, SortField, MediaFile, FilePreview, FileValidationConfig } from '@/types/common'
 
 // 心情表情
 export const useMoodEmoji = () => {
@@ -67,7 +63,7 @@ export const useDateFormatter = () => {
 
 // 文件验证配置
 const FILE_VALIDATION_CONFIG: FileValidationConfig = {
-  maxFileSize: 52428800,  // 50MB
+  maxFileSize: 524288500,  // 500MB 
   supportedImageFormats: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'],
   supportedVideoFormats: ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/webm'],
   thumbnailMaxWidth: 200,
@@ -146,21 +142,22 @@ const validateFile = (file: File): { valid: boolean; error?: string } => {
 export const useFileUpload = () => {
   const { t } = useI18n()
   const filePreviews = ref<FilePreview[]>([])
+  const isDragOver = ref(false)
 
   const handleFileUpload = async (event: Event): Promise<void> => {
     const target = event.target as HTMLInputElement
     const files = Array.from(target.files || [])
-    
-    
+    await processFiles(files)
+    target.value = ''
+  }
 
+  const processFiles = async (files: File[]): Promise<void> => {
     if (filePreviews.value.length + files.length > 5) {
       ElMessage.error(t('common.maxFilesExceeded'))
       return
     }
 
     for (const file of files) {
-      
-      
       const validation = validateFile(file)
       if (!validation.valid) {
         ElMessage.error(`${t('records.uploadFailed')}: ${validation.error}`)
@@ -180,15 +177,30 @@ export const useFileUpload = () => {
           isValid: true
         })
 
-        
         ElMessage.success(t('records.uploadSuccess'))
       } catch (error) {
         ElMessage.error(t('records.uploadFailed'))
       }
     }
+  }
 
-    target.value = ''
+  const handleDragOver = (event: DragEvent): void => {
+    event.preventDefault()
+    isDragOver.value = true
+  }
+
+  const handleDragLeave = (): void => {
+    isDragOver.value = false
+  }
+
+  const handleDrop = async (event: DragEvent): Promise<void> => {
+    event.preventDefault()
+    isDragOver.value = false
     
+    const files = Array.from(event.dataTransfer?.files || [])
+    if (files.length === 0) return
+    
+    await processFiles(files)
   }
 
   const removeFile = (index: number): void => {
@@ -201,7 +213,7 @@ export const useFileUpload = () => {
   }
 
   const clearAllFiles = (): void => {
-    filePreviews.value.forEach((preview) => {
+    filePreviews.value.forEach((preview: FilePreview) => {
       if (preview.previewUrl.startsWith('blob:')) {
         URL.revokeObjectURL(preview.previewUrl)
       }
@@ -210,7 +222,7 @@ export const useFileUpload = () => {
   }
 
   const getUploadFiles = (): File[] => {
-    const files = filePreviews.value.map((preview) => preview.file)
+    const files = filePreviews.value.map((preview: FilePreview) => preview.file)
     
     return files
   }
@@ -231,7 +243,11 @@ export const useFileUpload = () => {
 
   return {
     filePreviews,
+    isDragOver,
     handleFileUpload,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
     removeFile,
     clearAllFiles,
     getUploadFiles,
@@ -258,7 +274,7 @@ export const useMediaModal = () => {
           const mediaFiles = Array.isArray(response.data) ? response.data : [response.data]
           currentMediaList.value = mediaFiles.map((m: any) => ({
             id: m.mid,
-            media_url: `/api${m.filePath}`,
+            media_url: m.filePath,  // 直接使用filePath，不再添加/api前缀
             media_type: m.mediaType,
             media_name: m.fileName,
             updated_at: m.updatedAt
@@ -278,6 +294,40 @@ export const useMediaModal = () => {
     }
     
     showMediaModal.value = true
+    
+    // 添加一个小延迟来确保DOM更新后再打印调试信息
+    setTimeout(() => {
+      console.log('媒体查看器已打开');
+      console.log('媒体列表:', currentMediaList.value);
+      console.log('当前索引:', currentMediaIndex.value);
+    }, 100);
+  }
+
+  const refreshMediaList = async (recordId: number): Promise<void> => {
+    if (!recordId || recordId <= 0) {
+      currentMediaList.value = []
+      return
+    }
+    mediaLoading.value = true
+    try {
+      const response = await request.get(`/media/record/${recordId}`)
+      if (response.code === 200 && response.data) {
+        const mediaFiles = Array.isArray(response.data) ? response.data : [response.data]
+        currentMediaList.value = mediaFiles.map((m: any) => ({
+          id: m.mid,
+          media_url: m.filePath,
+          media_type: m.mediaType,
+          media_name: m.fileName,
+          updated_at: m.updatedAt
+        }))
+      } else {
+        currentMediaList.value = []
+      }
+    } catch (error) {
+      currentMediaList.value = []
+    } finally {
+      mediaLoading.value = false
+    }
   }
 
   const closeMediaModal = (): void => {
@@ -311,6 +361,7 @@ export const useMediaModal = () => {
     mediaLoading,
     currentMediaIndex, // 导出当前媒体索引
     openMediaModal,
+    refreshMediaList,
     closeMediaModal,
     nextMedia, // 导出切换方法
     prevMedia,
@@ -343,7 +394,7 @@ export const useEventData = () => {
           updated_at: event.updatedAt || event.createdAt || event.eventTime,
           media_list: event.mediaList ? event.mediaList.map((m: any) => ({
             id: m.mid,
-            media_url: `/api${m.filePath}`,
+            media_url: m.filePath,  
             media_type: m.mediaType,
             media_name: m.fileName,
             updated_at: m.updatedAt
@@ -450,14 +501,26 @@ export const useEventOperations = (eventData?: { fetchEvents: () => Promise<void
       await fetchEvents()
     } catch (error) {
       if (error !== 'cancel') {
-        ElMessage.error(t('api.deleteFailed'))
-        
+        // 不再显示重复的错误消息，因为request.ts中的拦截器已经处理了错误显示
+        console.error('删除记录失败:', error)
       }
     }
   }
 
+  const deleteMediaFile = async (mid: number): Promise<void> => {
+    try {
+      await request.delete(`/media/${mid}`)
+      ElMessage.success(t('records.deleteMediaSuccess'))
+    } catch (error: any) {
+      const msg = error?.response?.data?.msg || error?.message || t('records.deleteMediaFailed')
+      ElMessage.error(msg)
+      throw error
+    }
+  }
+
   return {
-    deleteEvent
+    deleteEvent,
+    deleteMediaFile
   }
 }
 
@@ -571,21 +634,19 @@ export const useRecordForm = () => {
 
   const populateForm = (event: PetRecord): void => {
     let formattedDateTime = ''
-    try {
-      if (event.record_time) {
-        const isoString = event.record_time.replace(' ', 'T')
-        const date = new Date(isoString)
-        if (!isNaN(date.getTime())) {
-          formattedDateTime = date.toISOString().slice(0, 16)
-        } else {
-          const parts = event.record_time.split(' ')
-          if (parts.length === 2) {
-            formattedDateTime = `${parts[0]}T${parts[1].slice(0, 5)}`
-          }
+    if (event.record_time) {
+      // 尝试解析日期时间
+      const isoString = event.record_time.replace(' ', 'T')
+      const date = new Date(isoString)
+      if (!isNaN(date.getTime())) {
+        formattedDateTime = date.toISOString().slice(0, 16)
+      } else {
+        // 如果标准解析失败，尝试使用简单的格式化
+        const parts = event.record_time.split(' ')
+        if (parts.length === 2) {
+          formattedDateTime = `${parts[0]}T${parts[1].slice(0, 5)}`
         }
       }
-    } catch (error) {
-      
     }
     
     Object.assign(formData, {
@@ -615,7 +676,11 @@ export const useRecords = (): UseRecordsReturn => {
   // 文件和模态框管理
   const { 
     filePreviews, 
+    isDragOver,
     handleFileUpload, 
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
     removeFile, 
     clearAllFiles, 
     getUploadFiles, 
@@ -629,6 +694,7 @@ export const useRecords = (): UseRecordsReturn => {
     mediaLoading, 
     currentMediaIndex, // 添加当前媒体索引
     openMediaModal, 
+    refreshMediaList,
     closeMediaModal,
     nextMedia, // 添加切换方法
     prevMedia,
@@ -644,7 +710,7 @@ export const useRecords = (): UseRecordsReturn => {
   const { formData, resetForm, populateForm } = useRecordForm()
   
   // 操作管理
-  const { deleteEvent } = useEventOperations({ fetchEvents })
+  const { deleteEvent, deleteMediaFile } = useEventOperations({ fetchEvents })
   
   // 模态框状态
   const showAddModal = ref(false)
@@ -665,6 +731,7 @@ export const useRecords = (): UseRecordsReturn => {
   // 表单操作
   const editEvent = (event: PetRecord): void => {
     populateForm(event)
+    refreshMediaList(event.record_id)
     showEditModal.value = true
   }
   
@@ -702,11 +769,11 @@ export const useRecords = (): UseRecordsReturn => {
       if (showEditModal.value && formData.record_id) {
         await request.put(`/events/${formData.record_id}`, data)
         recordId = Number(formData.record_id)
-        ElMessage.success('事件更新成功')
+        // 不再单独显示更新成功消息，统一在最后显示
       } else {
         const response = await request.post('/events', data)
         recordId = response.data?.eid
-        ElMessage.success('事件添加成功')
+        // 不再单独显示添加成功消息，统一在最后显示
       }
   
       // 只有在成功创建/更新事件后才上传媒体文件
@@ -717,24 +784,31 @@ export const useRecords = (): UseRecordsReturn => {
         if (uploadFiles && uploadFiles.length > 0) {
           try {
             // 确保所有文件一次性上传，并关联到同一个记录ID
-            
+            ElMessage.info('正在上传媒体文件，请稍候...')
             await uploadMediaFiles(uploadFiles, recordId)
             
-            ElMessage.success('事件保存成功，媒体文件上传完成')
-          } catch (uploadError) {
-            
-            ElMessage.warning('事件保存成功，但媒体文件上传失败')
+            // 媒体文件上传成功，不单独显示消息
+          } catch (uploadError: any) {
+            console.error('媒体文件上传失败:', uploadError)
+            // 显示更详细的错误信息
+            const errorMsg = uploadError?.response?.data?.msg || uploadError?.message || '媒体文件上传失败'
+            ElMessage.error(`事件保存成功，但媒体文件上传失败: ${errorMsg}`)
+            // 不抛出异常，让事件保存成功
           }
-        } else {
-          
         }
+        
+        // 只在最后显示一个成功消息
+        ElMessage.success(showEditModal.value ? '事件更新成功' : '事件添加成功')
       }
       
       // 所有操作完成后，刷新数据并关闭模态框
       await fetchEvents()
       closeModal()
-    } catch (error) {
-      ElMessage.error(showEditModal.value ? '事件更新失败' : '事件添加失败')
+    } catch (error: any) {
+      console.error('保存事件失败:', error)
+      // 显示更详细的错误信息
+      const errorMsg = error?.response?.data?.msg || error?.message || (showEditModal.value ? '事件更新失败' : '事件添加失败')
+      ElMessage.error(errorMsg)
       
     } finally {
       // 确保无论成功还是失败，都重置提交状态
@@ -766,6 +840,7 @@ export const useRecords = (): UseRecordsReturn => {
     // 表单数据
     formData,
     filePreviews,
+    isDragOver,
     currentMediaList,
     
     // 计算属性
@@ -783,16 +858,21 @@ export const useRecords = (): UseRecordsReturn => {
     getMoodClass,
     formatDate,
     handleFileUpload,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
     removeFile,
     getFileIcon,
     formatFileSize,
     openMediaModal,
+    refreshMediaList,
     closeMediaModal,
     nextMedia, // 导出切换方法
     prevMedia,
     selectMedia,
     editEvent,
     deleteEvent,
+    deleteMediaFile,
     saveEvent: saveEventHandler,
     closeModal
   }

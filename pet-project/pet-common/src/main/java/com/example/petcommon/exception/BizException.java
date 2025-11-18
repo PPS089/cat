@@ -8,7 +8,7 @@ public class BizException extends RuntimeException {
     private final HttpStatus status;
 
     public BizException(ErrorCode errorCode) {
-        super(errorCode.getDefaultMessage());
+        super(errorCode.getMessage());
         this.code = errorCode.getCode();
         this.status = errorCode.getStatus();
     }

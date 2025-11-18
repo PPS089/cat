@@ -6,10 +6,7 @@
     
     <main class="pets-main">
       <div class="pets-list">
-        <!-- <div v-if="loading" class="loading-state">
-          <p>{{ t('message.loading') }}</p>
-        </div> -->
-        
+      
         <div v-if="pets.length === 0" class="empty-state">
           <p>{{ t('user.noAdoptionRecords') }}</p>
           <button @click="addPet" class="add-first-pet-btn">{{ t('user.goAdoptPet') }}</button>
@@ -18,25 +15,26 @@
         <div v-else class="pets-grid">
           <div v-for="pet in pets" :key="pet.pid" class="pet-card">
             <div class="pet-image">
-              <img :src="pet.image || '/src/assets/img/dog.jpg'" :alt="pet.name" />
+              <img :src="pet.imgUrl || '/src/assets/img/dog.jpg'" :alt="pet.name" />
               <div class="pet-type-badge adoption">{{ t('message.adoption') }}</div>
             </div>
             <div class="pet-info">
               <h3>{{ pet.name }}
-                <span v-if="pet.petStatus === 'FOSTERING' || pet.isFostering" class="fostering-indicator">({{ t('message.fostering') }})</span>
+                <span v-if="pet.status === 'FOSTERING'" class="fostering-indicator">({{ t('message.fostering') }})</span>
               </h3>
               <p class="pet-breed">{{ pet.breed }}</p>
               <p class="pet-age">{{ pet.age }}{{ t('message.yearsOld') }}</p>
+              <p class="pet-gender">{{ t('user.' + pet.gender) }}</p>
               <p v-if="pet.adoptionDate" class="pet-date">
                 {{ t('message.adoptDate') }}: {{ pet.adoptionDate }}
               </p>
-              <p v-if="pet.sname" class="pet-shelter">
-                {{ t('message.shelter') }}: {{ pet.sname }}
+              <p v-if="pet.shelterName" class="pet-shelter">
+                {{ t('message.shelter') }}: {{ pet.shelterName }}
               </p>
 
               <div class="pet-actions">
                 <!-- 寄养相关操作 - 这些是通过/user/adoptions获取的领养宠物，总是显示寄养按钮 -->
-                <template v-if="pet.petStatus === 'FOSTERING' || pet.isFostering">
+                <template v-if="pet.status === 'FOSTERING'">
                   <!-- 如果正在寄养中，显示结束寄养按钮 -->
                   <button @click="endFoster(pet)" class="end-foster-btn">{{ t('message.endFoster') }}</button>
                   <div class="foster-status">🏠 {{ t('message.fostering') }}</div>
@@ -46,7 +44,6 @@
                   <button @click="startFoster(pet)" class="start-foster-btn">{{ t('message.startFoster') }}</button>
                 </template>
                 <button @click="editPet(pet.pid)" class="edit-btn">{{ t('message.edit') }}</button>
-              <!-- <button @click="deletePet(pet.id)" class="delete-btn">{{ translations.delete }}</button> -->
             </div>
             </div>
           </div>

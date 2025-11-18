@@ -16,10 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 /**
  * 健康提醒控制器
  * 提供健康提醒相关的 REST API 接口
@@ -44,26 +41,6 @@ public class HealthAlertsController {
         log.info("获取用户健康提醒列表，用户ID: {}", userId);
         List<HealthAlertsVo> alerts = healthAlertsService.getUserHealthAlerts(userId.intValue());
         return Result.success(alerts);
-    }
-
-    /**
-     * 更新健康提醒状态
-     */
-    @PutMapping("/{healthId}/status")
-    @Operation(summary = "更新健康提醒状态", description = "更新指定健康提醒的状态")
-    public Result<Map<String, Object>> updateAlertStatus(
-            @PathVariable Integer healthId,
-            @RequestParam String status) {
-        log.info("更新健康提醒状态，提醒ID: {}, 状态: {}", healthId, status);
-        boolean updated = healthAlertsService.updateAlertStatus(healthId, status);
-        if (!updated) {
-            throw new BizException(ErrorCode.BAD_REQUEST, "状态更新失败");
-        }
-        Map<String, Object> result = new HashMap<>();
-        result.put("healthId", healthId);
-        result.put("status", status);
-        result.put("message", "状态更新成功");
-        return Result.success(result);
     }
 
     /**

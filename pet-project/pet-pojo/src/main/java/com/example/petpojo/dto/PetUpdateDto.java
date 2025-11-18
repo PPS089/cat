@@ -1,10 +1,9 @@
 package com.example.petpojo.dto;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @Data
 @Schema(description = "宠物信息更新DTO")
@@ -25,7 +24,7 @@ public class PetUpdateDto {
     @Schema(description = "宠物年龄", example = "3")
     private Integer age;
     @NotBlank(message = "性别不能为空")
-    @Schema(description = "宠物性别", example = "男")
+    @Schema(description = "宠物性别", example = "公")
     private String gender;
 
 }

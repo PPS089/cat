@@ -1,4 +1,4 @@
-export default {
+const en = {
   common: {
     confirm: 'Confirm',
     cancel: 'Cancel',
@@ -41,6 +41,7 @@ export default {
     deleteFailed: 'Delete failed',
     updateSuccess: 'Updated successfully',
     updateFailed: 'Update failed',
+    goAdoptPet: 'Go Adopt Pet',
     addSuccess: 'Added successfully',
     addFailed: 'Add failed',
     getFosterRecordsFailed: 'Failed to fetch foster records',
@@ -203,7 +204,18 @@ export default {
     avatarPreviewFailed: 'Failed to preview avatar'
   },
   nav: {
-    home: 'Home', pets: 'Pet Management', dashboard: 'Dashboard', articles: 'Articles', login: 'Login', profile: 'Profile', settings: 'Settings', petManagement: 'Pet Management', myPets: 'My Pets', addPet: 'Add Pet', adoptionRecords: 'Adoption Records', fosteringRecords: 'Foster Records', healthCenter: 'Health Center', healthAlerts: 'Health Alerts', viewHealthStatus: 'View your pet health status', pendingAlerts: 'Pending Alerts', resolvedAlerts: 'Resolved Alerts', noPendingAlerts: 'No pending health alerts', noResolvedAlerts: 'No resolved health alerts', processAlert: 'Process Alert', viewPet: 'View Pet', confirmProcessAlert: 'Are you sure you have handled this health alert?', processAlertTitle: 'Process Alert', confirmProcess: 'Confirm Processing', cancel: 'Cancel', fostering: 'Fostering', startFoster: 'Foster', endFoster: 'End Foster', selectFosterShelter: 'Select Foster Shelter', pleaseSelectShelter: 'Please select a shelter', startDate: 'Start Date', endDate: 'End Date', selectStartDate: 'Select start date', selectEndDateOptional: 'Select end date (Optional)', confirmFoster: 'Confirm Foster', healthStatus: 'Health Status', vaccinated: 'Vaccinated', spayed: 'Spayed/Neutered', adoptionFee: 'Adoption Fee', fosterFee: 'Foster Fee', description: 'Description', healthy: 'Healthy', good: 'Good', fair: 'Fair', needsAttention: 'Needs Attention', available: 'Available', adopted: 'Adopted', fostered: 'Fostered', profileUpdated: 'Profile updated successfully', alertProcessed: 'Alert marked as processed', alertProcessedSuccess: 'Pet recurring event alert has been processed, new event created', pending: 'Pending', resolved: 'Resolved', petLabel: 'Pet:', handlerLabel: 'Handler:', pleaseLogin: 'Please login first', pleaseLoginForRealData: 'Please login to view real data', updateAlertFailed: 'Failed to update alert status', getHealthAlertsFailed: 'Failed to fetch health alerts', healthAlertsUpdated: 'Health alerts data updated', regularEvents: 'Pet Events', recurringEventManagement: 'Pet Recurring Event Management', recurringEventTemplates: 'Pet Recurring Event Templates', everyDays: 'Every {days} days', addRecurringEvent: 'Add Pet Recurring Event', upcomingRecurringEvents: 'Upcoming Pet Recurring Events', eventName: 'Event Name', petName: 'Pet Name', frequency: 'Frequency', nextOccurrence: 'Next Occurrence', actions: 'Actions', view: 'View', complete: 'Complete', delete: 'Delete', edit: 'Edit', confirmDelete: 'Confirm Delete', deleteConfirm: 'Are you sure you want to delete this pet recurring event?', deleteSuccess: 'Pet recurring event deleted successfully', eventCompleted: 'Event completed', completeSuccess: 'Event completed successfully', confirmComplete: 'Confirm Complete', completeConfirm: 'Are you sure you want to complete this pet recurring event?', noUpcomingEvents: 'No upcoming pet recurring events', createFromTemplate: 'Create from Template', createNewEvent: 'Create New Event', daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly', yearly: 'Yearly', daysUntil: 'days later', manageRecurringEvents: 'Manage your pet recurring events and reminders', createAlert: 'Create Reminder', pet: 'Pet', selectPet: 'Please select a pet', eventType: 'Event Type', selectType: 'Please select a type', eventDescription: 'Event Description', nextExecutionTime: 'Next Execution Time', recurringInterval: 'Recurring Interval (Days)', pleaseSelectPet: 'Please select a pet', addEventFailed: 'Failed to add event, please check your network connection', urgent: 'Urgent', upcoming: 'Upcoming', normal: 'Normal', recurringEvent: 'Pet Recurring Event', personalSettings: 'Personal Settings', userCenter: 'User Center', information: 'Information & Resources', adoptionInfo: 'Adoption Information', fostersInfo: 'Foster Information', alertCreatedSuccessfully: 'Pet recurring event reminder created successfully', createAlertFailed: 'Failed to create pet recurring event reminder', main: 'Main Navigation', adoptCenter: 'Pet Adoption Center', return: 'Return', adoptable: 'Adoptable', age: 'Age', gender: 'Gender', address: 'Address', adoptNow: 'Adopt Now', viewDetails: 'View Details', noPetsAvailable: 'No adoptable pets available', allPetsAdopted: 'All pets have been adopted, please check back later', goAdoptPet: 'Go Adopt a Pet', viewAdoptionHistory: 'View your pet adoption history', noAdoptionRecords: 'No adoption records', noAdoptionsYet: 'You have not adopted any pets yet', browseAdoptablePets: 'Browse adoptable pets', adoptionSuccess: 'Adoption successful', healthRecords: 'Health Records', fosterRecords: 'Foster Records', viewFosterHistory: 'View your pet foster history', noFosterRecords: 'No foster records', noFosterYet: 'You have not fostered any pets yet', viewFosterablePets: 'View fosterable pets', fosterStart: 'Foster Start', fosterEnd: 'Foster End', status: 'Status', ongoing: 'Ongoing', confirmEndFoster: 'Are you sure you want to end this foster?', confirmEndFosterTitle: 'Confirm End Foster', fosterEnded: 'Foster ended', endFosterFailed: 'Failed to end foster', loadFosterFailed: 'Failed to load foster records', loadPetsFailed: 'Failed to fetch pet list', pleaseEnterPetName: 'Please enter pet name', pleaseEnterSpecies: 'Please enter pet species', pleaseEnterBreed: 'Please enter pet breed'
+    home: 'Home', pets: 'Pet Management', dashboard: 'Dashboard', articles: 'Articles', login: 'Login', profile: 'Profile', settings: 'Settings', petManagement: 'Pet Management', myPets: 'My Pets', addPet: 'Add Pet', adoptionRecords: 'Adoption Records', fosteringRecords: 'Foster Records', healthCenter: 'Health Center', healthAlerts: 'Health Alerts', viewHealthStatus: 'View your pet health status', resolvedAlerts: 'Resolved Alerts', noResolvedAlerts: 'No resolved health alerts', processAlert: 'Process Alert', viewPet: 'View Pet', confirmProcessAlert: 'Are you sure you have handled this health alert?', processAlertTitle: 'Process Alert', confirmProcess: 'Confirm Processing', cancel: 'Cancel', fostering: 'Fostering', startFoster: 'Foster', endFoster: 'End Foster', selectFosterShelter: 'Select Foster Shelter',
+    pleaseSelectShelter: 'Please select a shelter',
+    startDate: 'Start Date',
+    endDate: 'End Date',
+    selectStartDate: 'Select start date',
+    selectEndDateOptional: 'Select end date (Optional)',
+    confirmFoster: 'Confirm Foster',
+    breed: 'Breed',
+    shelter: 'Shelter',
+    healthStatus: 'Health Status', vaccinated: 'Vaccinated', spayed: 'Spayed/Neutered', adoptionFee: 'Adoption Fee', fosterFee: 'Foster Fee', description: 'Description', healthy: 'Healthy', good: 'Good', fair: 'Fair', needsAttention: 'Needs Attention', available: 'Available', adopted: 'Adopted', fostered: 'Fostered', profileUpdated: 'Profile updated successfully', alertProcessed: 'Alert marked as processed',
+    alertProcessedSuccess: 'Pet recurring event alert has been processed, new event created',
+    resolved: 'Resolved', petLabel: 'Pet:', handlerLabel: 'Handler:', pleaseLogin: 'Please login first', pleaseLoginForRealData: 'Please login to view real data', updateAlertFailed: 'Failed to update alert status', getHealthAlertsFailed: 'Failed to fetch health alerts', healthAlertsUpdated: 'Health alerts data updated', regularEvents: 'Pet Events', recurringEventManagement: 'Pet Recurring Event Management', recurringEventTemplates: 'Pet Recurring Event Templates', everyDays: 'Every {days} days', addRecurringEvent: 'Add Pet Recurring Event', upcomingRecurringEvents: 'Upcoming Pet Recurring Events', eventName: 'Event Name', petName: 'Pet Name', frequency: 'Frequency', nextOccurrence: 'Next Occurrence', actions: 'Actions', view: 'View', complete: 'Complete', delete: 'Delete', edit: 'Edit', confirmDelete: 'Confirm Delete', deleteConfirm: 'Are you sure you want to delete this pet recurring event?', deleteSuccess: 'Pet recurring event deleted successfully', eventCompleted: 'Event completed', completeSuccess: 'Event completed successfully', confirmComplete: 'Confirm Complete', completeConfirm: 'Are you sure you want to complete this pet recurring event?', noUpcomingEvents: 'No upcoming pet recurring events', createFromTemplate: 'Create from Template', createNewEvent: 'Create New Event', daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly', yearly: 'Yearly', daysUntil: 'days later', manageRecurringEvents: 'Manage your pet recurring events and reminders', createAlert: 'Create Reminder', pet: 'Pet', selectPet: 'Please select a pet', eventType: 'Event Type', selectType: 'Please select a type', eventDescription: 'Event Description', nextExecutionTime: 'Next Execution Time', recurringInterval: 'Recurring Interval (Days)', pleaseSelectPet: 'Please select a pet', addEventFailed: 'Failed to add event, please check your network connection', urgent: 'Urgent', upcoming: 'Upcoming', normal: 'Normal', recurringEvent: 'Pet Recurring Event', personalSettings: 'Personal Settings', userCenter: 'User Center', information: 'Information & Resources', adoptionInfo: 'Adoption Information', fostersInfo: 'Foster Information', alertCreatedSuccessfully: 'Pet recurring event reminder created successfully', createAlertFailed: 'Failed to create pet recurring event reminder', main: 'Main Navigation', adoptCenter: 'Pet Adoption Center', return: 'Return', adoptable: 'Adoptable', age: 'Age', gender: 'Gender', address: 'Address', adoptNow: 'Adopt Now', viewDetails: 'View Details', noPetsAvailable: 'No adoptable pets available', allPetsAdopted: 'All pets have been adopted, please check back later', goAdoptPet: 'Go Adopt a Pet', viewAdoptionHistory: 'View your pet adoption history', noAdoptionRecords: 'No adoption records', noAdoptionsYet: 'You have not adopted any pets yet', browseAdoptablePets: 'Browse adoptable pets', adoptionSuccess: 'Adoption successful', healthRecords: 'Health Records', fosterRecords: 'Foster Records', viewFosterHistory: 'View your pet foster history', noFosterRecords: 'No foster records', noFosterYet: 'You have not fostered any pets yet', viewFosterablePets: 'View fosterable pets', fosterStart: 'Foster Start', fosterEnd: 'Foster End', status: 'Status', ongoing: 'Ongoing', confirmEndFoster: 'Are you sure you want to end this foster?', confirmEndFosterTitle: 'Confirm End Foster', fosterEnded: 'Foster ended', endFosterFailed: 'Failed to end foster', loadFosterFailed: 'Failed to load foster records', loadPetsFailed: 'Failed to fetch pet list', pleaseEnterPetName: 'Please enter pet name', pleaseEnterSpecies: 'Please enter pet species', pleaseEnterBreed: 'Please enter pet breed'
   },
   login: {
     title: 'User Login', username: 'Username', password: 'Password', userLogin: 'User Login', adminLogin: 'Admin Login', switchToUser: 'Switch to User Login', switchToAdmin: 'Switch to Admin Login', usernamePlaceholder: 'Please enter username', passwordPlaceholder: 'Please enter password', rememberMe: 'Remember me (7 days)', noAccount: 'No account yet?', registerNow: 'Register now', submit: 'Login', registerLink: 'Register new account', forgotPassword: 'Forgot password?', success: 'Login successful', error: 'Login failed', networkError: 'Network error, please try again later'
@@ -229,7 +241,6 @@ export default {
     nickname: 'Nickname',
     name: 'Name',
     species: 'Species',
-    breed: 'Breed',
     age: 'Age',
     gender: 'Gender',
     male: 'Male',
@@ -237,6 +248,7 @@ export default {
     pleaseEnterPetName: 'Please enter pet name',
     pleaseEnterSpecies: 'Please enter pet species',
     pleaseEnterBreed: 'Please enter pet breed',
+    breed: 'Breed',
     changePassword: 'Change Password',
     currentPassword: 'Current Password',
     newPassword: 'New Password',
@@ -274,6 +286,7 @@ export default {
     noAdoptionRecords: 'No adoption records',
     noAdoptionsYet: 'You have not adopted any pets yet',
     noAdoptionYet: 'You have not adopted any pets yet',
+    goAdoptPet: 'Go Adopt Pet',
     browseAdoptablePets: 'Browse adoptable pets',
     fosterStart: 'Foster Start',
     fosterEnd: 'Foster End',
@@ -293,17 +306,13 @@ export default {
     loadFosterFailed: 'Failed to load foster records',
     healthAlerts: 'Health Alerts',
     viewHealthStatus: 'View your pet health status',
-    pendingAlerts: 'Pending Alerts',
     resolvedAlerts: 'Resolved Alerts',
-    noPendingAlerts: 'No pending health alerts',
     noResolvedAlerts: 'No resolved health alerts',
     processAlert: 'Process Alert',
     confirmProcessAlert: 'Are you sure you have handled this health alert?',
     processAlertTitle: 'Process Alert',
-    pending: 'Pending',
     resolved: 'Resolved',
     normal: 'Normal',
-    critical: 'Critical',
     petLabel: 'Pet:',
     handlerLabel: 'Handler:',
     getHealthAlertsFailed: 'Failed to fetch health alerts',
@@ -323,7 +332,8 @@ export default {
     reset: 'Reset',
     healthStatus: 'Health Status',
     formReset: 'Form reset successfully',
-    updateFailed: 'Update failed'
+    updateFailed: 'Update failed',
+    undefined: 'Undefined'
   },
   settings: {
     title: 'Settings', accountSecurity: 'Account Security', accountSecuritySubtitle: 'Manage your account security settings', security: 'Security Settings', loginHistory: 'Login History', preferences: 'Preferences', language: 'Language Settings', theme: 'Theme Appearance', interface: 'Interface Settings', currentPassword: 'Current Password', newPassword: 'New Password', confirmPassword: 'Confirm Password', changePassword: 'Change Password', changePasswordTip: 'Changing your password regularly can improve account security', currentPasswordPlaceholder: 'Please enter current password', newPasswordPlaceholder: 'Please enter new password', confirmPasswordPlaceholder: 'Please confirm new password', securityTips: 'Security Tips', securityTipsSubtitle: 'Protect your account security', securityTip1: 'Use strong passwords with letters, numbers and special characters', securityTip2: 'Change your password regularly and avoid using the same password on multiple websites', securityTip3: 'Enable two-step verification (if available)', recentLoginRecords: 'Recent Login Records', viewLoginHistory: 'View your login history', unknownLocation: 'Unknown Location', loginSuccess: 'Login successful', loginFailed: 'Login failed', loadMore: 'Load More', clearHistory: 'Clear History', languageLabel: 'Interface Language', languageSettings: 'Language Settings', languageSettingsSubtitle: 'Choose your preferred interface language', interfaceLanguage: 'Interface Language', chineseSimplified: 'Simplified Chinese', english: 'English', saveLanguageSettings: 'Save Language Settings', themeMode: 'Theme Mode', lightTheme: 'Light Theme', darkTheme: 'Dark Theme', autoTheme: 'Follow System', followSystem: 'Follow System', themeAppearance: 'Theme Appearance', themeAppearanceSubtitle: 'Customize interface appearance and style', themeColor: 'Theme Color', saveThemeSettings: 'Save Theme Settings', interfaceSettings: 'Interface Settings', interfaceSettingsSubtitle: 'Adjust interface display options', fontSize: 'Font Size', animationEffects: 'Animation Effects', compactMode: 'Compact Mode', compactModeHint: 'Reduce interface spacing, display more content', saveLanguage: 'Save Language Settings', saveTheme: 'Save Theme Settings', savePreferences: 'Save Preferences', backgroundSettings: 'Background Settings', enableBackground: 'Enable Background', backgroundType: 'Background Type', solidColor: 'Solid Color', gradient: 'Gradient', imageBackground: 'Image Background', backgroundColor: 'Background Color', gradientColors: 'Gradient Colors', startColor: 'Start Color', endColor: 'End Color', imageUrl: 'Image URL', imagePlaceholder: 'Please enter image URL', randomImage: 'Random Image', opacity: 'Opacity', blurEffect: 'Blur Effect', resetBackgroundSettings: 'Reset Background Settings', testEffect: 'Test Effect', saveBackgroundSettings: 'Save Background Settings', justNow: 'Just now', minutesAgo: 'minutes ago', hoursAgo: 'hours ago', daysAgo: 'days ago', passwordInfoRequired: 'Please fill in all password information', passwordMismatch: 'Passwords do not match', passwordLengthError: 'Password must be at least 6 characters long', languageSaved: 'Language settings saved successfully', themeSaved: 'Theme settings saved successfully', preferencesSaved: 'Preferences saved successfully', historyCleared: 'Login history cleared', clearHistoryFailed: 'Failed to clear login history', loadingMore: 'Loading more...', startFetchingLoginHistory: 'Starting to fetch login history...', currentPageURL: 'Current Page URL:', currentHost: 'Current Host:', requestURL: 'Request URL:', fullRequestURL: 'Full Request URL:', loginHistoryFailed: 'Failed to fetch login history', loginHistoryFormatError: 'Login history data format error', loginHistoryNetworkError: 'Network error fetching login history', loadingPreferences: 'Loading preferences...', preferencesLoaded: 'Preferences loaded', preferencesSynced: 'Preferences synced', saveInterfaceSettings: 'Save Interface Settings',
@@ -404,19 +414,25 @@ export default {
     confirmDelete: 'Are you sure you want to delete this event?',
     deleteSuccess: 'Deleted successfully',
     addSuccess: 'Added successfully',
-    updateSuccess: 'Updated successfully'
+    updateSuccess: 'Updated successfully',
+    existingMedia: 'Existing Media',
+    deleteMedia: 'Delete Media',
+    deleteCurrentMedia: 'Delete Current Media',
+    confirmDeleteMedia: 'Are you sure you want to delete this media file?',
+    deleteMediaSuccess: 'Media file deleted successfully',
+    deleteMediaFailed: 'Failed to delete media file',
+    clickToSelectOrDrag: 'Click to select files or drag here',
+    dragFilesHere: 'Drag files here to upload'
   },
   healthAlerts: {
     pageTitle: 'Health Alert Management',
     description: 'Manage your pet health records and reminders',
     title: 'Health Records',
     totalRecords: 'Health Records',
-    normalStatus: 'Normal',
-    criticalStatus: 'Critical',
+    attentionStatus: 'Needs Attention',
+    treatmentStatus: 'In Treatment',
     noType: 'Unclassified',
     unknown: 'Unknown',
-    pendingAlerts: 'Pending Alerts',
-    completedRecords: 'Completed Records',
     expiredAlerts: 'Expired Alerts',
     allPets: 'All Pets',
     allTypes: 'All Types',
@@ -425,11 +441,13 @@ export default {
     checkup: 'Checkup',
     surgery: 'Surgery',
     disease: 'Disease',
-    normal: 'Normal',
-    critical: 'Critical',
     pending: 'Pending',
+    attention: 'Needs Attention',
+    treatment: 'In Treatment',
     expired: 'Expired',
-    completed: 'Completed',
+    reminded: 'Reminded',
+    expiredStatus: 'Expired',
+    remindedStatus: 'Reminded',
     petName: 'Pet Name',
     selectPet: 'Please select a pet',
     healthType: 'Health Type',
@@ -437,6 +455,7 @@ export default {
     checkDate: 'Check Date',
     checkTime: 'Check Date',
     reminderTime: 'Reminder Time',
+    reminderTimeHelp: 'Set a reminder time, the system will remind you at that time',
     healthStatus: 'Health Status',
     descriptionLabel: 'Health Status Description',
     descriptionPlaceholder: 'Please enter health status description',
@@ -460,7 +479,8 @@ export default {
     pleaseEnterRemarks: 'Please enter remarks',
     reminderContent: 'Reminder Content',
     pleaseEnterReminderContent: 'Please enter reminder content',
-    status: 'Status'
+    status: 'Status',
+    completed: 'Completed'
   },
   fosters: {
     title: 'Foster Management', fosterList: 'Foster List', fosterStatus: 'Foster Status', fosterStart: 'Foster Start', fosterEnd: 'Foster End', petName: 'Pet Name', fosterDays: 'Foster Days', fosterInProgress: 'Fostering', fosterEnded: 'Foster Ended', noFosters: 'No foster records', loading: 'Loading foster records...'
@@ -485,6 +505,10 @@ export default {
     getStatsFailed: 'Failed to fetch statistics', getPetListFailed: 'Failed to fetch pet list', updateHealthAlertFailed: 'Failed to update health alert status', deleteHealthAlertFailed: 'Failed to delete health alert', saveHealthAlertFailed: 'Failed to save health alert', loginFailed: 'Login request failed', endFosterFailed: 'Failed to end foster', getFosterRecordsFailed: 'Failed to fetch foster records', getArticleDetailFailed: 'Failed to fetch article details', getUserInfoFailed: 'Failed to fetch user info', updateProfileFailed: 'Failed to update profile', adoptFailed: 'Adoption failed', getArticleListFailed: 'Failed to fetch article list', saveLanguageFailed: 'Failed to save language', clearLoginHistoryFailed: 'Error clearing login history', httpError: 'HTTP Error', getLoginHistoryFailed: 'Failed to fetch login history', loadPreferencesFailed: 'Error loading preferences', savePreferencesFailed: 'Error saving preferences', getShelterListFailed: 'Error fetching shelter list', fosterApiFailed: 'Foster API call failed', deletePetFailed: 'Failed to delete pet', getPetDetailFailed: 'Failed to fetch pet details', petDetail: 'Pet Details', species: 'Species', healthStatus: 'Health Status', vaccinated: 'Vaccinated', spayed: 'Spayed/Neutered', adoptionFee: 'Adoption Fee', fosterFee: 'Foster Fee', shelterInfo: 'Shelter Info', shelterName: 'Shelter Name', healthy: 'Healthy', good: 'Good', fair: 'Fair', needsAttention: 'Needs Attention', available: 'Available', adopted: 'Adopted', fostered: 'Fostered', unknown: 'Unknown', yes: 'Yes', no: 'No', browsePets: 'Browse Pets', getAdoptionRecordsFailed: 'Failed to fetch adoption records', getShelterListFailed2: 'Failed to fetch shelter list', fosterFailed: 'Foster failed', updateHealthAlertSuccess: 'Status updated successfully', deleteHealthAlertSuccess: 'Deleted successfully', pleaseLogin: 'Please login first', pleaseSelectPet: 'Please select a pet', createHealthAlertSuccess: 'Created successfully', operationFailed: 'Operation failed', confirmDeleteHealthAlert: 'Are you sure you want to delete this health alert?', deleteConfirmation: 'Delete Confirmation', confirm: 'Confirm', cancel: 'Cancel', invalidArticleId: 'Invalid article ID', likeSuccess: 'Favorited successfully', unlikeSuccess: 'Unfavorited successfully', linkCopied: 'Link copied to clipboard', unknownPet: 'Unknown Pet'
   }
 }
+
+
+
+export default en
 
 
 

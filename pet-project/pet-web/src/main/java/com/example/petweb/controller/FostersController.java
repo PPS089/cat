@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.petcommon.result.Result;
-import com.example.petpojo.entity.enums.CommonEnum;
 import com.example.petservice.service.FosterService;
-import com.example.petcommon.exception.BizException;
-import com.example.petcommon.error.ErrorCode;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -36,21 +33,10 @@ public class FostersController {
      */
     @DeleteMapping("delete/{id}")
     @Operation(summary = "删除寄养记录", description = "根据ID删除寄养记录")
-    public Result<String> deleteFoster(
-            @PathVariable Integer id) {
+    public Result<String> deleteFoster(@PathVariable Integer id) {
         log.info("删除寄养记录ID: {}", id);
-        CommonEnum.FosterDeleteResultEnum result = fosterService.deleteFoster(id);
-        
-        switch (result) {
-            case SUCCESS:
-                return Result.success("寄养记录删除成功");
-            case PET_IS_FOSTERING:
-                throw new BizException(ErrorCode.BAD_REQUEST, "宠物正在寄养中，无法删除记录");
-            case DELETE_FAILED:
-                throw new BizException(ErrorCode.BAD_REQUEST, "删除失败，寄养记录不存在");
-            default:
-                throw new BizException(ErrorCode.BAD_REQUEST, "删除失败，未知错误");
-        }
+        fosterService.deleteFoster(id);
+        return Result.success("寄养记录删除成功");
     }
 
 }

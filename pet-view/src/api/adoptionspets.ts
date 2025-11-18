@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
@@ -109,7 +109,7 @@ export const usePetData = () => {
 }
 
 // 领养功能函数
-export const useAdoptPet = (availablePets: any = null) => {
+export const useAdoptPet = (availablePets: Ref<Pet[]> | null = null) => {
   const { t } = useI18n()
   const { fetchAvailablePets } = usePetData()
   
@@ -126,12 +126,9 @@ export const useAdoptPet = (availablePets: any = null) => {
         }
       )
       
-      const response = await request.post('/pets/adopt',null,
-        {
-          params: { petId: pet.pid }
-        }
-      )
-      
+      const response = await request.post('/pets/adopt', null, {
+        params: { petId: pet.pid }
+      })
       
       // response 已经是解析后的数据，直接检查 code
       if (response.code === 200) {
@@ -140,20 +137,18 @@ export const useAdoptPet = (availablePets: any = null) => {
         await fetchAvailablePets()
         // 如果提供了availablePets引用，立即更新本地列表以刷新UI
         if (availablePets && availablePets.value) {
-          availablePets.value = availablePets.value.filter((p: Pet) => p.pid !== pet.pid)
+          availablePets.value = availablePets.value.filter((p) => p.pid !== pet.pid)
         }
 
         return true
       } else {
-        console.log('领养失败，响应码:', response.code, '消息:', response.message)
         ElMessage.error(response.message || t('message.adoptFailed'))
         return false
       }
     } catch (error: any) {
       if (error !== 'cancel') {
-        
         // 处理特定错误情况
-        const errorMessage =error.response?.data?.message
+        const errorMessage = error.response?.data?.message
         if (errorMessage?.includes('已被领养') || errorMessage?.includes('已有领养记录')) {
           ElMessage.error(t('message.petAlreadyAdopted') || '该宠物已被其他人领养，页面将自动刷新')
           // 自动刷新宠物列表

@@ -1,9 +1,9 @@
 package com.example.petweb.controller;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
+import com.example.petpojo.vo.AdoptionResultVo;
+import com.example.petpojo.vo.FosterEndResultVo;
 import com.example.petpojo.dto.AdoptionTimelineResponse;
 import com.example.petpojo.dto.FosterRequest;
 import com.example.petpojo.dto.PetUpdateDto;
@@ -53,68 +53,16 @@ public class PetsController {
     private final AdoptionsService adoptionsService;
     private final ListPetsService listPetsService;
 
-
-    /**
-     * listPetsVo 转换为 PetsDetailsVo
-     */
-    
-    private PetsDetailsVo convertToPetVO(PetListVo listPetsVo) { // 更改参数类型
-          PetsDetailsVo pet = new PetsDetailsVo();
-            pet.setId(listPetsVo.getPid());  // 使用pid作为id
-            pet.setPid(listPetsVo.getPid()); // 使用pid作为pid
-            pet.setName(listPetsVo.getName());
-            // 使用从数据库查询到的实际物种信息，而不是硬编码为"adoption"
-            pet.setSpecies(listPetsVo.getSpecies() != null ? listPetsVo.getSpecies() : "未知物种");
-            pet.setBreed(listPetsVo.getBreed());
-            pet.setAge(listPetsVo.getAge());
-            pet.setGender(listPetsVo.getGender());
-            pet.setStatus(listPetsVo.getStatus());
-            pet.setDescription(listPetsVo.getName() + "是一只可爱的" + listPetsVo.getBreed() + "，正在寻找温暖的家庭");
-            pet.setImage(listPetsVo.getImgUrl() != null ? listPetsVo.getImgUrl() : "/dog.jpg");
-            pet.setHealthStatus("健康");
-            pet.setVaccinated(true);
-            pet.setSpayed(false);
-            pet.setAdoptionFee(200);
-            pet.setFosterFee(50);
-            
-            // 只有在不为null时才设置收容所信息
-            if (listPetsVo.getShelterName() != null) {
-                pet.setShelterName(listPetsVo.getShelterName());
-            }
-            if (listPetsVo.getShelterAddress() != null) {
-                pet.setShelterAddress(listPetsVo.getShelterAddress());
-            }
-            
-            pet.setShelterId(1L);
-
-            return pet;
-    }
-
-    
-
     /**
      * 领养宠物
      */
     @PostMapping("/adopt")
     @Operation(summary = "领养宠物", description = "领养指定ID的宠物")
-    public Result<Map<String, Object>> adoptPet(@RequestParam Long petId) {
+    public Result<AdoptionResultVo> adoptPet(@RequestParam Long petId) {
         log.info("领养宠物ID: {}", petId);
-        PetListVo adopted = petsService.adop(petId);
-        if (adopted == null) {
-            throw new BizException(ErrorCode.BAD_REQUEST, "领养失败，宠物可能已被领养或不存在");
-        }
-        Map<String, Object> result = new HashMap<>();
-        result.put("petId", adopted.getPid());
-        result.put("petName", adopted.getName());
-        result.put("species", adopted.getSpecies());
-        result.put("breed", adopted.getBreed());
-        result.put("status", adopted.getStatus());
-        result.put("adoptionDate", LocalDateTime.now());
-        result.put("message", "领养成功");
+        AdoptionResultVo result = petsService.adop(petId);
         return Result.success(result);
     }
-
-
 
     /**
      * 寄养宠物
@@ -138,19 +86,17 @@ public class PetsController {
      */
     @PostMapping("/{petId}/foster/end")
     @Operation(summary = "结束宠物寄养", description = "结束指定宠物的寄养状态")
-    public Result<Map<String, Object>> endPetFoster(@PathVariable Long petId) {
+    public Result<FosterEndResultVo> endPetFoster(@PathVariable Long petId) {
         log.info("结束宠物寄养ID: {}", petId);
         boolean ended = fosterService.endFosterByPetId(petId);
         if (!ended) {
             throw new BizException(ErrorCode.BAD_REQUEST, "结束寄养失败");
         }
-        Map<String, Object> data = new HashMap<>();
-        data.put("end_date", LocalDateTime.now());
-        data.put("pet_id", petId);
-        return Result.success(data);
+        FosterEndResultVo result = new FosterEndResultVo();
+        result.setPetId(petId);
+        result.setEndDate(LocalDateTime.now());
+        return Result.success(result);
     }
-
-
 
     /**
      * 获取宠物领养时间线
@@ -179,8 +125,6 @@ public class PetsController {
         return Result.success(updatedPet);
     }
 
-
-
     /**
      * 领养界面根据ID获取宠物详情
      */
@@ -190,16 +134,10 @@ public class PetsController {
     public Result<PetsDetailsVo> getPetById(@PathVariable Long id) {
         log.info("根据ID获取宠物详情: {}", id);
         
-        PetListVo listPetsVo = listPetsService.getPetById(id.intValue());
-        if (listPetsVo == null) {
+        PetsDetailsVo pet = listPetsService.getPetById(id.intValue());
+        if (pet == null) {
             throw new BizException(ErrorCode.PET_NOT_FOUND);
         }
-        PetsDetailsVo pet = convertToPetVO(listPetsVo);
         return Result.success(pet);
     }
-
-
-
-
-
 }

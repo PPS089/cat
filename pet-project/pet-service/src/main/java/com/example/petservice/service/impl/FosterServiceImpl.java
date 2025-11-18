@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +12,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.petcommon.context.UserContext;
+import com.example.petcommon.exception.BizException;
+import com.example.petcommon.error.ErrorCode;
 import com.example.petpojo.entity.Fosters;
 import com.example.petpojo.entity.Pets;
 import com.example.petpojo.entity.enums.CommonEnum;
@@ -22,6 +23,7 @@ import com.example.petservice.service.FosterService;
 import com.example.petpojo.vo.FostersVo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -29,12 +31,11 @@ import lombok.RequiredArgsConstructor;
  * 实现寄养相关的业务逻辑
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class FosterServiceImpl extends ServiceImpl<FosterMapper, Fosters> implements FosterService {
-    @Autowired
-    private FosterMapper fosterMapper;
-    @Autowired
-    private PetsMapper petsMapper;
+    private final FosterMapper fosterMapper;
+    private final PetsMapper petsMapper;
 
     /**
      * 创建寄养信息（带收容所和开始日期）
@@ -116,31 +117,35 @@ public class FosterServiceImpl extends ServiceImpl<FosterMapper, Fosters> implem
      */
     @Override
     @Transactional
-    public CommonEnum.FosterDeleteResultEnum deleteFoster(Integer id) {
-        List<Object> foster = fosterMapper.selectObjs(new LambdaQueryWrapper<Fosters>()
+    public void deleteFoster(Integer id) {
+        List<Object> endDateList = fosterMapper.selectObjs(new LambdaQueryWrapper<Fosters>()
         .eq(Fosters::getFid, id)
         .select(Fosters::getEndDate));
-        //寄养结束时间
-         LocalDateTime endDate =foster.isEmpty() ? null : (LocalDateTime) foster.get(0);
-        if(foster.isEmpty()){
-            return CommonEnum.FosterDeleteResultEnum.DELETE_FAILED;
-        } else if (endDate == null) {
-            return CommonEnum.FosterDeleteResultEnum.PET_IS_FOSTERING;
-        }else{
-             // 真正从数据库删除寄养记录
-            boolean deleted = this.removeById(id);
-            if (!deleted) {
-                return CommonEnum.FosterDeleteResultEnum.DELETE_FAILED;
-            }
+        
+        // 检查寄养记录是否存在
+        if(endDateList.isEmpty()){
+            throw new BizException(ErrorCode.FOSTER_NOT_FOUND, "寄养记录不存在");
         }
         
-        return CommonEnum.FosterDeleteResultEnum.SUCCESS;
+        // 获取寄养结束时间
+        LocalDateTime endDate = (LocalDateTime) endDateList.get(0);
+        
+        // 检查宠物是否正在寄养中（结束时间为空表示正在寄养）
+        if (endDate == null) {
+            throw new BizException(ErrorCode.FOSTER_PET_IS_FOSTERING, "宠物正在寄养中，无法删除记录");
+        }
+        
+        // 真正从数据库删除寄养记录
+        boolean deleted = this.removeById(id);
+        if (!deleted) {
+            throw new BizException(ErrorCode.FOSTER_DELETE_FAILED, "寄养记录删除失败");
+        }
     }
 
     /**
      * 查询寄养信息
      */
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<FostersVo> fosterInfo(Integer currentPage, Integer pageSize) {
         Integer offset = (currentPage - 1) * pageSize;
@@ -155,6 +160,7 @@ public class FosterServiceImpl extends ServiceImpl<FosterMapper, Fosters> implem
      * @param pageSize 每页数量
      */
     @Override
+    @Transactional(readOnly = true)
     public IPage<FostersVo> getUserFostersWithPage(Long userId, Integer currentPage, Integer pageSize) {
         // 创建分页对象
         Page<FostersVo> page = new Page<>(currentPage, pageSize);

@@ -1,9 +1,7 @@
 package com.example.petcommon.result;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 
 /**
@@ -12,7 +10,6 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Result<T> {
 
     /**
@@ -31,9 +28,18 @@ public class Result<T> {
     private T data;
 
     /**
+     * 构造函数
+     */
+    public Result(Integer code, String msg, T data) {
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+    }
+
+    /**
      * 成功响应
      */
-    public static <T> Result<T> success() {
+    public static Result<Void> success() {
         return new Result<>(200, "success", null);
     }
 
@@ -47,7 +53,7 @@ public class Result<T> {
     /**
      * 错误响应
      */
-    public static <T> Result<T> error(String msg) {
+    public static Result<String> error(String msg) {
         return new Result<>(500, msg, null);
     }
 
@@ -55,7 +61,7 @@ public class Result<T> {
     /**
      * 错误响应，自定义状态码
      */
-    public static <T> Result<T> error(Integer code, String msg) {
+    public static Result<String> error(Integer code, String msg) {
         return new Result<>(code, msg, null);
     }
 

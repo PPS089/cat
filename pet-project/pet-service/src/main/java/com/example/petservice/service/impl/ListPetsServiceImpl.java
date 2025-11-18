@@ -3,13 +3,15 @@ package com.example.petservice.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.petpojo.vo.PetListVo;
+import com.example.petpojo.vo.PetsDetailsVo;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.petcommon.error.ErrorCode;
+import com.example.petcommon.exception.BizException;
 import com.example.petpojo.entity.Pets;
 import com.example.petservice.mapper.ListPetsMapper;
 import com.example.petservice.service.ListPetsService;
@@ -33,9 +35,9 @@ public class ListPetsServiceImpl extends ServiceImpl<ListPetsMapper, Pets> imple
      * @param pageSize 每页数量
      * @return 宠物列表分页对象
      */
-    @SneakyThrows
     @Override
-    public IPage<PetListVo> listPets(@Param("current_page") Integer currentPage, @Param("per_page") Integer pageSize) {
+    @Transactional(readOnly = true)
+    public IPage<PetListVo> listPets(Integer currentPage, Integer pageSize) {
         // 确保分页参数有效
         int current = (currentPage != null && currentPage > 0) ? currentPage : 1;
         int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
@@ -47,7 +49,7 @@ public class ListPetsServiceImpl extends ServiceImpl<ListPetsMapper, Pets> imple
             return listPetsMapper.selectPetListByPage(page);
         } catch (Exception e) {
             log.error("查询宠物列表失败", e);
-            throw new RuntimeException("查询宠物列表失败", e);
+            throw new BizException(ErrorCode.INTERNAL_ERROR, "查询宠物列表失败");
         }
     }
 
@@ -57,19 +59,18 @@ public class ListPetsServiceImpl extends ServiceImpl<ListPetsMapper, Pets> imple
      * @return 宠物详情VO对象
      */
     @Override
-    public PetListVo getPetById(Integer petId) {
+    @Transactional(readOnly = true)
+    public PetsDetailsVo getPetById(Integer petId) {
         log.info("根据ID查询宠物详情，宠物ID: {}", petId);
         
-        try {
-            // 直接使用Mapper查询返回VO对象
-            PetListVo petVo = listPetsMapper.selectPetListById(petId);
-            
-            log.info("查询结果: petVo = {}", petVo);
-            
-            return petVo;
-        } catch (Exception e) {
-            log.error("查询宠物详情失败，宠物ID: {}", petId, e);
-            throw new RuntimeException("查询宠物详情失败", e);
+        PetsDetailsVo petDetailsVo = listPetsMapper.selectPetDetailsById(petId);
+        
+        // 检查宠物是否存在
+        if (petDetailsVo == null) {
+            log.warn("宠物不存在，宠物ID: {}", petId);
+            throw new BizException(ErrorCode.PET_NOT_FOUND);
         }
+        
+        return petDetailsVo;
     }
 }

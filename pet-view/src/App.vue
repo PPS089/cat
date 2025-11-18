@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, inject, ref, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
-import WebSocketReminderScheduler from '@/components/WebSocketReminderScheduler.vue'
 
 // 初始化主题
 const initTheme = inject<() => Promise<any>>('initTheme')
@@ -29,8 +28,6 @@ onMounted(async () => {
 
 <template>
   <router-view/>
-  <!-- WebSocket提醒调度器 -->
-  <WebSocketReminderScheduler />
 </template>
 
 <style scoped>

@@ -1,1 +1,0 @@
-const c=e=>({male:"公",female:"母"})[e]||"公",t=e=>({公:"male",母:"female"})[e]||"male",d=(e,n,r)=>{try{return n==="backend"&&r==="frontend"?t(e):e}catch(a){return console.error("性别转换失败:",a),r==="frontend"?"male":"公"}};export{c as a,t as c,d as s};

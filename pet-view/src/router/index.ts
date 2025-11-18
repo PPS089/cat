@@ -106,11 +106,6 @@ const routes = [
             }
         ]
     },
-    {
-        path:"/exception",
-        name:"exception",
-        component: () => import('../views/Exception.vue')
-    },
 ]
  
 const router = createRouter({
@@ -121,13 +116,15 @@ const router = createRouter({
 // 全局路由守卫
 router.beforeEach((to, _from, next) => {
   const userid = localStorage.getItem('userId')
+  const token = localStorage.getItem('jwt_token') 
   
   // 检查路由是否需要认证
   // const needsAuth = to.path.startsWith('/user')
-  const auth=["/","/login","/register","/exception"]
+  const auth=["/","/login","/register"]
 
   
-  if (!auth.includes(to.path) && !userid) {
+  if (!auth.includes(to.path) && (!userid || !token)) {
+    console.log('需要认证但缺少信息，重定向到登录页');
     return next({ path: '/login', query: { redirect: to.fullPath } })
   }
   

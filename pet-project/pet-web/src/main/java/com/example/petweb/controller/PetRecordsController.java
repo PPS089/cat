@@ -9,8 +9,6 @@ import com.example.petcommon.result.Result;
 import com.example.petpojo.dto.RecordDto;
 import com.example.petpojo.vo.EventVo;
 import com.example.petservice.service.PetRecordsService;
-import com.example.petcommon.exception.BizException;
-import com.example.petcommon.error.ErrorCode;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -41,9 +39,7 @@ public class PetRecordsController {
     public Result<List<EventVo>> getUserEvents() {
         
         Long userId = UserContext.getCurrentUserId();
-        log.info("获取用户事件记录，用户ID: {}", userId);
-        
-        // 直接获取EventVo列表，避免在Controller中进行转换
+        // 直接获取EventVo列表
         List<EventVo> eventVos = petRecordsService.getUserEventVos(userId.intValue());
         
         return Result.success(eventVos);
@@ -56,7 +52,7 @@ public class PetRecordsController {
     @Operation(summary = "创建事件记录", description = "创建一个新的宠物事件记录")
     public Result<EventVo> createEvent(
             @Valid @RequestBody RecordDto recordDto) {
-        log.info("创建事件记录，用户ID: {}, 宠物ID: {}", recordDto.getUid(), recordDto.getPid());
+        log.info("创建事件记录，用户ID: {}, 宠物ID: {}",recordDto.getPid());
         EventVo eventVo = petRecordsService.createRecord(recordDto);
         return Result.success(eventVo);
     }
@@ -83,10 +79,7 @@ public class PetRecordsController {
     public Result<String> deleteEvent(
             @PathVariable Integer eventId) {
         log.info("删除事件记录，记录ID: {}", eventId);
-        boolean result = petRecordsService.deleteRecord(eventId);
-        if (!result) {
-            throw new BizException(ErrorCode.BAD_REQUEST, "删除失败，事件记录可能不存在");
-        }
+        petRecordsService.deleteRecord(eventId);
         return Result.success("删除成功");
     }
 }

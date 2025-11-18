@@ -27,7 +27,7 @@ export const useHealth = () => {
     checkDate: '',
     description: '',
     reminderTime: undefined,
-    status: 'normal'
+    status: 'attention'
   })
 
   const showAddModalDialog = () => {
@@ -39,16 +39,16 @@ export const useHealth = () => {
   }
 
   const totalAlerts = computed(() => healthAlerts.value.length)
-  const normalAlerts = computed(() => 
-    healthAlerts.value.filter(alert => alert.status === 'normal')
-  )
-  const criticalAlerts = computed(() => 
-    healthAlerts.value.filter(alert => alert.status === 'critical')
-  )
+  
+  // 根据状态过滤健康提醒的辅助函数
+  const filterAlertsByStatus = (status: string) => 
+    healthAlerts.value.filter(alert => alert.status === status)
+  
+  // 各种状态的提醒数量
+  const attentionAlerts = computed(() => filterAlertsByStatus('attention'))
+  const expiredAlerts = computed(() => filterAlertsByStatus('expired'))
+  const remindedAlerts = computed(() => filterAlertsByStatus('reminded'))
 
-  const pendingAlerts = computed(() => normalAlerts.value)
-  const completedAlerts = computed(() => criticalAlerts.value)
-  const expiredAlerts = computed(() => criticalAlerts.value)
 
   const filteredAlerts = computed(() => {
     let filtered = healthAlerts.value
@@ -87,36 +87,24 @@ export const useHealth = () => {
       
       await fetchPets()
       
-      const userPetIds = pets.value.map(pet => pet.pid)
-      console.log('用户拥有的宠物ID列表:', userPetIds)
-      
+      // 后端已确保只返回当前用户宠物的健康提醒，无需额外过滤
       if (response && response.data && Array.isArray(response.data)) {
-        const allAlerts = response.data
-      
-        healthAlerts.value = allAlerts
-          .filter((alert: any) => {
-            const alertPid = Number(alert.pid)
-            const isUserPet = userPetIds.includes(alertPid)
-            console.log(`过滤检查 - alertPid: ${alertPid}, 用户宠物: ${isUserPet}`)
-            return isUserPet
-          })
-          .map((alert: any) => {
-            console.log('健康提醒alert数据:', alert)
-            return {
-              healthId: alert.healthId,
-              pid: Number(alert.pid),
-              checkDate: alert.checkDate,
-              healthType: alert.healthType,
-              description: alert.description,
-              reminderTime: alert.reminderTime,
-              status: alert.status,
-              createdAt: alert.createdAt,
-              updatedAt: alert.updatedAt,
-            } as HealthAlert
-          })
+        healthAlerts.value = response.data.map((alert: any) => {
+          return {
+            healthId: alert.healthId,
+            pid: Number(alert.pid),
+            checkDate: alert.checkDate,
+            healthType: alert.healthType,
+            description: alert.description,
+            reminderTime: alert.reminderTime,
+            status: alert.status,
+            createdAt: alert.createdAt,
+            updatedAt: alert.updatedAt,
+          } as HealthAlert
+        })
       }
 
-      console.log('过滤后的健康警报数据:', healthAlerts.value)
+      console.log('健康警报数据:', healthAlerts.value)
     } catch (error) {
       ElMessage.error(t('api.getPetListFailed'))
       healthAlerts.value = []
@@ -174,20 +162,7 @@ export const useHealth = () => {
     }
   }
 
-  const updateAlertStatus = async (healthId: number, status: 'normal' | 'critical') => {
-    try {
-      await request.put(`/user/health-alerts/${healthId}/status?status=${status}`)
-      await fetchHealthAlerts()
-      ElMessage.success(t('api.updateHealthAlertSuccess'))
-    } catch (error: any) {
-      console.error(t('api.updateHealthAlertFailed'), error)
-      if (error.response && error.response.status === 400) {
-        ElMessage.error(t('api.updateHealthAlertFailed') + ': ' + (error.response.data?.message || t('common.validationError')))
-      } else {
-        ElMessage.error(t('api.updateHealthAlertFailed'))
-      }
-    }
-  }
+
 
   const deleteAlert = async (healthId: number) => {
     try {
@@ -206,7 +181,6 @@ export const useHealth = () => {
       ElMessage.success(t('api.deleteSuccess'))
     } catch (error) {
       if (error !== 'cancel') {
-        ElMessage.error(t('api.deleteFailed'))
         console.error('删除健康提醒失败:', error)
       }
     }
@@ -231,8 +205,9 @@ export const useHealth = () => {
           String(date.getSeconds()).padStart(2, '0')
       }
 
-      let formattedReminderTime = formData.reminderTime || null
-      if (formData.reminderTime && formData.reminderTime.includes('T')) {
+      let formattedReminderTime = null
+      // 只有在状态为attention且设置了提醒时间时才格式化并发送
+      if (formData.status === 'attention' && formData.reminderTime && formData.reminderTime.includes('T')) {
         // 将日期格式转换为 yyyy-MM-dd HH:mm:ss
         const date = new Date(formData.reminderTime)
         formattedReminderTime = date.getFullYear() + '-' + 
@@ -247,7 +222,7 @@ export const useHealth = () => {
         pid: formData.pid,
         healthType: formData.healthType,
         checkDate: formattedCheckDate,
-        reminderTime: formattedReminderTime, // 允许为null
+        reminderTime: formattedReminderTime, // 只有attention状态才可能有值
         status: formData.status,
         description: formData.description
       }
@@ -297,7 +272,7 @@ export const useHealth = () => {
     formData.healthType = ''
     formData.checkDate = ''
     formData.reminderTime = undefined
-    formData.status = 'normal'
+    formData.status = 'attention'
     formData.description = ''
   }
 
@@ -319,13 +294,12 @@ export const useHealth = () => {
   }
 
   const getStatusClass = (status: string): Record<string, boolean> => {
-    const normalizeStatus = status === 'normal' ? 'normal' : status === 'critical' ? 'critical' : status
+    const normalizeStatus = status === 'pending' ? 'pending' : status === 'attention' ? 'attention' : status
     return {
-      'pending': normalizeStatus === 'normal',
-      'completed': normalizeStatus === 'normal',
-      'expired': normalizeStatus === 'critical',
-      'normal': normalizeStatus === 'normal',
-      'critical': normalizeStatus === 'critical'
+      'expired': normalizeStatus === 'expired',
+      'reminded': normalizeStatus === 'reminded',
+      'pending': normalizeStatus === 'pending',
+      'attention': normalizeStatus === 'attention'
     }
   }
 
@@ -343,12 +317,12 @@ export const useHealth = () => {
   const getStatusLabel = (status: string | null | undefined): string => {
     if (!status) return t('healthAlerts.unknown', '未知')
     const statusMap: Record<string, string> = {
-      'normal': t('healthAlerts.normal'),
-      'critical': t('healthAlerts.critical'),
-      'pending': t('healthAlerts.pending'),
-      'completed': t('healthAlerts.completed'),
-      'expired': t('healthAlerts.expired')
-    }
+    'pending': t('healthAlerts.pending', '待处理'),
+    'attention': t('healthAlerts.attention'),
+    'expired': t('healthAlerts.expired'),
+    'reminded': t('healthAlerts.reminded', '已提醒'),
+    'completed': t('healthAlerts.completed', '已完成')
+  }
     return statusMap[status] || status
   }
 
@@ -379,7 +353,7 @@ export const useHealth = () => {
     
     formData.checkDate = (alert.checkDate || '').replace(' ', 'T')
     formData.reminderTime = (alert.reminderTime || '').replace(' ', 'T')
-    formData.status = alert.status || 'normal'
+    formData.status = alert.status || 'attention'
     formData.description = alert.description || alert.content || ''
     
     showEditModal.value = true
@@ -405,15 +379,13 @@ export const useHealth = () => {
     showEditModal,
     formData,
     totalAlerts,
-    normalAlerts,
-    criticalAlerts,
-    pendingAlerts,
-    completedAlerts,
+    attentionAlerts,
     expiredAlerts,
+    remindedAlerts,
+
     filteredAlerts,
     groupedAlerts,
     showAddModalDialog,
-    updateAlertStatus,
     deleteAlert,
     saveAlert,
     closeModal,

@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.petcommon.context.UserContext;
 import com.example.petcommon.result.Result;
-import com.example.petcommon.result.UserLoginResponse;
+import com.example.petpojo.vo.UserLoginVo;
 import com.example.petpojo.dto.ChangePasswordDto;
 import com.example.petpojo.dto.UserLoginDto;
 import com.example.petpojo.dto.UserUpdateDto;
@@ -54,9 +55,9 @@ public class UsersController {
      */
     @Operation(summary = "创建新用户", description = "注册新用户账号")
     @PostMapping
-    public Result<UserLoginResponse> createUser(@Valid @RequestBody UsersCreateDto userdto) {
+    public Result<UserLoginVo> createUser(@Valid @RequestBody UsersCreateDto userdto) {
         log.info("创建新用户: {}", userdto);
-        UserLoginResponse response = usersService.createUser(userdto);
+        UserLoginVo response = usersService.createUser(userdto);
         return Result.success(response);
     }
 
@@ -65,11 +66,18 @@ public class UsersController {
      */
     @Operation(summary = "用户登录", description = "用户使用用户名和密码登录系统")
     @PostMapping("/login")
-    public Result<UserLoginResponse> login(
+    public Result<UserLoginVo> login(
             @Valid @RequestBody UserLoginDto userLogindto, 
             HttpServletRequest request) {
         log.info("用户登录: {}", userLogindto);
-        UserLoginResponse response = usersService.userLogin(userLogindto, request);
+        UserLoginVo response = usersService.userLogin(userLogindto, request);
+        
+        // 如果登录失败，返回错误结果
+        if (!response.isOk()) {
+            return Result.error(401001, response.getMessage(), response);
+        }
+        
+        // 登录成功，返回成功结果
         return Result.success(response);
     }
 
@@ -135,8 +143,7 @@ public class UsersController {
         if (pageSize > 100) {
             pageSize = 100;
         }
-        com.baomidou.mybatisplus.core.metadata.IPage<AdoptionsVo> pageResult = 
-            adoptionsService.getUserAdoptionsWithPage(userId, currentPage, pageSize);
+        IPage<AdoptionsVo> pageResult = adoptionsService.getUserAdoptionsWithPage(userId, currentPage, pageSize);
         return Result.success(Map.of(
             "records", pageResult.getRecords(),
             "total", pageResult.getTotal(),
@@ -158,7 +165,7 @@ public class UsersController {
         if (pageSize > 100) {
             pageSize = 100;
         }
-        com.baomidou.mybatisplus.core.metadata.IPage<FostersVo> pageResult = 
+        IPage<FostersVo> pageResult = 
             fosterService.getUserFostersWithPage(userId, currentPage, pageSize);
         return Result.success(Map.of(
             "records", pageResult.getRecords(),
@@ -173,9 +180,9 @@ public class UsersController {
      * 刷新JWT token
      */
     @PostMapping("/refresh-token")
-    public Result<UserLoginResponse> refreshToken(HttpServletRequest request) {
+    public Result<UserLoginVo> refreshToken(HttpServletRequest request) {
         log.info("用户刷新token");
-        UserLoginResponse response = usersService.refreshToken(request);
+        UserLoginVo response = usersService.refreshToken(request);
         return Result.success(response);
     }
 

@@ -31,7 +31,7 @@ export const usePetsStore = defineStore('pets', () => {
   }
 
   const getPetById = (pid: number): Pet | undefined => {
-    return pets.value.find(pet => pet.pid === pid)
+    return pets.value.find((pet: Pet) => pet.pid === pid)
   }
 
   const getPetName = (pid: number): string => {

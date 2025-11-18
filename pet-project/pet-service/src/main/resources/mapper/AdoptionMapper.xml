@@ -21,7 +21,7 @@
             WHEN p.status = 'FOSTERING' THEN 1 
             ELSE 0 
         END AS isFostering,  -- 根据宠物状态判断是否寄养
-        p.status AS petStatus  -- 宠物状态
+        p.status AS status  -- 宠物状态
         FROM adoptions a
         JOIN pets p ON a.pid = p.pid
         JOIN shelters s ON p.shelter_id = s.sid
@@ -47,7 +47,7 @@
             WHEN p.status = 'FOSTERING' THEN 1 
             ELSE 0 
         END AS isFostering,  -- 根据宠物状态判断是否寄养
-        p.status AS petStatus  -- 宠物状态
+        p.status AS status  -- 宠物状态
         FROM adoptions a
         JOIN pets p ON a.pid = p.pid
         JOIN shelters s ON p.shelter_id = s.sid
@@ -75,7 +75,7 @@
             WHEN p.status = 'FOSTERING' THEN 1 
             ELSE 0 
         END AS isFostering,
-        p.status AS petStatus  -- 宠物状态
+        p.status AS status  -- 宠物状态
         FROM adoptions a
         JOIN pets p ON a.pid = p.pid
         JOIN shelters s ON p.shelter_id = s.sid
@@ -103,7 +103,7 @@
             WHEN p.status = 'FOSTERING' THEN 1 
             ELSE 0 
         END AS isFostering,
-        p.status AS petStatus
+        p.status AS status
         FROM adoptions a
         JOIN pets p ON a.pid = p.pid
         JOIN shelters s ON p.shelter_id = s.sid

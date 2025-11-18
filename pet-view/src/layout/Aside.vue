@@ -133,13 +133,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.user-layout {
-  min-height: 100vh;
-  background-color: #f5f7fa;
-  display: flex;
-  flex-direction: column;
-  transition: background-color 0.3s ease, background-image 0.3s ease;
-}
 
 /* 顶部导航栏 */
 .top-header {
@@ -356,8 +349,8 @@ onMounted(async () => {
 .main-container {
   display: flex;
   flex: 1;
-  margin-top: 80px;
-  height: calc(100vh - 80px);
+  margin-top: 0;
+  height: 100vh;
   overflow: hidden;
   width: 100%;
 }
@@ -367,19 +360,30 @@ onMounted(async () => {
   width: 280px;
   background: var(--el-bg-color, linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%));
   box-shadow: 2px 0 12px rgba(0,0,0,0.08);
-  padding: 1.5rem 0;
+  padding: 0;
   position: fixed;
   left: 0;
-  top: 80px;
-  bottom: 0;
-  overflow-y: auto;
+  top: 0;
+  height: 100vh;
+  overflow-y: hidden;
   z-index: 999;
-  border-right: 1px solid var(--el-border-color-light, #e4e7ed);
+  border-right: none;
   backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-top: 85px; /* 下移头部高度，使首页按钮位置对齐到我的宠物按钮位置 */
 }
 
 .nav-menu {
-  padding: 0 1rem;
+  padding: 0;
+  height: 100%;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex: 1;
 }
 
 /* 导航区域标题 */
@@ -395,6 +399,12 @@ onMounted(async () => {
 
 .nav-section {
   margin-bottom: 2rem;
+  padding-top: 1rem;
+}
+
+.nav-section:first-child {
+  padding-top: 1rem;
+  margin-top: 0;
 }
 
 .nav-section-title {
@@ -407,7 +417,7 @@ onMounted(async () => {
 }
 
 .nav-item {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.1rem;
   position: relative;
 }
 
@@ -437,6 +447,11 @@ onMounted(async () => {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+/* 第一个导航项特殊处理 */
+.nav-section:first-child .nav-item:first-child .nav-link {
+  margin-top: 0;
 }
 
 /* 完全移除悬停效果，使用更精确的状态控制 */
@@ -583,27 +598,34 @@ onMounted(async () => {
   color: #e6a23c;
 }
 
-/* 内容区域 */
-.content-area {
-  flex: 1;
-  padding: 0;
-  overflow-y: auto;
-  margin-left: 280px;
-  animation: fadeIn 0.6s ease-out;
-  width: calc(100% - 280px);
-  height: calc(100vh - 80px);
-  transition: background-color 0.3s ease, background-image 0.3s ease;
-  position: relative;
+/* 自定义滚动条样式 */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
 }
 
-.content-area > * {
-  min-height: 100%;
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.content-area > router-view {
-  display: block;
-  height: 100%;
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(144, 147, 153, 0.3);
+  border-radius: 3px;
 }
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(144, 147, 153, 0.5);
+}
+
+/* 暗色主题下的滚动条 */
+html.dark .sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+html.dark .sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 内容区域 - 移除了固定高度计算 */
 
 @keyframes fadeIn {
   from {

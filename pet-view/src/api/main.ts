@@ -6,7 +6,7 @@ import { useThemeStore } from '@/stores/theme'
 // 强制重新计算导航状态
 export const forceUpdateNavState = (themeStore: any) => {
   // 只需要确保主题正确应用，不需要强制重新渲染
-  themeStore.applyTheme()
+  themeStore.applyTheme();
 }
 
 // 初始化用户布局

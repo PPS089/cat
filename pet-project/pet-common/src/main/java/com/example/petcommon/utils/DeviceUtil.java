@@ -1,13 +1,15 @@
 package com.example.petcommon.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 设备识别工具类
  */
-@Slf4j
 public class DeviceUtil {
+    
+    private static final Logger log = LoggerFactory.getLogger(DeviceUtil.class);
 
     /**
      * 从User-Agent提取设备类型

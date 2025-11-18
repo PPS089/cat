@@ -1,8 +1,8 @@
 package com.example.petservice.websocket;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
 
@@ -18,16 +18,15 @@ import lombok.extern.slf4j.Slf4j;
 @ServerEndpoint("/ws/{id}")
 @Slf4j
 public class WebSocketServer {
-    //存放会话对象
-    private static final Map<String, Session> sessionMap = new HashMap<>();
+    private static final Map<String, Session> sessionMap = new ConcurrentHashMap<>();
 
     /**
      * 连接建立成功调用的方法
      */
     @OnOpen
-    public void onOpen(Session session, @PathParam("id") Integer id) {
-        System.out.println("客户端：" + id + "建立连接");
-        sessionMap.put(id.toString(), session);
+    public void onOpen(Session session, @PathParam("id") String id) {
+        log.info("客户端: {} 建立连接", id);
+        sessionMap.put(id, session);
     }
 
     /**
@@ -37,7 +36,7 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(String message, @PathParam("id") String id) {
-        System.out.println("收到来自客户端：" + id + "的信息:" + message);
+        log.info("收到来自客户端 {} 的信息: {}", id, message);
     }
 
     /**
@@ -47,7 +46,7 @@ public class WebSocketServer {
      */
     @OnClose
     public void onClose(@PathParam("id") String id) {
-        System.out.println("连接断开:" + id);
+        log.info("连接断开: {}", id);
         sessionMap.remove(id);
     }
 
@@ -60,14 +59,12 @@ public class WebSocketServer {
         Collection<Session> sessions = sessionMap.values();
         for (Session session : sessions) {
             try {
-                //服务器向客户端发送消息
                 session.getBasicRemote().sendText(message);
             } catch (java.io.IOException e) {
                 log.error("发送消息失败", e);
             } catch (IllegalStateException e) {
                 log.error("WebSocket连接状态异常", e);
-                // 移除无效会话
-                sessionMap.values().remove(session);
+                sessionMap.entrySet().removeIf(entry -> entry.getValue().equals(session));
             }
         }
     }
@@ -80,16 +77,19 @@ public class WebSocketServer {
         Session session = sessionMap.get(id);
         if (session != null && session.isOpen()) {
             try {
-                //服务器向客户端发送消息
                 session.getBasicRemote().sendText(message);
             } catch (java.io.IOException e) {
                 log.error("发送消息给客户端{}失败", id, e);
             } catch (IllegalStateException e) {
                 log.error("客户端{}的WebSocket连接状态异常", id, e);
-                // 移除无效会话
                 sessionMap.remove(id);
             }
         }
+    }
+
+    @jakarta.websocket.OnError
+    public void onError(Session session, Throwable error) {
+        log.error("WebSocket发生错误，sessionId={}, error={}", session != null ? session.getId() : "null", error.getMessage(), error);
     }
 
 

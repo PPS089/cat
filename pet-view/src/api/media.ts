@@ -11,7 +11,6 @@ export const uploadMediaFiles = async (
 ): Promise<any> => {
   // 检查是否有文件需要上传
   if (!files || files.length === 0) {
-    console.warn('没有文件需要上传')
     return { success: true, message: '没有文件需要上传' }
   }
 
@@ -31,7 +30,9 @@ export const uploadMediaFiles = async (
   try {
     const response = await request.post('/media/upload', formData)
     return response
-  } catch (error) {
+  } catch (error: any) {
+    console.error('上传媒体文件失败:', error)
+    // 抛出更详细的错误信息
     throw error
   }
 }

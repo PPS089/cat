@@ -16,7 +16,7 @@
       <div v-else class="fosters-list">
         <div v-for="foster in fosters" :key="foster.id" class="foster-card">
           <div class="pet-image">
-            <img :src="foster.pet.image" :alt="foster.pet.name" />
+            <img :src="foster.pet.image || '/src/assets/img/dog.jpg'" :alt="foster.pet.name" />
           </div>
           <div class="foster-details">
             <div class="pet-info">
@@ -35,7 +35,7 @@
               </div>
               <div class="info-item">
                 <span class="label">{{ t('user.shelter') }}：</span>
-                <span class="value">{{ foster.shelter ? foster.shelter.name : t('user.unknown') }}</span>
+                <span class="value">{{ foster.shelter?.name || t('user.unknown') }}</span>
               </div>
               <div class="info-item">
                 <span class="label">{{ t('user.status') }}：</span>

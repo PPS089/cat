@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.petcommon.context.UserContext;
+import com.example.petcommon.error.ErrorCode;
+import com.example.petcommon.exception.BizException;
 import com.example.petpojo.dto.RecordDto;
 import com.example.petpojo.entity.Adoptions;
 import com.example.petpojo.entity.Fosters;
@@ -45,8 +47,6 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
      */
     @Override
     public List<EventVo> getUserRecords(Integer uid) {
-        log.info("获取用户事件记录列表，用户ID: {}", uid);
-        // 使用Mapper直接查询EventVo列表
         return baseMapper.getEventVosByUserId(uid);
     }
     
@@ -55,8 +55,6 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
      */
     @Override
     public List<EventVo> getPetRecords(Integer pid) {
-        log.info("获取宠物事件记录列表，宠物ID: {}", pid);
-        // 使用Mapper直接查询EventVo列表
         return baseMapper.getEventVosByPetId(pid);
     }
     
@@ -65,7 +63,6 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
      */
     @Override
     public List<EventVo> getUserEventVos(Integer uid) {
-        log.info("获取用户事件记录列表，用户ID: {}", uid);
         List<EventVo> eventVos = baseMapper.getEventVosByUserId(uid);
         
         // 为每个事件加载媒体文件
@@ -131,8 +128,7 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
             return false;
         } catch (Exception e) {
             log.error("检查宠物所有权时发生错误，宠物ID: {}，用户ID: {}", petId, userId, e);
-            // 如果检查过程中出现异常，我们不能确定用户是否有权限，抛出带有具体信息的运行时异常
-            throw new RuntimeException("检查宠物所有权时发生错误: " + e.getMessage());
+            throw new BizException(ErrorCode.INTERNAL_ERROR, "检查宠物所有权时发生错误");
         }
     }
 
@@ -141,54 +137,39 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
      */
     @Override
     public EventVo createRecord(RecordDto recordDto) {
-        log.info("创建事件记录，用户ID: {}, 宠物ID: {}", recordDto.getUid(), recordDto.getPid());
+        log.info("创建事件记录，用户ID: {}, 宠物ID: {}",recordDto.getPid());
         
-        try {
-            // 如果用户ID为空，使用当前登录用户ID
-            if (recordDto.getUid() == null) {
-                Long userId = UserContext.getCurrentUserId();
-                recordDto.setUid(userId.intValue());
-            }
-            
-            // 验证用户是否有权限为该宠物创建记录
-            Integer userId = recordDto.getUid();
-            Integer petId = recordDto.getPid();
-            
-            // 检查宠物是否存在且属于该用户
-            if (!isPetOwnedByUser(petId, userId)) {
-                log.warn("用户 {} 无权限为宠物 {} 创建事件记录", userId, petId);
-                throw new IllegalArgumentException("宠物不存在或不属于当前用户");
-            }
-            
-            PetRecords petRecords = new PetRecords();
-            BeanUtils.copyProperties(recordDto, petRecords);
-            
-            // 设置记录时间为当前时间（如果未提供）
-            if (petRecords.getRecordTime() == null) {
-                petRecords.setRecordTime(LocalDateTime.now());
-            }
-            
-            // 尝试保存记录
-            boolean saved = this.save(petRecords);
-            if (!saved) {
-                log.error("事件记录创建失败，用户ID: {}, 宠物ID: {}", userId, petId);
-                throw new RuntimeException("事件记录创建失败");
-            }
-            
-            log.info("事件记录创建成功，记录ID: {}", petRecords.getRecordId());
-            
-            // 返回EventVo对象
-            return getEventVoById(petRecords.getRecordId());
-        } catch (IllegalArgumentException e) {
-            // 重新抛出参数异常，让控制器处理
-            throw e;
-        } catch (RuntimeException e) {
-            // 重新抛出运行时异常，让控制器处理
-            throw e;
-        } catch (Exception e) {
-            log.error("创建事件记录时发生未预期的错误: {}", e.getMessage(), e);
-            throw new RuntimeException("创建事件记录时发生未预期的错误");
+        Long userId = UserContext.getCurrentUserId();
+        Integer petId = recordDto.getPid();
+        
+        // 检查宠物是否存在且属于该用户
+        if (!isPetOwnedByUser(petId, userId.intValue())) {
+            log.warn("用户 {} 无权限为宠物 {} 创建事件记录", userId, petId);
+            throw new BizException(ErrorCode.FORBIDDEN, "宠物不存在或不属于当前用户");
         }
+        
+        PetRecords petRecords = new PetRecords();
+        BeanUtils.copyProperties(recordDto, petRecords);
+        
+        // 设置用户ID
+        petRecords.setUid(userId.intValue());
+        
+        // 设置记录时间为当前时间（如果未提供）
+        if (petRecords.getRecordTime() == null) {
+            petRecords.setRecordTime(LocalDateTime.now());
+        }
+        
+        // 尝试保存记录
+        boolean saved = this.save(petRecords);
+        if (!saved) {
+            log.error("事件记录创建失败，用户ID: {}, 宠物ID: {}", userId, petId);
+            throw new BizException(ErrorCode.INTERNAL_ERROR, "事件记录创建失败");
+        }
+        
+        log.info("事件记录创建成功，记录ID: {}", petRecords.getRecordId());
+        
+        // 返回EventVo对象
+        return getEventVoById(petRecords.getRecordId());
     }
     
     /**
@@ -201,7 +182,7 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
         PetRecords petRecords = this.getById(recordId);
         if (petRecords == null) {
             log.error("事件记录不存在，记录ID: {}", recordId);
-            throw new IllegalArgumentException("事件记录不存在，ID: " + recordId);
+            throw new BizException(ErrorCode.NOT_FOUND, "事件记录不存在，ID: " + recordId);
         }
         
         // 更新所有字段
@@ -210,7 +191,6 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
         // 手动设置更新时间，确保updatedAt字段被更新
         petRecords.setUpdatedAt(LocalDateTime.now());
         
-        // 直接调用updateById，MyBatis Plus会自动更新updatedAt字段（使用非严格模式的fillStrategy）
         boolean updated = this.updateById(petRecords);
         if (updated) {
             log.info("事件记录更新成功，记录ID: {}，更新时间: {}", recordId, petRecords.getUpdatedAt());
@@ -231,8 +211,8 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
         
         PetRecords petRecords = this.getById(recordId);
         if (petRecords == null) {
-            log.error("事件记录不存在，记录ID: {}", recordId);
-            return false;
+            log.warn("事件记录不存在，记录ID: {}", recordId);
+            throw new BizException(ErrorCode.BAD_REQUEST, "删除失败，事件记录不存在");
         }
         
         boolean result = this.removeById(recordId);
@@ -240,6 +220,7 @@ public class PetRecordsServiceImpl extends ServiceImpl<PetRecordsMapper, PetReco
             log.info("事件记录删除成功，记录ID: {}", recordId);
         } else {
             log.error("事件记录删除失败，记录ID: {}", recordId);
+            throw new BizException(ErrorCode.INTERNAL_ERROR, "删除事件记录失败");
         }
         return result;
     }

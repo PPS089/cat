@@ -32,7 +32,6 @@ export const useRegister = () => {
     router.push('/login')
   }
 
-
   // 表单验证规则
   const rules = {
     username: [{ required: true, message: t('register.usernameRequired'), trigger: "blur" }],

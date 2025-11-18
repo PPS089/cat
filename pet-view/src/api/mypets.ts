@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import request from '@/utils/request'
+import { convertBackendToFrontendGender } from '@/utils/genderConverter'
 import type { AdoptionResponse, EndFosterResponse, Pet, Shelter } from '@/types/mypets'
 
 export function usePets() {
@@ -21,15 +22,13 @@ export function usePets() {
   const pageSize = ref(5)
   const total = ref(0)
   const totalPages = ref(0)
-  // t 函数已在函数顶部声明，组件可以直接使用
 
   const addPet = () => {
     router.push('/user/adoption-pets')
   }
 
-
   const editPet = (id: number) => {
-    router.push(`pets/edit/${id}`)
+    router.push(`/user/pets/edit/${id}`)
   }
 
   // 开始寄养
@@ -45,17 +44,16 @@ export function usePets() {
       
       // 处理 shelters API 响应 
       if (response.code === 200) {
-       const sheltersData = response.data as Shelter[]
-     
-      
-      // 转换数据结构 - API返回的是 sid 字段，但模板期望 id 字段
-      shelters.value = sheltersData.map((shelter : Shelter) => ({
-        sid: shelter.sid,
-        shelterName: shelter.shelterName,
-        shelterAddress: shelter.shelterAddress,
-      }))
-      ElMessage.success(t('common.pleaseSelectShelter'))
-    }
+        const sheltersData = response.data as Shelter[]
+        
+        // 转换数据结构 - API返回的是 sid 字段，但模板期望 id 字段
+        shelters.value = sheltersData.map((shelter: Shelter) => ({
+          sid: shelter.sid,
+          shelterName: shelter.shelterName,
+          shelterAddress: shelter.shelterAddress,
+        }))
+        ElMessage.success(t('common.pleaseSelectShelter'))
+      }
     } catch (error: any) {
         ElMessage.error(t('getShelterListFailed'))
     }
@@ -92,9 +90,9 @@ export function usePets() {
         // 更新本地状态
         const targetPetId = selectedPet.value.pid
         if (targetPetId) {
-          pets.value = pets.value.map(pet => 
+          pets.value = pets.value.map((pet: Pet) => 
             pet.pid === targetPetId 
-              ? { ...pet, isFostering: true }
+              ? { ...pet, status: 'FOSTERING' as any }
               : pet
           )
         }
@@ -117,10 +115,7 @@ export function usePets() {
   
   // 分页事件处理函数
   const handlePageChange = async (page: number) => {
-    
-    
     if (page < 1 || (totalPages.value > 0 && page > totalPages.value)) {
-      
       return
     }
     
@@ -156,12 +151,12 @@ export function usePets() {
       if (response.code === 200) {
         ElMessage.success(t('message.endFosterSuccess'))
         
-        // 更新本地状态 - 将寄养状态设置为false
+        // 更新本地状态 - 将寄养状态设置为ADOPTED
         const targetPetId = pet.pid
         if (targetPetId) {
-          pets.value = pets.value.map(p => 
+          pets.value = pets.value.map((p: Pet) => 
             p.pid === targetPetId 
-              ? { ...p, isFostering: false }
+              ? { ...p, status: 'ADOPTED' as any }
               : p
           )
         }
@@ -179,43 +174,53 @@ export function usePets() {
   }
 
  
-
   // 获取宠物列表
   const fetchPets = async (page = currentPage.value, size = pageSize.value) => {
-    
     try {
-      
-      
       // 参数验证
       if (page < 1) {
-        
         page = 1
       }
       
       if (size < 1) {
-        
         size = 5
       }
       
       // 使用新的API直接获取用户已领养的宠物（带分页）
-      const response = await request.get<AdoptionResponse>(`/user/adoptions?current_page=${page}&per_page=${size}`)
+      const response = await request.get<AdoptionResponse>(`/user/adoptions`, {
+        params: {
+          current_page: page,
+          per_page: size
+        }
+      })
       
-      
-      
+      // 调试：打印返回的数据结构
+      console.log('后端返回的宠物数据:', response);
       
       const responseData = response.data
       
-      
-      
       if (!responseData.records || responseData.records.length === 0) {
         // 用户还没有领养任何宠物，显示空状态
-        
         pets.value = []
         total.value = responseData.total || 0
         totalPages.value = responseData.pages || 0
       } else {
-        // 使用新的API获取的数据
-        pets.value = responseData.records || []
+        // 转换后端返回的数据结构以匹配前端Pet接口
+        pets.value = responseData.records.map((record: any) => ({
+          pid: record.pid,
+          name: record.name,
+          species: record.species,
+          breed: record.breed,
+          age: record.age,
+          gender: convertBackendToFrontendGender(record.gender),
+          status: record.status || record.petStatus,  // 兼容两种可能的字段名
+          imgUrl: record.image,
+          shelterName: record.sname,
+          shelterAddress: record.location
+        })) || []
+        
+        // 调试：打印处理后的数据
+        console.log('处理后的宠物数据:', pets.value);
         
         // 使用API返回的真实分页数据
         total.value = responseData.total || 0
@@ -225,11 +230,7 @@ export function usePets() {
       // 更新当前页码和每页数量
       currentPage.value = page
       pageSize.value = size
-      
-      
-      
     } catch (error: any) {
-      
       if (error.name === 'AbortError') {
         return
       }
@@ -270,6 +271,3 @@ export function usePets() {
     handlePageSizeChange
   }
 }
-
-
-

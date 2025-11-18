@@ -31,7 +31,7 @@
                 v-if="userAvatar" 
                 :src="userAvatar" 
                 class="avatar"
-                @error="profileForm.headPic = '/src/assets/img/dog.jpg'"
+                @error="handleImageError"
               />
               <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
             </el-upload>
@@ -85,7 +85,8 @@ const {
   beforeImageUpload,
   handleImageUpload,
   submitForm,
-  resetForm
+  resetForm,
+  handleImageError
 } = useProfile()
 
 // 创建计算属性，确保头像预览优先显示
@@ -94,8 +95,20 @@ const userAvatar = computed(() => {
   if (profileForm.headPic && profileForm.headPic.startsWith('data:')) {
     return profileForm.headPic
   }
-  // 否则从store获取
-  return profileForm.headPic || '/src/assets/img/dog.jpg'
+  // 如果是base64数据URI，直接返回
+  if (profileForm.headPic && profileForm.headPic.startsWith('data:image')) {
+    return profileForm.headPic
+  }
+  // 如果头像URL包含http或https，说明是OSS存储的完整URL
+  if (profileForm.headPic && (profileForm.headPic.startsWith('http://') || profileForm.headPic.startsWith('https://'))) {
+    return profileForm.headPic
+  }
+  // 如果有服务器返回的头像文件名，构造完整URL
+  if (profileForm.headPic && !profileForm.headPic.startsWith('/src/assets/img/')) {
+    return `/images/${profileForm.headPic}`
+  }
+  // 否则显示默认头像
+  return '/src/assets/img/dog.jpg'
 })
 </script>
 

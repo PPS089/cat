@@ -8,8 +8,8 @@
 
    <!-- 插入新用户 -->
     <insert id="insertUser" parameterType="com.example.petpojo.entity.Users" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users (username, password_hash, phone, email, introduce, nickname, headpic,created_at)
-        VALUES (#{user.userName}, #{user.passwordHash}, #{user.phone}, #{user.email}, #{user.introduce}, #{user.nickName}, #{user.headPic},#{user.createAt})
+        INSERT INTO users (username, password_hash, phone, email, introduce, nickname, headpic)
+        VALUES (#{userName}, #{passwordHash}, #{phone}, #{email}, #{introduce}, #{nickName}, #{headPic})
     </insert>
 
 

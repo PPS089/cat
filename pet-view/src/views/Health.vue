@@ -14,18 +14,25 @@
           <p>{{ t('healthAlerts.totalRecords') }}</p>
         </div>
       </div>
-      <div class="stat-card normal">
-        <div class="stat-icon">✅</div>
-        <div class="stat-content">
-          <h3>{{ normalAlerts.length }}</h3>
-          <p>{{ t('healthAlerts.normalStatus') }}</p>
-        </div>
-      </div>
-      <div class="stat-card critical">
+      <div class="stat-card attention">
         <div class="stat-icon">⚠️</div>
         <div class="stat-content">
-          <h3>{{ criticalAlerts.length }}</h3>
-          <p>{{ t('healthAlerts.criticalStatus') }}</p>
+          <h3>{{ attentionAlerts.length }}</h3>
+          <p>{{ t('healthAlerts.attentionStatus') }}</p>
+        </div>
+      </div>
+      <div class="stat-card expired">
+        <div class="stat-icon">⏰</div>
+        <div class="stat-content">
+          <h3>{{ expiredAlerts.length }}</h3>
+          <p>{{ t('healthAlerts.expiredStatus') }}</p>
+        </div>
+      </div>
+      <div class="stat-card reminded">
+        <div class="stat-icon">🔔</div>
+        <div class="stat-content">
+          <h3>{{ remindedAlerts.length }}</h3>
+          <p>{{ t('healthAlerts.remindedStatus') }}</p>
         </div>
       </div>
     </div>
@@ -48,8 +55,10 @@
         </select>
         <select v-model="selectedStatus" class="filter-select">
           <option value="">{{ t('healthAlerts.allStatus') }}</option>
-          <option value="normal">{{ t('healthAlerts.normal') }}</option>
-          <option value="critical">{{ t('healthAlerts.critical') }}</option>
+          <option value="pending">{{ t('healthAlerts.pending') }}</option>
+          <option value="attention">{{ t('healthAlerts.attention') }}</option>
+          <option value="expired">{{ t('healthAlerts.expired') }}</option>
+          <option value="reminded">{{ t('healthAlerts.reminded') }}</option>
         </select>
       </div>
       <button class="add-button" @click="() => { closeModal(); showAddModal = true }">
@@ -227,12 +236,13 @@
           </div>
 
           <div class="form-group">
-            <label>{{ t('healthAlerts.healthStatus') }}<span class="required">*</span></label>
-            <select v-model="formData.status" required class="form-select">
-              <option value="normal">{{ t('healthAlerts.normal') }}</option>
-              <option value="critical">{{ t('healthAlerts.critical') }}</option>
-            </select>
-          </div>
+                <label>{{ t('healthAlerts.healthStatus') }}<span class="required">*</span></label>
+                <select v-model="formData.status" required class="form-select">
+                  <option value="attention">{{ t('healthAlerts.attention') }}</option>
+                  <option value="expired">{{ t('healthAlerts.expired') }}</option>
+                  <option value="reminded">{{ t('healthAlerts.reminded') }}</option>
+                </select>
+              </div>
 
           <div class="form-group">
             <label>{{ t('healthAlerts.descriptionLabel') }}<span class="required">*</span></label>
@@ -244,14 +254,14 @@
             ></textarea>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" v-if="formData.status === 'attention'">
             <label>{{ t('healthAlerts.reminderTime') }}</label>
             <input 
               type="datetime-local" 
               v-model="formData.reminderTime" 
               class="form-input"
             >
-            <small class="form-help">{{ t('healthAlerts.ifNotSet') }}</small>
+            <small class="form-help">{{ t('healthAlerts.reminderTimeHelp') }}</small>
           </div>
 
           <div class="modal-actions">
@@ -292,8 +302,9 @@ const {
   showEditModal,
   formData,
   totalAlerts,
-  normalAlerts,
-  criticalAlerts,
+  attentionAlerts,
+  expiredAlerts,
+  remindedAlerts,
   filteredAlerts,
   groupedAlerts,
   getPetName,
@@ -308,9 +319,7 @@ const {
   initializeHealthAlerts
 } = useHealth()
 
-const { createWebSocketConnection, closeWebSocketConnection, syncHealthAlertsToStorage, checkAndSendReminders } = useWebSocket()
-
-let reminderCheckInterval = null
+const { createWebSocketConnection, closeWebSocketConnection, syncHealthAlertsToStorage } = useWebSocket()
 
 onMounted(async () => {
   await initializeHealthAlerts()
@@ -320,16 +329,6 @@ onMounted(async () => {
   if (userStore.info.userId) {
     createWebSocketConnection(userStore.info.userId)
   }
-  
-  // ===== 新增：每分钟检查一次定时提醒 =====
-  console.log('启动定时提醒检查（每60秒）')
-  reminderCheckInterval = setInterval(() => {
-    console.log('执行定时提醒检查...')
-    checkAndSendReminders()
-  }, 60000) // 每60秒检查一次
-  
-  // 初始化时立即检查一次
-  checkAndSendReminders()
 })
 
 watch(healthAlerts, (newAlerts) => {
@@ -338,11 +337,6 @@ watch(healthAlerts, (newAlerts) => {
 }, { deep: true })
 
 onUnmounted(() => {
-  // 清理定时器
-  if (reminderCheckInterval) {
-    clearInterval(reminderCheckInterval)
-    reminderCheckInterval = null
-  }
   closeWebSocketConnection()
 })
 </script>

@@ -1,9 +1,9 @@
 package com.example.petservice.handler;
 
-import com.example.petcommon.result.Result;
-import com.example.petcommon.exception.BizException;
-import com.example.petcommon.error.ErrorCode;
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import com.example.petcommon.error.ErrorCode;
+import com.example.petcommon.exception.BizException;
+import com.example.petcommon.result.Result;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 全局异常处理器
@@ -65,7 +67,9 @@ public class GlobalExceptionHandler {
         String firstError = errors.values().iterator().next();
         return Result.error(ErrorCode.VALIDATION_ERROR.getCode(), firstError, errors);
     }
-
+    /**
+     * 处理业务异常
+     */
     @ExceptionHandler(BizException.class)
     public ResponseEntity<Result<String>> handleBizException(BizException e) {
         log.error("业务异常：{}", e.getMessage());
@@ -87,7 +91,7 @@ public class GlobalExceptionHandler {
      * 处理运行时异常
      */
     @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 添加这行，返回500状态码
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) 
     public Result<String> handleRuntimeException(RuntimeException e) {
         log.error("运行时异常：", e);
         return Result.error(ErrorCode.INTERNAL_ERROR.getCode(), "运行时异常：" + e.getMessage());

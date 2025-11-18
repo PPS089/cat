@@ -51,7 +51,7 @@ export const useDeleteFoster = () => {
         setTimeout(() => loadFosters(), 500)
       } 
     } catch (error: any) {
-      ElMessage.error(t('user.deleteFosterFailed'))
+      console.error('删除寄养记录失败:', error)
     }
   }
   
@@ -80,7 +80,7 @@ export const useLoadFosters = () => {
       })
     
       // 检查实际的响应数据结构
-      let actualData = response.data as import('@/types/api').PageResult<any>
+      const actualData = response.data as import('@/types/api').PageResult<any>
       
       // MyBatis-Plus IPage分页格式 (records + total)
       if (actualData.records && actualData.total !== undefined) {
@@ -94,20 +94,20 @@ export const useLoadFosters = () => {
           return {
             id: foster.fid || foster.id,
             pet: {
-              pid: foster.pet?.pid ,
-              name: foster.pet?.name ,
-              breed: foster.pet?.breed ,
-              age: foster.pet?.age ,
-              gender: foster.pet?.gender ,
+              pid: foster.pet?.pid || 0,
+              name: foster.pet?.name || '',
+              breed: foster.pet?.breed || '',
+              age: foster.pet?.age || 0,
+              gender: foster.pet?.gender || '',
               image: foster.pet?.image ? (foster.pet.image.startsWith('http') ? foster.pet.image : `/api/images/${foster.pet.image}`) : dogImage
             },
             shelter: {
-              sid: foster.shelter?.sid,
-              name: foster.shelter?.name,
-              location: foster.shelter?.location
+              sid: foster.shelter?.sid || 0,
+              name: foster.shelter?.name || '',
+              location: foster.shelter?.location || ''
             },
-            startDate: foster.startDate ,
-            endDate: foster.endDate ,
+            startDate: foster.startDate || '',
+            endDate: foster.endDate || null,
             status: !foster.endDate  ? 'ongoing' : 'ended'
           }
         })

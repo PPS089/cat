@@ -4,14 +4,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 
-@Slf4j
 public class JwtUtil {
+    
+    private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
     /**
      * 生成jwt
      * 使用Hs256算法, 私匙使用固定秘钥
@@ -61,7 +63,7 @@ public class JwtUtil {
     }
 
     /**
-     * 解析JWT（严格模式）- 验证签名和过期时间
+     * 解析JWT
      *
      * @param secretKey jwt秘钥
      * @param token     待解析的token
@@ -80,72 +82,22 @@ public class JwtUtil {
             // 生成安全的密钥
             SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
             
-            // 使用新的 API
+            // 解析JWT
             Claims claims = Jwts.parserBuilder()
-                    // 设置签名的秘钥
                     .setSigningKey(key)
-                    // 构建解析器
                     .build()
-                    // 设置需要解析的jwt
                     .parseClaimsJws(token).getBody();
             
             log.debug("JWT token解析成功，用户: {}", claims.get("username"));
             return claims;
             
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            // 处理过期token - 仍然返回claims
+            log.debug("JWT token已过期，但仍然返回claims");
+            return e.getClaims();
         } catch (Exception e) {
             log.error("JWT token解析失败，错误: {}", e.getMessage());
             throw new RuntimeException("JWT token解析失败: " + e.getMessage());
-        }
-    }
-
-    /**
-     * 验证JWT有效性
-     *
-     * @param token     待验证的JWT
-     * @param secretKey 用于验证的密钥
-     * @return 如果验证成功返回Claims对象；如果验证失败抛出RuntimeException
-     */
-    public static Claims verify(String token, String secretKey) {
-        return parseJWT(secretKey, token);
-    }
-
-    /**
-     * 解析JWT（宽松模式）- 即使过期也能读取claims
-     * 用于token刷新场景
-     *
-     * @param secretKey jwt秘钥
-     * @param token     待解析的token
-     * @return Claims对象
-     */
-    public static Claims parseJWTLoose(String secretKey, String token) {
-        try {
-            // 参数验证
-            if (secretKey == null || secretKey.trim().isEmpty()) {
-                throw new IllegalArgumentException("密钥不能为空");
-            }
-            if (token == null || token.trim().isEmpty()) {
-                throw new IllegalArgumentException("token不能为空");
-            }
-            
-            // 生成安全的密钥
-            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-            
-            // 宽松解析 - 忽略过期验证
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token).getBody();
-            
-            log.debug("JWT token宽松解析成功，用户: {}", claims.get("username"));
-            return claims;
-            
-        } catch (io.jsonwebtoken.ExpiredJwtException e) {
-            // 处理过期token - 宽松模式下仍然返回claims
-            log.debug("JWT token已过期，但宽松解析仍然返回claims");
-            return e.getClaims();
-        } catch (Exception e) {
-            log.error("JWT token宽松解析失败，错误: {}", e.getMessage());
-            throw new RuntimeException("JWT token宽松解析失败: " + e.getMessage());
         }
     }
     
@@ -166,5 +118,68 @@ public class JwtUtil {
         }
         
         return expiration.before(new Date());
+    }
+
+    /**
+     * 从对象中提取Long值
+     * @param obj 可能包含Long值的对象
+     * @return 提取的Long值，如果无法提取则返回null
+     */
+    private static Long extractLongValue(Object obj) {
+        if (obj instanceof Long num) {
+            return num;
+        }
+
+        if (obj instanceof Integer num) {
+            return num.longValue();
+        }
+
+        if (obj instanceof String) {
+            try {
+                return Long.parseLong((String) obj);
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 从Claims中安全地获取userId
+     * @param claims JWT claims对象
+     * @return 用户ID，如果获取失败返回null
+     */
+    public static Long extractUserId(Claims claims) {
+        if (claims == null) {
+            log.warn("Claims为null，无法提取userId");
+            return null;
+        }
+
+        try {
+            return extractLongValue(claims.get("userId"));
+        } catch (ClassCastException | NullPointerException e) {
+            log.debug("提取userId失败: {}", e.getMessage());
+        }
+
+        log.warn("无法从claims中提取userId，返回null");
+        return null;
+    }
+
+    /**
+     * 从Claims中提取用户名
+     * @param claims JWT claims
+     * @return 用户名，如果获取失败返回null
+     */
+    public static String extractUsername(Claims claims) {
+        if (claims == null) {
+            return null;
+        }
+        Object usernameObj = claims.get("username");
+        if (usernameObj instanceof String) {
+            String username = (String) usernameObj;
+            return username.isEmpty() ? null : username;
+        }
+        return null;
     }
 }

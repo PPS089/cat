@@ -10,7 +10,7 @@ export const useWebSocket = () => {
   const { t } = useI18n()
   const ws = ref<WebSocket | null>(null)
   const isConnected = ref(false)
-  const reconnectTimer = ref<NodeJS.Timeout | null>(null)
+  const reconnectTimer = ref<number | null>(null)
   const reconnectAttempts = ref(0)
   const maxReconnectAttempts = 5
   
@@ -182,7 +182,7 @@ export const useWebSocket = () => {
         alertType: extractAlertTypeFromMessage(message) || 'GENERAL',
         time: new Date().toISOString(),
         content: message,
-        status: 'pending'
+        status: 'attention'
       }
       healthAlerts.unshift(alertData)
       
@@ -277,7 +277,7 @@ export const useWebSocket = () => {
       const healthAlerts = getStoredHealthAlerts()
       const alert = healthAlerts.find((h: HealthAlert) => h.content === message)
       if (alert) {
-        alert.status = 'completed'
+        alert.status = 'reminded'
       }
       localStorage.setItem('health_alerts', JSON.stringify(healthAlerts))
     } catch (error) {
@@ -333,194 +333,16 @@ export const useWebSocket = () => {
     
     console.log(`WebSocket将在 ${delay}ms 后尝试第 ${reconnectAttempts.value} 次重连`)
     
-    reconnectTimer.value = setTimeout(() => {
+    reconnectTimer.value = window.setTimeout(() => {
       if (userId.value) {
         createWebSocketConnection(userId.value)
       }
     }, delay)
   }
   
-  /**
-   * 获取未完成的消息（未读的健康提醒）
-   */
-  const getIncompleteMessages = () => {
-    try {
-      const healthAlerts = getStoredHealthAlerts()
-      // 这里需要根据实际的数据结构来判断是否已读，假设status为pending表示未读
-      const incompleteAlerts = healthAlerts.filter((alert: HealthAlert) => alert.status === 'pending')
-      console.log(`找到 ${incompleteAlerts.length} 条未完成的健康提醒`)
-      console.log('所有健康提醒状态:', healthAlerts.map((alert: HealthAlert) => ({hid: alert.hid, status: alert.status, time: alert.time})))
-      return incompleteAlerts
-    } catch (error) {
-      console.error('获取未完成消息失败:', error)
-      return []
-    }
-  }
-  
-  /**
-   * 解析不同的时间格式
-   */
-  const parseDateTime = (dateString: string): Date => {
-    if (!dateString) return new Date(NaN)
-    // 支持：yyyy-MM-dd HH:mm 和 2025-10-27T02:29:31 格式
-    const normalized = dateString.replace(' ', 'T')
-    return new Date(normalized)
-  }
-  
-  /**
-   * 获取定时提醒消息（即将到期的提醒）
-   * 关键：提醒应该在 reminderTime 到达时触发
-   */
-  const getScheduledReminders = () => {
-    try {
-      const healthAlerts = getStoredHealthAlerts()
-      const now = new Date()
-      const reminderThreshold = 24 * 60 * 60 * 1000 // 24小时
-      
-      console.log('\n===== 定时提醒检查 =====')
-      console.log('当前时间:', now.toISOString())
-      console.log('存储的提醒数量:', healthAlerts.length)
-      
-      const upcomingReminders = healthAlerts.filter((alert: any) => {
-        // 关键：使用 reminderTime（提醒时间）来判断是否应该触发
-        const reminderTimeStr = alert.reminderTime
-        if (!reminderTimeStr) {
-          console.log(`跳过: "${alert.description}" - 没有设置提醒时间`)
-          return false
-        }
-        
-        const alertTime = parseDateTime(reminderTimeStr)
-        if (isNaN(alertTime.getTime())) {
-          console.log(`跳过: "${alert.description}" - 时间格式错误`)
-          return false
-        }
-        
-        const timeDiff = alertTime.getTime() - now.getTime()
-        const minutesDiff = Math.round(timeDiff / 1000 / 60)
-        
-        // 逻辑：提醒时间已经过期（timeDiff <= 0），且在最近24小时内（timeDiff > -24h）
-        // 包括normal、pending和critical状态的提醒都应该触发
-        const shouldRemind = timeDiff <= 0 && timeDiff > -reminderThreshold && 
-                           (alert.status === 'normal' || alert.status === 'pending' || alert.status === 'critical')
-        
-        console.log(`检查: "${alert.description}"`, {
-          reminderTime: reminderTimeStr,
-          timeDiff: `${minutesDiff}分钟`,
-          shouldRemind: shouldRemind ? '✓ 应触发' : '✗ 不触发',
-          status: alert.status
-        })
-        
-        return shouldRemind
-      })
-      
-      console.log(`\n找到 ${upcomingReminders.length} 条应触发的提醒\n`)
-      return upcomingReminders
-    } catch (error) {
-      console.error('获取定时提醒失败:', error)
-      return []
-    }
-  }
-  
-  /**
-   * 发送定时提醒消息
-   */
-  const sendScheduledReminder = (alert: HealthAlert) => {
-    try {
-      const message = `⏰ 定时提醒: ${alert.description || alert.content || ''}`
-      showHealthAlertNotification(message)
-      
-      // 记录已发送的提醒
-      const sentReminders = JSON.parse(localStorage.getItem('sent-reminders') || '[]')
-      sentReminders.push({
-        alertId: alert.hid,
-        sentAt: new Date().toISOString()
-      })
-      localStorage.setItem('sent-reminders', JSON.stringify(sentReminders))
-      
-      console.log('已发送定时提醒:', message)
-    } catch (error) {
-      console.error('发送定时提醒失败:', error)
-    }
-  }
-  
-  /**
-   * 清理过期的已发送提醒记录（超过7天的记录）
-   */
-  const cleanupOldSentReminders = () => {
-    try {
-      const sentReminders = JSON.parse(localStorage.getItem('sent-reminders') || '[]')
-      const now = new Date()
-      const sevenDaysAgo = now.getTime() - (7 * 24 * 60 * 60 * 1000) // 7天前
-      
-      // 过滤掉超过7天的记录
-      const filteredReminders = sentReminders.filter((sent: any) => {
-        const sentTime = new Date(sent.sentAt).getTime()
-        return sentTime > sevenDaysAgo
-      })
-      
-      // 如果有记录被清理，更新localStorage
-      if (filteredReminders.length < sentReminders.length) {
-        localStorage.setItem('sent-reminders', JSON.stringify(filteredReminders))
-        console.log(`清理了 ${sentReminders.length - filteredReminders.length} 条过期的已发送提醒记录`)
-      }
-    } catch (error) {
-      console.error('清理过期提醒记录失败:', error)
-    }
-  }
 
-  /**
-   * 检查并发送定时提醒
-   */
-  const checkAndSendReminders = () => {
-    try {
-      // 定期清理过期记录
-      cleanupOldSentReminders()
-      
-      const reminders = getScheduledReminders()
-      const sentReminders = JSON.parse(localStorage.getItem('sent-reminders') || '[]')
-      const now = new Date()
-      
-      reminders.forEach((alert: HealthAlert) => {
-        // 检查是否已经发送过此提醒
-        const alreadySent = sentReminders.some((sent: any) => {
-          // 如果提醒ID匹配且发送时间在24小时内，则认为已发送
-          if (sent.alertId === alert.hid) {
-            const sentTime = new Date(sent.sentAt)
-            const hoursSinceSent = (now.getTime() - sentTime.getTime()) / (1000 * 60 * 60)
-            return hoursSinceSent < 24 // 24小时内的提醒视为已发送
-          }
-          return false
-        })
-        
-        // 添加调试日志
-        if (alreadySent) {
-          console.log(`提醒 "${alert.description}" 已在24小时内发送过，跳过`)
-        }
-        
-        if (!alreadySent) {
-          sendScheduledReminder(alert)
-        }
-      })
-    } catch (error) {
-      console.error('检查并发送定时提醒失败:', error)
-    }
-  }
   
-  /**
-   * 重新发送未完成的消息
-   */
-  const resendIncompleteMessages = () => {
-    try {
-      const incompleteMessages = getIncompleteMessages()
-      console.log(`重新发送 ${incompleteMessages.length} 条未完成的消息`)
-      
-      incompleteMessages.forEach((alert: HealthAlert) => {
-        showHealthAlertNotification(alert.description || alert.content || '')
-      })
-    } catch (error) {
-      console.error('重新发送未完成消息失败:', error)
-    }
-  }
+
   
   /**
    * 关闭WebSocket连接
@@ -566,16 +388,10 @@ export const useWebSocket = () => {
     createWebSocketConnection,
     closeWebSocketConnection,
     sendMessage,
-    // 新增的消息管理函数
-    getIncompleteMessages,
-    getScheduledReminders,
-    checkAndSendReminders,
-    resendIncompleteMessages,
-    sendScheduledReminder,
+    // 消息管理函数
     getStoredMessages,
     getStoredHealthAlerts,
     markHealthAlertAsRead,
-    syncHealthAlertsToStorage,
-    cleanupOldSentReminders
+    syncHealthAlertsToStorage
   }
 }
