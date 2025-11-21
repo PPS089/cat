@@ -7,6 +7,81 @@
     </header>
     
     <main class="adopt-pet-main">
+      <!-- 筛选区域 -->
+      <div class="filter-section">
+        <el-card class="filter-card">
+          <template #header>
+            <div class="card-header">
+              <span>{{ t('nav.filterOptions') }}</span>
+              <el-button type="primary" size="small" @click="resetFilters">
+                {{ t('nav.resetFilters') }}
+              </el-button>
+            </div>
+          </template>
+          
+          <div class="filter-form">
+            <el-row :gutter="20">
+              <el-col :span="6">
+                <el-form-item :label="t('nav.breed')">
+                  <el-input 
+                    v-model="breed" 
+                    :placeholder="t('nav.breedPlaceholder')"
+                    clearable
+                    @keyup.enter="applyFilters"
+                  />
+                </el-form-item>
+              </el-col>
+              
+              <el-col :span="6">
+                <el-form-item :label="t('nav.gender')">
+                  <el-select 
+                    v-model="gender" 
+                    :placeholder="t('nav.genderPlaceholder')"
+                    clearable
+                  >
+                    <el-option 
+                      v-for="item in genderOptions" 
+                      :key="item.value" 
+                      :label="item.label" 
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              
+              <el-col :span="6">
+                <el-form-item :label="t('nav.ageRange')">
+                  <el-input 
+                    v-model.number="minAge" 
+                    type="number"
+                    :min="0" 
+                    :max="30" 
+                    :placeholder="t('nav.minAge')"
+                    style="width: 45%"
+                  />
+                  <span style="margin: 0 5px">-</span>
+                  <el-input 
+                    v-model.number="maxAge" 
+                    type="number"
+                    :min="0" 
+                    :max="30" 
+                    :placeholder="t('nav.maxAge')"
+                    style="width: 45%"
+                  />
+                </el-form-item>
+              </el-col>
+              
+              <el-col :span="6">
+                <el-form-item>
+                  <el-button type="primary" @click="applyFilters">
+                    {{ t('nav.applyFilters') }}
+                  </el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+        </el-card>
+      </div>
 
       <div class="pets-grid">
         <div v-for="pet in availablePets" :key="pet.pid" class="pet-card">
@@ -85,12 +160,10 @@
 
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAdd } from '@/api/adoptionspets'
 import Pagination from '@/components/Pagination.vue'
-
-
 
 // 使用组合式函数
 const {
@@ -99,10 +172,16 @@ const {
   currentPage,
   pageSize,
   total,
+  breed,
+  gender,
+  minAge,
+  maxAge,
   themeStore,
   
   // 方法
   fetchAvailablePets,
+  resetFilters,
+  applyFilters,
   adoptPet,
   viewPetDetail,
   handlePageChange,
@@ -111,6 +190,12 @@ const {
 
 // 使用i18n
 const { t } = useI18n()
+
+// 性别选项
+const genderOptions = computed(() => [
+  { value: 'male', label: t('message.male') },
+  { value: 'female', label: t('message.female') }
+])
 
 // 组件挂载时加载数据
 onMounted(() => {

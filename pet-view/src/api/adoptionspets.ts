@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useThemeStore } from '@/stores/theme'
 import request from '@/utils/request'
-import type { Pet } from '@/types/mypets'
+import type { Pet, PetFilter } from '@/types/mypets'
 
 // 导航函数
 export const useAddNavigation = () => {
@@ -42,16 +42,31 @@ export const usePetData = () => {
   const total = ref<number>(0)
   const { t } = useI18n()
   
+  // 筛选条件
+  const breed = ref<string>('')
+  const gender = ref<string>('')
+  const minAge = ref<number | null>(null)
+  const maxAge = ref<number | null>(null)
+  
   // 获取可领养的宠物列表 - 查询所有未被领养的宠物
   const fetchAvailablePets = async () => {
     loading.value = true
     try {
+      // 构建查询参数
+      const params: any = {
+        currentPage: currentPage.value,
+        pageSize: pageSize.value
+      }
+      
+      // 添加筛选条件
+      if (breed.value) params.breed = breed.value
+      if (gender.value) params.gender = gender.value
+      if (minAge.value !== null) params.minAge = minAge.value
+      if (maxAge.value !== null) params.maxAge = maxAge.value
+      
       // 使用数据库查询API获取所有未领养宠物
       const response = await request.get('/pets/info/available', {
-        params: {
-          current_page: currentPage.value,
-          per_page: pageSize.value
-        }
+        params
       })
       
       
@@ -81,7 +96,25 @@ export const usePetData = () => {
     } catch (error: any) {
       console.error('获取可领养宠物失败:', error)
       ElMessage.error(t('message.dataLoadFailedRetry'))
+    } finally {
+      loading.value = false
     }
+  }
+  
+  // 重置筛选条件
+  const resetFilters = () => {
+    breed.value = ''
+    gender.value = ''
+    minAge.value = null
+    maxAge.value = null
+    currentPage.value = 1
+    fetchAvailablePets()
+  }
+  
+  // 应用筛选条件
+  const applyFilters = () => {
+    currentPage.value = 1
+    fetchAvailablePets()
   }
   
   // 分页处理
@@ -102,7 +135,13 @@ export const usePetData = () => {
     currentPage,
     pageSize,
     total,
+    breed,
+    gender,
+    minAge,
+    maxAge,
     fetchAvailablePets,
+    resetFilters,
+    applyFilters,
     handlePageChange,
     handleSizeChange
   }
@@ -170,7 +209,7 @@ export const useAdoptPet = (availablePets: Ref<Pet[]> | null = null) => {
 // 主要的useAdd组合式函数
 export const useAdd = () => {
   const { viewPetDetail } = useAddNavigation()
-  const { loading, availablePets, currentPage, pageSize, total, fetchAvailablePets, handlePageChange, handleSizeChange } = usePetData()
+  const { loading, availablePets, currentPage, pageSize, total, breed, gender, minAge, maxAge, fetchAvailablePets, resetFilters, applyFilters, handlePageChange, handleSizeChange } = usePetData()
   const { adoptPet } = useAdoptPet(availablePets)
   const themeStore = useThemeStore()
   
@@ -181,7 +220,13 @@ export const useAdd = () => {
     currentPage,
     pageSize,
     total,
+    breed,
+    gender,
+    minAge,
+    maxAge,
     fetchAvailablePets,
+    resetFilters,
+    applyFilters,
     handlePageChange,
     handleSizeChange,
     adoptPet,

@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PetQueryDto {
-    private Integer pageSize=12;
-    private Integer currentPage=1;
+    private Integer pageSize;
+    private Integer currentPage;
     private String breed;
     private String gender;
     private Integer minAge;

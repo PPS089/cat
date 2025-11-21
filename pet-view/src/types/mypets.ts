@@ -16,3 +16,13 @@ export interface EndFosterResponse {
 
 // 领养响应
 export type AdoptionResponse = PageResult<Pet>
+
+// 宠物筛选条件
+export interface PetFilter {
+  breed?: string
+  gender?: 'male' | 'female'
+  minAge?: number | null
+  maxAge?: number | null
+  currentPage?: number
+  pageSize?: number
+}

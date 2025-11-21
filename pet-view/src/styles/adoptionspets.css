@@ -49,6 +49,26 @@ html.dark .adopt-pet-container {
   margin: 0 auto;
 }
 
+/* 筛选区域样式 */
+.filter-section {
+  margin-bottom: 2rem;
+}
+
+.filter-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter-form {
+  padding: 0.5rem 0;
+}
+
 .pets-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

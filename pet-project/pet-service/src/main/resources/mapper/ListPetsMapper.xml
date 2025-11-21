@@ -43,7 +43,7 @@
     </select>
     
     <!-- 根据条件查询宠物列表，支持品种、性别、年龄范围等筛选 -->
-    <select id="selectPetListByPage" resultType="com.example.petpojo.vo.ListPetsVo">
+    <select id="selectPetListByPage" resultType="com.example.petpojo.vo.PetListVo">
         SELECT 
             p.pid,
             p.name,
@@ -60,14 +60,14 @@
         WHERE 1=1
         
         <if test="queryDto.breed != null and queryDto.breed != ''">
-    AND p.breed = #{queryDto.breed}
+    AND p.breed LIKE CONCAT('%', #{queryDto.breed}, '%')
 </if>
 
 <if test="queryDto.gender != null and queryDto.gender != ''">
     AND p.gender = 
     <choose>
-        <when test="queryDto.gender == 'male'">公</when>
-        <when test="queryDto.gender == 'female'">母</when>
+        <when test="queryDto.gender == 'male'">'公'</when>
+        <when test="queryDto.gender == 'female'">'母'</when>
         <otherwise>#{queryDto.gender}</otherwise>
     </choose>
 </if>
