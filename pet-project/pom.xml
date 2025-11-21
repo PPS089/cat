@@ -31,7 +31,7 @@
     <!-- ========= 统一版本管理 ========= -->
     <properties>
         <!-- Java版本 -->
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         
         <!-- 核心框架版本 -->
         <lombok.version>1.18.38</lombok.version>
