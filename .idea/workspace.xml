@@ -6,14 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d91dc103-88d7-48b9-aa39-2004eff9e789" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pet-project/pet-pojo/src/main/java/com/example/petpojo/dto/PetQueryDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-pojo/src/main/java/com/example/petpojo/dto/PetQueryDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/mapper/ListPetsMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pet-project/pet-service/src/main/resources/mapper/ListPetsMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pet-view/src/api/adoptionspets.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/api/adoptionspets.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pet-view/src/locales/en-US.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/locales/en-US.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pet-view/src/locales/zh-CN.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/locales/zh-CN.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pet-view/src/styles/adoptionspets.css" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/styles/adoptionspets.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pet-view/src/types/mypets.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/types/mypets.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pet-view/src/views/AdoptionsPets.vue" beforeDir="false" afterPath="$PROJECT_DIR$/pet-view/src/views/AdoptionsPets.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,38 +24,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Maven.pet-web [clean].executor": "Run",
-    "Maven.pet-web [compile].executor": "Run",
-    "Maven.petproject [clean].executor": "Run",
-    "Maven.petproject [compile].executor": "Run",
-    "Maven.petproject [validate].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Spring Boot.PetWebApplication.executor": "Run",
-    "git-widget-placeholder": "feat-zt",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "F:/Project/petManager/project (15)",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.build.tools.auto.reload": "ALL",
-    "settings.editor.selected.configurable": "build.tools",
-    "ts.external.directory.path": "C:\\Users\\33185\\Desktop\\project\\pet-view\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Maven.pet-web [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.pet-web [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.petproject [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.petproject [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.petproject [validate].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.PetWebApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feat-zt&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;F:/Project/petManager/project (15)&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.build.tools.auto.reload&quot;: &quot;ALL&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;build.tools&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\33185\\Desktop\\project\\pet-view\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="PetWebApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="pet-web" />
@@ -98,7 +90,8 @@
       <workItem from="1763393690067" duration="3485000" />
       <workItem from="1763428976893" duration="7992000" />
       <workItem from="1763440275875" duration="3955000" />
-      <workItem from="1763728298637" duration="5765000" />
+      <workItem from="1763728298637" duration="7532000" />
+      <workItem from="1763785888535" duration="1087000" />
     </task>
     <servers />
   </component>
