@@ -1,5 +1,6 @@
 package com.example.petweb.controller;
 
+import com.example.petpojo.dto.PetQueryDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,16 +36,13 @@ public class MyPetsController {
 
     /**
      * 分页查询宠物列表
-     * @param currentPage 当前页码
-     * @param pageSize 每页数量
+     * @param queryDto 查询条件
      * @return 宠物列表
      */
     @GetMapping("/available")
     @Operation(summary = "分页查询宠物列表", description = "分页查询可领养的宠物列表")
-    public Result<IPage<PetListVo>> listPets(
-            @RequestParam("current_page") Integer currentPage,
-            @RequestParam("per_page") Integer pageSize) {
-        IPage<PetListVo> petsPage = listPetsService.listPets(currentPage, pageSize);
+    public Result<IPage<PetListVo>> listPets(PetQueryDto queryDto) {
+        IPage<PetListVo> petsPage = listPetsService.listPets(queryDto);
         return Result.success(petsPage);
 
     }

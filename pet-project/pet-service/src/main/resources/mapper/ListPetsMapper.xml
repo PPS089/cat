@@ -42,7 +42,7 @@
         WHERE p.pid = #{petId}
     </select>
     
-    <!-- 新增直接返回PetListVo的查询语句 -->
+    <!-- 根据条件查询宠物列表，支持品种、性别、年龄范围等筛选 -->
     <select id="selectPetListByPage" resultType="com.example.petpojo.vo.PetListVo">
         SELECT 
             p.pid,
@@ -57,10 +57,33 @@
             s.location as shelterAddress
         FROM pets p
         LEFT JOIN shelters s ON p.shelter_id = s.sid
-        WHERE p.status = 'UNADOPTED'
+        WHERE 1=1
+        
+        <if test="queryDto.breed != null and queryDto.breed != ''">
+    AND p.breed LIKE CONCAT('%', #{queryDto.breed}, '%')
+</if>
+
+<if test="queryDto.gender != null and queryDto.gender != ''">
+    AND p.gender = 
+    <choose>
+        <when test="queryDto.gender == 'male'">'公'</when>
+        <when test="queryDto.gender == 'female'">'母'</when>
+        <otherwise>#{queryDto.gender}</otherwise>
+    </choose>
+</if>
+
+<if test="queryDto.minAge != null">
+    AND p.age >= #{queryDto.minAge}
+</if>
+
+<if test="queryDto.maxAge != null">
+    <![CDATA[ AND p.age <= #{queryDto.maxAge} ]]>
+</if>
+        
         ORDER BY p.pid
     </select>
     
+    <!-- 新增根据ID查询PetListVo的查询语句 -->
     <select id="selectPetListById" resultType="com.example.petpojo.vo.PetListVo">
         SELECT 
             p.pid,

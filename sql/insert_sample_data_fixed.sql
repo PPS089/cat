@@ -19,52 +19,52 @@ INSERT INTO users (id, username, phone, password_hash, introduce, headpic, email
 
 -- 插入宠物数据 - 狗狗 (pid 1-15)
 INSERT INTO pets (pid, name, species, breed, age, gender, status, shelter_id, img_url) VALUES
-(1, '小黄', '狗', '中华田园犬', 2, '雄', 'UNADOPTED', 1, 'https://picsum.photos/seed/dog1/400/300.jpg'),
-(2, '旺财', '狗', '金毛寻回犬', 3, '雄', 'UNADOPTED', 1, 'https://picsum.photos/seed/dog2/400/300.jpg'),
-(3, '贝贝', '狗', '拉布拉多', 1, '雌', 'UNADOPTED', 2, 'https://picsum.photos/seed/dog3/400/300.jpg'),
-(4, '豆豆', '狗', '柯基', 2, '雄', 'UNADOPTED', 2, 'https://picsum.photos/seed/dog4/400/300.jpg'),
-(5, '毛毛', '狗', '萨摩耶', 4, '雌', 'UNADOPTED', 3, 'https://picsum.photos/seed/dog5/400/300.jpg'),
-(6, '球球', '狗', '哈士奇', 3, '雄', 'UNADOPTED', 3, 'https://picsum.photos/seed/dog6/400/300.jpg'),
-(7, '花花', '狗', '边牧', 2, '雌', 'UNADOPTED', 4, 'https://picsum.photos/seed/dog7/400/300.jpg'),
-(8, '黑子', '狗', '德国牧羊犬', 5, '雄', 'UNADOPTED', 4, 'https://picsum.photos/seed/dog8/400/300.jpg'),
-(9, '小白', '狗', '比熊', 1, '雌', 'UNADOPTED', 5, 'https://picsum.photos/seed/dog9/400/300.jpg'),
-(10, '大壮', '狗', '罗威纳', 4, '雄', 'UNADOPTED', 5, 'https://picsum.photos/seed/dog10/400/300.jpg'),
-(11, '妞妞', '狗', '泰迪', 2, '雌', 'ADOPTED', 1, 'https://picsum.photos/seed/dog11/400/300.jpg'),
-(12, '阿福', '狗', '柴犬', 3, '雄', 'ADOPTED', 1, 'https://picsum.photos/seed/dog12/400/300.jpg'),
-(13, '可乐', '狗', '法国斗牛犬', 2, '雄', 'ADOPTED', 2, 'https://picsum.photos/seed/dog13/400/300.jpg'),
-(14, '奶茶', '狗', '比熊', 1, '雌', 'ADOPTED', 2, 'https://picsum.photos/seed/dog14/400/300.jpg'),
-(15, '馒头', '狗', '松狮', 3, '雄', 'ADOPTED', 3, 'https://picsum.photos/seed/dog15/400/300.jpg');
+(1, '小黄', '狗', '中华田园犬', 2, '公', 'UNADOPTED', 1, 'https://picsum.photos/seed/dog1/400/300.jpg'),
+(2, '旺财', '狗', '金毛寻回犬', 3, '公', 'UNADOPTED', 1, 'https://picsum.photos/seed/dog2/400/300.jpg'),
+(3, '贝贝', '狗', '拉布拉多', 1, '母', 'UNADOPTED', 2, 'https://picsum.photos/seed/dog3/400/300.jpg'),
+(4, '豆豆', '狗', '柯基', 2, '公', 'UNADOPTED', 2, 'https://picsum.photos/seed/dog4/400/300.jpg'),
+(5, '毛毛', '狗', '萨摩耶', 4, '母', 'UNADOPTED', 3, 'https://picsum.photos/seed/dog5/400/300.jpg'),
+(6, '球球', '狗', '哈士奇', 3, '公', 'UNADOPTED', 3, 'https://picsum.photos/seed/dog6/400/300.jpg'),
+(7, '花花', '狗', '边牧', 2, '母', 'UNADOPTED', 4, 'https://picsum.photos/seed/dog7/400/300.jpg'),
+(8, '黑子', '狗', '德国牧羊犬', 5, '公', 'UNADOPTED', 4, 'https://picsum.photos/seed/dog8/400/300.jpg'),
+(9, '小白', '狗', '比熊', 1, '母', 'UNADOPTED', 5, 'https://picsum.photos/seed/dog9/400/300.jpg'),
+(10, '大壮', '狗', '罗威纳', 4, '公', 'UNADOPTED', 5, 'https://picsum.photos/seed/dog10/400/300.jpg'),
+(11, '妞妞', '狗', '泰迪', 2, '母', 'ADOPTED', 1, 'https://picsum.photos/seed/dog11/400/300.jpg'),
+(12, '阿福', '狗', '柴犬', 3, '公', 'ADOPTED', 1, 'https://picsum.photos/seed/dog12/400/300.jpg'),
+(13, '可乐', '狗', '法国斗牛犬', 2, '公', 'ADOPTED', 2, 'https://picsum.photos/seed/dog13/400/300.jpg'),
+(14, '奶茶', '狗', '比熊', 1, '母', 'ADOPTED', 2, 'https://picsum.photos/seed/dog14/400/300.jpg'),
+(15, '馒头', '狗', '松狮', 3, '公', 'ADOPTED', 3, 'https://picsum.photos/seed/dog15/400/300.jpg');
 
 -- 插入宠物数据 - 猫咪 (pid 16-30)
 INSERT INTO pets (pid, name, species, breed, age, gender, status, shelter_id, img_url) VALUES
-(16, '咪咪', '猫', '英国短毛猫', 1, '雌', 'UNADOPTED', 1, 'https://picsum.photos/seed/cat1/400/300.jpg'),
-(17, '小白', '猫', '波斯猫', 2, '雌', 'UNADOPTED', 1, 'https://picsum.photos/seed/cat2/400/300.jpg'),
-(18, '黑猫警长', '猫', '美国短毛猫', 3, '雄', 'UNADOPTED', 2, 'https://picsum.photos/seed/cat3/400/300.jpg'),
-(19, '橘子', '猫', '橘猫', 2, '雄', 'UNADOPTED', 2, 'https://picsum.photos/seed/cat4/400/300.jpg'),
-(20, '花花', '猫', '三花猫', 1, '雌', 'UNADOPTED', 3, 'https://picsum.photos/seed/cat5/400/300.jpg'),
-(21, '灰灰', '猫', '俄罗斯蓝猫', 2, '雄', 'FOSTERING', 3, 'https://picsum.photos/seed/cat6/400/300.jpg'),
-(22, '雪球', '猫', '布偶猫', 1, '雌', 'FOSTER_END', 4, 'https://picsum.photos/seed/cat7/400/300.jpg'),
-(23, '虎子', '猫', '孟加拉豹猫', 3, '雄', 'FOSTERING', 4, 'https://picsum.photos/seed/cat8/400/300.jpg'),
-(24, '小黑', '猫', '黑猫', 2, '雄', 'FOSTER_END', 5, 'https://picsum.photos/seed/cat9/400/300.jpg'),
-(25, '奶牛', '猫', '奶牛猫', 1, '雌', 'FOSTERING', 5, 'https://picsum.photos/seed/cat10/400/300.jpg'),
-(26, '蓝蓝', '猫', '英国短毛猫', 2, '雌', 'UNADOPTED', 1, 'https://picsum.photos/seed/cat11/400/300.jpg'),
-(27, '胖胖', '猫', '橘猫', 3, '雄', 'UNADOPTED', 1, 'https://picsum.photos/seed/cat12/400/300.jpg'),
-(28, '咪宝', '猫', '暹罗猫', 1, '雌', 'UNADOPTED', 2, 'https://picsum.photos/seed/cat13/400/300.jpg'),
-(29, '小狸', '猫', '狸花猫', 2, '雄', 'UNADOPTED', 2, 'https://picsum.photos/seed/cat14/400/300.jpg'),
-(30, '银虎', '猫', '美国短毛猫', 3, '雄', 'UNADOPTED', 3, 'https://picsum.photos/seed/cat15/400/300.jpg');
+(16, '咪咪', '猫', '英国短毛猫', 1, '母', 'UNADOPTED', 1, 'https://picsum.photos/seed/cat1/400/300.jpg'),
+(17, '小白', '猫', '波斯猫', 2, '母', 'UNADOPTED', 1, 'https://picsum.photos/seed/cat2/400/300.jpg'),
+(18, '黑猫警长', '猫', '美国短毛猫', 3, '公', 'UNADOPTED', 2, 'https://picsum.photos/seed/cat3/400/300.jpg'),
+(19, '橘子', '猫', '橘猫', 2, '公', 'UNADOPTED', 2, 'https://picsum.photos/seed/cat4/400/300.jpg'),
+(20, '花花', '猫', '三花猫', 1, '母', 'UNADOPTED', 3, 'https://picsum.photos/seed/cat5/400/300.jpg'),
+(21, '灰灰', '猫', '俄罗斯蓝猫', 2, '公', 'FOSTERING', 3, 'https://picsum.photos/seed/cat6/400/300.jpg'),
+(22, '雪球', '猫', '布偶猫', 1, '母', 'FOSTER_END', 4, 'https://picsum.photos/seed/cat7/400/300.jpg'),
+(23, '虎子', '猫', '孟加拉豹猫', 3, '公', 'FOSTERING', 4, 'https://picsum.photos/seed/cat8/400/300.jpg'),
+(24, '小黑', '猫', '黑猫', 2, '公', 'FOSTER_END', 5, 'https://picsum.photos/seed/cat9/400/300.jpg'),
+(25, '奶牛', '猫', '奶牛猫', 1, '母', 'FOSTERING', 5, 'https://picsum.photos/seed/cat10/400/300.jpg'),
+(26, '蓝蓝', '猫', '英国短毛猫', 2, '母', 'UNADOPTED', 1, 'https://picsum.photos/seed/cat11/400/300.jpg'),
+(27, '胖胖', '猫', '橘猫', 3, '公', 'UNADOPTED', 1, 'https://picsum.photos/seed/cat12/400/300.jpg'),
+(28, '咪宝', '猫', '暹罗猫', 1, '母', 'UNADOPTED', 2, 'https://picsum.photos/seed/cat13/400/300.jpg'),
+(29, '小狸', '猫', '狸花猫', 2, '公', 'UNADOPTED', 2, 'https://picsum.photos/seed/cat14/400/300.jpg'),
+(30, '银虎', '猫', '美国短毛猫', 3, '公', 'UNADOPTED', 3, 'https://picsum.photos/seed/cat15/400/300.jpg');
 
 -- 插入宠物数据 - 其他小动物 (pid 31-40)
 INSERT INTO pets (pid, name, species, breed, age, gender, status, shelter_id, img_url) VALUES
-(31, '雪球', '兔子', '垂耳兔', 1, '雌', 'UNADOPTED', 1, 'https://picsum.photos/seed/rabbit1/400/300.jpg'),
-(32, '跳跳', '兔子', '荷兰兔', 2, '雄', 'UNADOPTED', 1, 'https://picsum.photos/seed/rabbit2/400/300.jpg'),
-(33, '小灰', '兔子', '安哥拉兔', 1, '雄', 'UNADOPTED', 2, 'https://picsum.photos/seed/rabbit3/400/300.jpg'),
-(34, '棉花', '兔子', '狮子兔', 2, '雌', 'UNADOPTED', 2, 'https://picsum.photos/seed/rabbit4/400/300.jpg'),
-(35, '小刺', '刺猬', '非洲迷你刺猬', 1, '雄', 'UNADOPTED', 3, 'https://picsum.photos/seed/hedgehog1/400/300.jpg'),
-(36, '球球', '刺猬', '四趾刺猬', 2, '雌', 'UNADOPTED', 3, 'https://picsum.photos/seed/hedgehog2/400/300.jpg'),
-(37, '奇奇', '仓鼠', '金丝熊', 1, '雄', 'UNADOPTED', 4, 'https://picsum.photos/seed/hamster1/400/300.jpg'),
-(38, '豆豆', '仓鼠', '三线仓鼠', 1, '雌', 'UNADOPTED', 4, 'https://picsum.photos/seed/hamster2/400/300.jpg'),
-(39, '花花', '仓鼠', '布丁仓鼠', 1, '雄', 'UNADOPTED', 5, 'https://picsum.photos/seed/hamster3/400/300.jpg'),
-(40, '小白', '仓鼠', '银狐仓鼠', 1, '雌', 'UNADOPTED', 5, 'https://picsum.photos/seed/hamster4/400/300.jpg');
+(31, '雪球', '兔子', '垂耳兔', 1, '母', 'UNADOPTED', 1, 'https://picsum.photos/seed/rabbit1/400/300.jpg'),
+(32, '跳跳', '兔子', '荷兰兔', 2, '公', 'UNADOPTED', 1, 'https://picsum.photos/seed/rabbit2/400/300.jpg'),
+(33, '小灰', '兔子', '安哥拉兔', 1, '公', 'UNADOPTED', 2, 'https://picsum.photos/seed/rabbit3/400/300.jpg'),
+(34, '棉花', '兔子', '狮子兔', 2, '母', 'UNADOPTED', 2, 'https://picsum.photos/seed/rabbit4/400/300.jpg'),
+(35, '小刺', '刺猬', '非洲迷你刺猬', 1, '公', 'UNADOPTED', 3, 'https://picsum.photos/seed/hedgehog1/400/300.jpg'),
+(36, '球球', '刺猬', '四趾刺猬', 2, '母', 'UNADOPTED', 3, 'https://picsum.photos/seed/hedgehog2/400/300.jpg'),
+(37, '奇奇', '仓鼠', '金丝熊', 1, '公', 'UNADOPTED', 4, 'https://picsum.photos/seed/hamster1/400/300.jpg'),
+(38, '豆豆', '仓鼠', '三线仓鼠', 1, '母', 'UNADOPTED', 4, 'https://picsum.photos/seed/hamster2/400/300.jpg'),
+(39, '花花', '仓鼠', '布丁仓鼠', 1, '公', 'UNADOPTED', 5, 'https://picsum.photos/seed/hamster3/400/300.jpg'),
+(40, '小白', '仓鼠', '银狐仓鼠', 1, '母', 'UNADOPTED', 5, 'https://picsum.photos/seed/hamster4/400/300.jpg');
 
 -- 插入宠物健康记录
 INSERT INTO pet_health (health_id, pid, check_date, health_type, description, reminder_time, status, created_at, updated_at) VALUES

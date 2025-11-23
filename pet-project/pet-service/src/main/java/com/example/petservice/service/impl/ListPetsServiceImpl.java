@@ -2,6 +2,7 @@ package com.example.petservice.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.petpojo.dto.PetQueryDto;
 import com.example.petpojo.vo.PetListVo;
 import com.example.petpojo.vo.PetsDetailsVo;
 
@@ -31,22 +32,21 @@ public class ListPetsServiceImpl extends ServiceImpl<ListPetsMapper, Pets> imple
 
     /**
      * 分页查询宠物列表
-     * @param currentPage 当前页码
-     * @param pageSize 每页数量
+     * @param queryDto 查询参数
      * @return 宠物列表分页对象
      */
     @Override
     @Transactional(readOnly = true)
-    public IPage<PetListVo> listPets(Integer currentPage, Integer pageSize) {
+    public IPage<PetListVo> listPets(PetQueryDto queryDto) {
         // 确保分页参数有效
-        int current = (currentPage != null && currentPage > 0) ? currentPage : 1;
-        int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
+        int current = (queryDto.getCurrentPage() != null && queryDto.getCurrentPage() > 0) ? queryDto.getCurrentPage() : 1;
+        int size = (queryDto.getPageSize() != null && queryDto.getPageSize() > 0) ? queryDto.getPageSize() : 10;
         
         Page<PetListVo> page = new Page<>(current, size);
         
         try {
             // 直接使用Mapper查询返回VO对象，无需转换
-            return listPetsMapper.selectPetListByPage(page);
+            return listPetsMapper.selectPetListByPage(page, queryDto);
         } catch (Exception e) {
             log.error("查询宠物列表失败", e);
             throw new BizException(ErrorCode.INTERNAL_ERROR, "查询宠物列表失败");
