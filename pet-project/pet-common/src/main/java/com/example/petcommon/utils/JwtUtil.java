@@ -1,0 +1,235 @@
+package com.example.petcommon.utils;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.Map;
+
+import javax.crypto.SecretKey;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+
+import com.example.petcommon.error.ErrorCode;
+import com.example.petcommon.exception.BizException;
+
+/**
+ * @author 33185
+ */
+public class JwtUtil {
+    
+    private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
+    private static final int MIN_SECRET_LENGTH = 32;
+    private static final String CLAIM_USERNAME = "username";
+    private static final String CLAIM_USER_ID = "userId";
+    private static final String CLAIM_ROLE = "role";
+    private static final String CLAIM_ADMIN_SHELTER_ID = "adminShelterId";
+    /**
+     * 生成jwt
+     * 使用Hs256算法, 私匙使用固定秘钥
+     *
+     * @param secretKey jwt秘钥
+     * @param ttlMillis jwt过期时间(毫秒)
+     * @param claims    设置的信息
+     */
+    public static String createJWT(String secretKey, long ttlMillis, Map<String, Object> claims) {
+        try {
+            // 参数验证
+            if (secretKey == null || secretKey.trim().isEmpty()) {
+                throw new BizException(ErrorCode.JWT_CONFIG_ERROR, "密钥不能为空");
+            }
+            if (secretKey.trim().length() < MIN_SECRET_LENGTH) {
+                throw new BizException(ErrorCode.JWT_CONFIG_ERROR, "密钥长度不足，需至少32字符");
+            }
+            if (ttlMillis <= 0) {
+                throw new BizException(ErrorCode.JWT_CONFIG_ERROR, "过期时间必须大于0");
+            }
+            if (claims == null || claims.isEmpty()) {
+                throw new BizException(ErrorCode.JWT_CONFIG_ERROR, "claims不能为空");
+            }
+            
+            // 生成JWT的时间
+            long expMillis = System.currentTimeMillis() + ttlMillis;
+            Date exp = new Date(expMillis);
+
+            // 生成安全的密钥
+            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+
+            // 设置jwt的body
+            JwtBuilder builder = Jwts.builder()
+                    // 如果有私有声明，一定要先设置这个自己创建的私有的声明，这个是给builder的claim赋值，一旦写在标准的声明赋值之后，就是覆盖了那些标准的声明的
+                    .setClaims(claims)
+                    .setIssuedAt(new Date())
+                    // 设置签名使用的签名算法和签名使用的秘钥
+                    .signWith(key)
+                    // 设置过期时间
+                    .setExpiration(exp);
+
+            String token = builder.compact();
+            log.debug("JWT token生成成功，过期时间: {}", exp);
+            return token;
+            
+        } catch (Exception e) {
+            log.error("JWT token生成失败，错误: {}", e.getMessage(), e);
+            throw new BizException(ErrorCode.JWT_CONFIG_ERROR, "JWT token生成失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 解析JWT
+     *
+     * @param secretKey jwt秘钥
+     * @param token     待解析的token
+     * @return Claims对象
+     */
+    public static Claims parseJWT(String secretKey, String token) {
+        try {
+            // 参数验证
+            if (secretKey == null || secretKey.trim().isEmpty()) {
+                throw new BizException(ErrorCode.JWT_CONFIG_ERROR, "密钥不能为空");
+            }
+            if (secretKey.trim().length() < MIN_SECRET_LENGTH) {
+                throw new BizException(ErrorCode.JWT_CONFIG_ERROR, "密钥长度不足，需至少32字符");
+            }
+            if (token == null || token.trim().isEmpty()) {
+                throw new BizException(ErrorCode.UNAUTHORIZED, "token不能为空");
+            }
+            
+            // 生成安全的密钥
+            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+            
+            // 解析JWT
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token).getBody();
+            
+            log.debug("JWT token解析成功，用户: {}", claims.get("username"));
+            return claims;
+            
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            log.warn("JWT token已过期: {}", e.getMessage());
+            throw new BizException(ErrorCode.TOKEN_INVALID_OR_EXPIRED, "token已过期");
+        } catch (Exception e) {
+            log.error("JWT token解析失败，错误: {}", e.getMessage());
+            throw new BizException(ErrorCode.TOKEN_INVALID_OR_EXPIRED, "JWT token解析失败: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 检查token是否已过期
+     *
+     * @param claims JWT claims对象
+     * @return true表示已过期，false表示未过期
+     */
+    public static boolean isTokenExpired(Claims claims) {
+        if (claims == null) {
+            return true;
+        }
+        
+        Date expiration = claims.getExpiration();
+        if (expiration == null) {
+            return true;
+        }
+        
+        return expiration.before(new Date());
+    }
+
+    /**
+     * 从对象中提取Long值
+     * @param obj 可能包含Long值的对象
+     * @return 提取的Long值，如果无法提取则返回null
+     */
+    private static Long extractLongValue(Object obj) {
+        if (obj instanceof Long num) {
+            return num;
+        }
+
+        if (obj instanceof Integer num) {
+            return num.longValue();
+        }
+
+        if (obj instanceof String string) {
+            try {
+                return Long.parseLong(string);
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 从Claims中安全地获取userId
+     * @param claims JWT claims对象
+     * @return 用户ID，如果获取失败返回null
+     */
+    public static Long extractUserId(Claims claims) {
+        if (claims == null) {
+            log.warn("Claims为null，无法提取userId");
+            return null;
+        }
+
+        try {
+            return extractLongValue(claims.get(CLAIM_USER_ID));
+        } catch (ClassCastException | NullPointerException e) {
+            log.debug("提取userId失败: {}", e.getMessage());
+        }
+
+        log.warn("无法从claims中提取userId，返回null");
+        return null;
+    }
+
+    /**
+     * 从Claims中提取用户名
+     * @param claims JWT claims
+     * @return 用户名，如果获取失败返回null
+     */
+    public static String extractUsername(Claims claims) {
+        if (claims == null) {
+            return null;
+        }
+        Object usernameObj = claims.get(CLAIM_USERNAME);
+        if (usernameObj instanceof String username) {
+            return username;
+        }
+        return null;
+    }
+
+    /**
+     * 从Claims中提取角色
+     * @param claims JWT claims
+     * @return 角色，如果获取失败返回null
+     */
+    public static String extractRole(Claims claims) {
+        if (claims == null) {
+            return null;
+        }
+        Object roleObj = claims.get(CLAIM_ROLE);
+        if (roleObj instanceof String role) {
+            return role;
+        }
+        return null;
+    }
+
+    /**
+     * 从Claims中提取管理员绑定的收容所ID
+     * @param claims JWT claims
+     * @return 收容所ID，如果获取失败或为空返回null
+     */
+    public static Integer extractAdminShelterId(Claims claims) {
+        if (claims == null) {
+            return null;
+        }
+        Object value = claims.get(CLAIM_ADMIN_SHELTER_ID);
+        if (value == null) {
+            return null;
+        }
+        Long longVal = extractLongValue(value);
+        return longVal != null ? longVal.intValue() : null;
+    }
+}

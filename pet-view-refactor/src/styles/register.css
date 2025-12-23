@@ -1,0 +1,517 @@
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.register-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+.register-container::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  transform: rotate(30deg);
+  z-index: 0;
+}
+
+.register-card {
+  display: flex;
+  width: 900px;
+  height: 600px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  transform: translateY(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.register-left {
+  flex: 1.2;
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.register-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-container:hover .register-image {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 30px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+}
+
+.welcome-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: fadeInDown 0.8s ease;
+}
+
+.welcome-subtitle {
+  font-size: 1.1rem;
+  font-weight: 300;
+  opacity: 0.9;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  animation: fadeInUp 0.8s ease;
+  max-width: 80%;
+  line-height: 1.6;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.register-right {
+  flex: 1;
+  padding: 35px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.register-right::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  z-index: 0;
+}
+
+.register-right::after {
+  content: "";
+  position: absolute;
+  bottom: -30px;
+  left: -30px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  z-index: 0;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 35px;
+  animation: fadeIn 1s ease;
+}
+
+.form-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  display: inline-block;
+}
+
+.form-title::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+.form-subtitle {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
+  font-weight: 400;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.register-form {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.register-form :deep(.el-form-item) {
+  margin-bottom: 18px;
+  animation: slideInRight 0.5s ease forwards;
+  opacity: 0;
+}
+
+.register-form :deep(.el-form-item:nth-child(1)) { animation-delay: 0.1s; }
+.register-form :deep(.el-form-item:nth-child(2)) { animation-delay: 0.2s; }
+.register-form :deep(.el-form-item:nth-child(3)) { animation-delay: 0.3s; }
+.register-form :deep(.el-form-item:nth-child(4)) { animation-delay: 0.4s; }
+.register-form :deep(.el-form-item:nth-child(5)) { animation-delay: 0.5s; }
+.register-form :deep(.el-form-item:nth-child(6)) { animation-delay: 0.6s; }
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.register-form :deep(.el-input__wrapper) {
+  border: 1px solid #dcdfe6;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  min-height: 40px;
+  background: #ffffff;
+}
+
+.register-form :deep(.el-input__wrapper):hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.register-form :deep(.el-input__wrapper).is-focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.register-form :deep(.el-input__prefix) {
+  color: #667eea;
+  margin-right: 12px;
+}
+
+.register-form :deep(.el-input--large .el-input__inner) {
+  font-size: 1rem;
+  height: auto;
+  line-height: normal;
+}
+
+.register-form :deep(.el-input__icon) {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.register-form :deep(.el-input__wrapper):hover .el-input__icon {
+  transform: scale(1.1);
+}
+
+.submit-btn {
+  width: 100%;
+  height: 40px;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  transition: all 0.3s ease;
+  margin-top: 18px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.submit-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+  z-index: -1;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.submit-btn:hover::before {
+  left: 100%;
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+  outline: 0;
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 30px;
+  animation: fadeIn 1.2s ease;
+}
+
+.login-text {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-text :deep(.el-link) {
+  font-weight: 600;
+  margin-left: 6px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.login-link {
+  font-weight: 600;
+  margin-left: 6px;
+  color: #667eea;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.login-link::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.3s ease;
+}
+
+.login-link:hover::after {
+  width: 100%;
+}
+
+.login-text :deep(.el-link)::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.3s ease;
+}
+
+.login-text :deep(.el-link:hover)::after {
+  width: 100%;
+}
+
+/* 主题隔离 - 确保注册页面不受全局主题影响 */
+.register-container,
+.register-card,
+.register-right {
+  background-color: #f5f7fa !important;
+  color: #333 !important;
+}
+
+.register-card {
+  background: white !important;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.register-right {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+}
+
+/* 覆盖Element Plus组件的主题样式 */
+.register-form :deep(.el-input__wrapper) {
+  background: #ffffff !important;
+  border: 1px solid #dcdfe6 !important;
+  color: #333 !important;
+}
+
+.register-form :deep(.el-input__inner) {
+  color: #333 !important;
+  background: transparent !important;
+}
+
+.register-form :deep(.el-input__prefix) {
+  color: #667eea !important;
+}
+
+.submit-btn {
+  background: #409eff !important;
+  border: 1px solid #409eff !important;
+  color: white !important;
+}
+
+.submit-btn:hover {
+  background: #66b1ff !important;
+  border-color: #66b1ff !important;
+}
+
+.login-text {
+  color: #666 !important;
+}
+
+.login-link {
+  color: #667eea !important;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .register-card {
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+  }
+  
+  .register-left {
+    height: 180px;
+    flex: none;
+  }
+  
+  .register-right {
+    padding: 30px 25px;
+  }
+  
+  .welcome-title {
+    font-size: 1.6rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .form-title {
+    font-size: 1.4rem;
+  }
+  
+  .register-form {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-card {
+    max-width: 350px;
+  }
+  
+  .register-left {
+    height: 150px;
+  }
+  
+  .register-right {
+    padding: 25px 20px;
+  }
+  
+  .form-title {
+    font-size: 1.3rem;
+  }
+  
+  .welcome-title {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .register-card {
+    max-width: 320px;
+  }
+  
+  .register-left {
+    height: 130px;
+  }
+  
+  .register-right {
+    padding: 20px 15px;
+  }
+  
+  .form-title {
+    font-size: 1.2rem;
+  }
+  
+  .welcome-title {
+    font-size: 1.3rem;
+  }
+}
+

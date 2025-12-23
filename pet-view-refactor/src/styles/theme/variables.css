@@ -1,0 +1,53 @@
+:root {
+  --app-bg-color: #f5f6fb;
+  --app-surface-color: #ffffff;
+  --app-border-color: rgba(15, 23, 42, 0.08);
+  --app-text-color: #0f172a;
+  --app-text-secondary: #475569;
+  --app-primary: #5f6fff;
+  --app-primary-hover: #4c58cc;
+  --app-radius-lg: 20px;
+  --app-radius-md: 14px;
+  --app-shadow-card: 0 20px 45px rgba(15, 23, 42, 0.08);
+  --sidebar-badge-bg: #eef2ff;
+  --sidebar-badge-color: #5f6fff;
+}
+
+:root.dark {
+  --app-bg-color: #0f172a;
+  --app-surface-color: #1e293b;
+  --app-border-color: rgba(148, 163, 184, 0.15);
+  --app-text-color: #f1f5f9;
+  --app-text-secondary: #94a3b8;
+  --app-primary: #8da2ff;
+  --app-primary-hover: #7c8fff;
+  --app-shadow-card: 0 20px 45px rgba(2, 6, 23, 0.6);
+  --sidebar-badge-bg: rgba(95, 111, 255, 0.35);
+  --sidebar-badge-color: #ffffff;
+}
+
+:root.warm {
+  --app-bg-color: #fff8f3;
+  --app-surface-color: rgba(255, 255, 255, 0.94);
+  --app-border-color: rgba(191, 144, 109, 0.3);
+  --app-text-color: #2b1409;
+  --app-text-secondary: #8d5e3c;
+  --app-primary: #f59f5a;
+  --app-primary-hover: #f08a3e;
+  --app-shadow-card: 0 25px 55px rgba(181, 94, 40, 0.25);
+  --sidebar-badge-bg: rgba(245, 159, 90, 0.15);
+  --sidebar-badge-color: #a6531f;
+}
+
+:root.admin-theme {
+  --app-bg-color: #0b111a;
+  --app-surface-color: rgba(16, 26, 37, 0.92);
+  --app-border-color: rgba(255, 255, 255, 0.12);
+  --app-text-color: #eaf0f6;
+  --app-text-secondary: #cbd5e1;
+  --app-primary: #f6c78d;
+  --app-primary-hover: #e3b06e;
+  --app-shadow-card: 0 25px 80px rgba(0, 0, 0, 0.38);
+  --sidebar-badge-bg: rgba(246, 199, 141, 0.18);
+  --sidebar-badge-color: #fdf8f1;
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.petservice.mapper.HealthAlertsMapper">
+
+    <!-- 批量将已提醒的健康提醒标记为过期 -->
+    <update id="batchExpireReminded">
+        UPDATE pet_health
+        SET status = 'expired'
+        WHERE status = 'reminded'
+          AND create_time &lt; DATE_SUB(#{now}, INTERVAL 1 DAY)
+    </update>
+
+    <!-- 批量将过期的健康提醒标记为归档 -->
+    <update id="batchArchiveExpired">
+        UPDATE pet_health
+        SET status = 'archived'
+        WHERE status = 'expired'
+          AND create_time &lt; DATE_SUB(#{now}, INTERVAL 30 DAY)
+    </update>
+
+    <!-- 批量删除已归档的健康提醒 -->
+    <delete id="batchDeleteArchived">
+        DELETE FROM pet_health
+        WHERE status = 'archived'
+          AND create_time &lt; DATE_SUB(#{now}, INTERVAL 365 DAY)
+    </delete>
+
+</mapper>

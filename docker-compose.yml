@@ -1,0 +1,110 @@
+services:
+  mysql:
+    image: "${MYSQL_IMAGE:-mysql:8.0.42}"
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_0900_ai_ci"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?请在.env中设置MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-pet_project}
+      TZ: Asia/Shanghai
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: "${REDIS_IMAGE:-redis:7.4.1-alpine}"
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?请在.env中设置REDIS_PASSWORD}"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./pet-project
+      args:
+        HTTP_PROXY: ${HTTP_PROXY:-}
+        HTTPS_PROXY: ${HTTPS_PROXY:-}
+        NO_PROXY: ${NO_PROXY:-}
+        MAVEN_MIRROR: ${MAVEN_MIRROR:-https://mirrors.cloud.tencent.com/nexus/repository/maven-public/}
+    image: "${BACKEND_IMAGE:-cjie6620/ck-backend:0.0.1}"
+    environment:
+      TZ: Asia/Shanghai
+      SPRING_PROFILES_ACTIVE: docker
+      # 邮件：用于 /user/send-reset-code 等功能（线上务必配置）
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD:-}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH:-true}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE:-true}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED:-true}
+      PET_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      PET_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-pet_project}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      PET_DATASOURCE_USERNAME: root
+      PET_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      PET_REDIS_HOST: redis
+      PET_REDIS_PORT: 6379
+      PET_REDIS_PASSWORD: ${REDIS_PASSWORD}
+      PET_REDIS_DATABASE: 0
+      PET_JWT_USER_SECRET_KEY: ${PET_JWT_USER_SECRET_KEY:?请在.env中设置PET_JWT_USER_SECRET_KEY}
+      PET_JWT_REFRESH_SECRET_KEY: ${PET_JWT_REFRESH_SECRET_KEY:?请在.env中设置PET_JWT_REFRESH_SECRET_KEY}
+      PET_JWT_USER_TTL: ${PET_JWT_USER_TTL:-900000}
+      PET_JWT_REFRESH_TTL: ${PET_JWT_REFRESH_TTL:-1209600000}
+      PET_ALIOSS_ENDPOINT: ${PET_ALIOSS_ENDPOINT:-}
+      PET_ALIOSS_BUCKET_NAME: ${PET_ALIOSS_BUCKET_NAME:-}
+      PET_ALIOSS_REGION: ${PET_ALIOSS_REGION:-}
+      PET_ALIOSS_URL_PREFIX: ${PET_ALIOSS_URL_PREFIX:-}
+      PET_ALIOSS_ACCESS_KEY_ID: ${PET_ALIOSS_ACCESS_KEY_ID:-}
+      PET_ALIOSS_ACCESS_KEY_SECRET: ${PET_ALIOSS_ACCESS_KEY_SECRET:-}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 8080"]
+      interval: 10s
+      timeout: 5s
+      start_period: 90s
+      retries: 12
+
+  frontend:
+    build:
+      context: ./pet-view-refactor
+      args:
+        HTTP_PROXY: ${HTTP_PROXY:-}
+        HTTPS_PROXY: ${HTTPS_PROXY:-}
+        NO_PROXY: ${NO_PROXY:-}
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmmirror.com}
+        VITE_APP_BASE_API: /api
+    image: "${FRONTEND_IMAGE:-cjie6620/ck-frontend:0.0.1}"
+    environment:
+      API_UPSTREAM: http://backend:8080
+      WS_UPSTREAM: http://backend:8080
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    healthcheck:
+      # docker-compose 会把 `$` 当作变量插值，正则结尾 `$` 需要写成 `$$`
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/healthz | grep -q '^ok$$'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  mysql_data:
+  redis_data:

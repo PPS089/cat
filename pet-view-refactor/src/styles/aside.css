@@ -1,0 +1,146 @@
+/* 侧边栏样式 - 主题适配 */
+.sidebar {
+  width: 280px;
+  background: var(--sidebar-bg-color, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+  color: var(--sidebar-text-color, white);
+  padding: 20px 0;
+  position: fixed;
+  left: 0;
+  top: 80px;
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 4px 0 25px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  border-right: 3px solid var(--sidebar-border-color, rgba(255,255,255,0.25));
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 导航菜单 */
+.nav-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 导航项 */
+.nav-item {
+  margin: 2px 0;
+}
+
+/* 导航链接 */
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 15px 25px;
+  color: var(--sidebar-text-color, rgba(255, 255, 255, 0.9));
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-radius: 0 25px 25px 0;
+  margin-right: 20px;
+  position: relative;
+  overflow: hidden;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: var(--sidebar-text-color, white);
+  background: var(--sidebar-hover-bg, rgba(255, 255, 255, 0.15));
+  transform: translateX(5px);
+}
+
+.nav-link.active {
+  color: var(--sidebar-text-color, white);
+  background: var(--sidebar-active-bg, rgba(255, 255, 255, 0.25));
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  background: var(--el-color-primary, #409eff);
+  border-radius: 0 2px 2px 0;
+}
+
+/* 图标样式 */
+.nav-link .el-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.nav-link:hover .el-icon {
+  transform: scale(1.1);
+}
+
+/* 导航徽章 */
+.nav-badge {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+.nav-badge.warning {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+}
+
+/* 导航部分标题 */
+.nav-section {
+  margin-bottom: 1.5rem;
+}
+
+.nav-section-title {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+    top: 70px;
+  }
+  
+  .nav-link {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .nav-section-title {
+    padding: 0.4rem 1rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 180px;
+  }
+  
+  .nav-link span:last-child {
+    display: none;
+  }
+  
+  .nav-link .el-icon {
+    margin-right: 0;
+  }
+  
+  .nav-badge {
+    display: none;
+  }
+}

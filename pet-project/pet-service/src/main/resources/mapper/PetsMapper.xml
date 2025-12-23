@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.petservice.mapper.PetsMapper">
+    <select id="selectAdminPets" resultType="com.example.petpojo.vo.AdminPetVo">
+        SELECT
+            p.pid,
+            p.name,
+            p.species_id AS speciesId,
+            sp.name AS species,
+            p.breed_id AS breedId,
+            b.name AS breed,
+            p.age,
+            p.gender,
+            p.status,
+            p.img_url AS image,
+            p.shelter_id AS shelterId,
+            s.name AS shelterName,
+            s.location AS shelterLocation,
+            u.id AS adopterId,
+            u.username AS adopterName,
+            u.phone AS adopterPhone,
+            u.email AS adopterEmail
+        FROM pets p
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        LEFT JOIN shelters s ON p.shelter_id = s.sid
+        LEFT JOIN adoptions a ON a.pid = p.pid AND a.status = 'APPROVED'
+        LEFT JOIN users u ON a.uid = u.id
+        <where>
+            <if test="status != null and status != ''">
+                p.status = #{status}
+            </if>
+            <if test="shelterId != null">
+                AND p.shelter_id = #{shelterId}
+            </if>
+        </where>
+        ORDER BY p.pid DESC
+    </select>
+</mapper>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.petservice.mapper.ListPetsMapper">
+    <select id="selectByPage" resultType="com.example.petpojo.entity.Pets">
+        SELECT 
+            p.pid,
+            p.name,
+            p.breed_id AS breedId,
+            b.name AS breed,
+            p.age,
+            p.gender,
+            p.img_url AS imageUrl,
+            p.species_id AS speciesId,
+            sp.name AS species,
+            p.status,
+            p.shelter_id AS shelterId,
+            s.sid,
+            s.name as shelterName,
+            s.location as shelterAddress
+        FROM pets p
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        LEFT JOIN shelters s ON p.shelter_id = s.sid
+        WHERE p.status = 'AVAILABLE'
+          AND NOT EXISTS (
+              SELECT 1 FROM adoptions a
+              WHERE a.pid = p.pid AND a.status = 'PENDING'
+          )
+        ORDER BY p.pid
+    </select>
+    
+    <select id="selectPetById" resultType="com.example.petpojo.entity.Pets">
+        SELECT 
+            p.pid,
+            p.name,
+            p.breed_id AS breedId,
+            b.name AS breed,
+            p.age,
+            p.gender,
+            p.img_url AS imageUrl,
+            p.species_id AS speciesId,
+            sp.name AS species,
+            p.status,
+            p.shelter_id AS shelterId,
+            s.sid,
+            s.name as shelterName,
+            s.location as shelterAddress
+        FROM pets p
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        LEFT JOIN shelters s ON p.shelter_id = s.sid
+        WHERE p.pid = #{petId}
+    </select>
+    
+    <!-- 新增直接返回PetListVo的查询语句 -->
+    <select id="selectPetListByPage" resultType="com.example.petpojo.vo.PetListVo">
+        SELECT 
+            p.pid,
+            p.name,
+            p.species_id AS speciesId,
+            sp.name AS species,
+            p.breed_id AS breedId,
+            b.name AS breed,
+            p.age,
+            p.gender,
+            p.img_url AS image,
+            p.status,
+            s.name as shelterName,
+            s.location as shelterAddress
+        FROM pets p
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        LEFT JOIN shelters s ON p.shelter_id = s.sid
+        <where>
+            p.status = 'AVAILABLE'
+            AND NOT EXISTS (
+                SELECT 1 FROM adoptions a
+                WHERE a.pid = p.pid AND a.status = 'PENDING'
+            )
+            <if test="species != null and species != ''">
+                AND sp.name = #{species}
+            </if>
+            <if test="breed != null and breed != ''">
+                AND b.name LIKE CONCAT('%', #{breed}, '%')
+            </if>
+            <if test="gender != null and gender != ''">
+                AND p.gender = #{gender}
+            </if>
+            <if test="minAge != null">
+                AND p.age &gt;= #{minAge}
+            </if>
+            <if test="maxAge != null">
+                AND p.age &lt;= #{maxAge}
+            </if>
+        </where>
+        ORDER BY p.pid
+    </select>
+    
+    <select id="selectPetListById" resultType="com.example.petpojo.vo.PetListVo">
+        SELECT 
+            p.pid,
+            p.name,
+            p.species_id AS speciesId,
+            sp.name AS species,
+            p.breed_id AS breedId,
+            b.name AS breed,
+            p.age,
+            p.gender,
+            p.img_url AS image,
+            p.status,
+            s.name as shelterName,
+            s.location as shelterAddress
+        FROM pets p
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        LEFT JOIN shelters s ON p.shelter_id = s.sid
+        WHERE p.pid = #{petId}
+    </select>
+    
+    <!-- 查询宠物详情的SQL，返回PetsDetailsVo -->
+    <select id="selectPetDetailsById" resultType="com.example.petpojo.vo.PetsDetailsVo">
+        SELECT 
+            p.pid,
+            p.name,
+            p.species_id AS speciesId,
+            sp.name AS species,
+            p.breed_id AS breedId,
+            b.name AS breed,
+            p.age,
+            p.gender,
+            p.status,
+            p.img_url AS image,
+            p.shelter_id AS shelterId,
+            s.name as shelterName,
+            s.location as shelterAddress
+        FROM pets p
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        LEFT JOIN shelters s ON p.shelter_id = s.sid
+        WHERE p.pid = #{petId}
+    </select>
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.petservice.mapper.FosterMapper">
+    <select id="getFostersInfo" resultType="com.example.petpojo.vo.FostersVo">
+        SELECT
+        f.fid AS id,  -- 寄养记录ID → VO 的 id
+        f.start_date AS startDate,  -- 业务寄养开始时间
+        f.end_date AS endDate,      -- 业务寄养结束时间
+        f.create_time AS createTime,  -- 记录创建时间
+        f.update_time AS updateTime,  -- 记录更新时间
+        f.review_time AS reviewTime,
+        f.review_note AS reviewNote,
+        UPPER(f.status) AS status,  -- 保留原始寄养状态，便于区分批准/拒绝/进行中等
+        p.pid AS "pet.pid",  -- 宠物ID → pet对象的pid
+        p.`name` AS "pet.name",  -- 宠物名称 → pet对象的name
+        sp.name AS "pet.species",  -- 宠物品类（联表）
+        b.name AS "pet.breed",  -- 宠物品种（联表）
+        p.age AS "pet.age",  -- 宠物年龄 → pet对象的age
+        p.gender AS "pet.gender",  -- 宠物性别 → pet对象的gender
+        p.status AS "pet.status", -- 宠物当前状态 → pet对象的status
+        p.img_url AS "pet.image",  -- 宠物图片URL → pet对象的image
+        s.sid AS "shelter.sid",  -- 收容所ID → shelter对象的sid
+        s.name AS "shelter.name",  -- 收容所名称 → shelter对象的name
+        s.location AS "shelter.location"  -- 收容所位置 → shelter对象的location
+        FROM `fosters` f
+        JOIN pets p ON f.pid = p.pid  -- 关联宠物表（确保条件完整）
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        JOIN shelters s ON f.sid = s.sid  -- 关联收容所表
+        WHERE f.uid = #{id}
+          AND f.deleted = 0
+        <if test="status != null and status != ''">
+            AND UPPER(f.status) = #{status}
+        </if>
+        ORDER BY f.start_date DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <select id="getFosterById" resultType="com.example.petpojo.vo.FostersVo">
+        SELECT
+        f.fid AS id,
+        f.start_date AS startDate,
+        f.end_date AS endDate,
+        f.create_time AS createTime,
+        f.update_time AS updateTime,
+        f.review_time AS reviewTime,
+        f.review_note AS reviewNote,
+        UPPER(f.status) AS status,
+        p.pid AS "pet.pid",  -- 宠物ID → pet对象的pid
+        p.`name` AS "pet.name",  -- 宠物名称 → pet对象的name
+        sp.name AS "pet.species",  -- 宠物品类（联表）
+        b.name AS "pet.breed",  -- 宠物品种（联表）
+        p.age AS "pet.age",  -- 宠物年龄 → pet对象的age
+        p.gender AS "pet.gender",  -- 宠物性别 → pet对象的gender
+        p.status AS "pet.status", -- 宠物当前状态 → pet对象的status
+        p.img_url AS "pet.image",  -- 宠物图片URL → pet对象的image
+        s.sid AS "shelter.sid",  -- 收容所ID → shelter对象的sid
+        s.name AS "shelter.name",  -- 收容所名称 → shelter对象的name
+        s.location AS "shelter.location"  -- 收容所位置 → shelter对象的location
+        FROM `fosters` f
+        JOIN pets p ON f.pid = p.pid  -- 关联宠物表（确保条件完整）
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        JOIN shelters s ON f.sid = s.sid  -- 关联收容所表
+        WHERE f.fid = #{id}
+          AND f.deleted = 0
+        LIMIT 1
+    </select>
+
+    <!-- 管理员查看寄养记录 -->
+    <select id="getAdminFosters" resultType="com.example.petpojo.vo.FostersVo">
+        SELECT
+        f.fid AS id,
+        f.uid AS applicantId,
+        u.username AS applicantName,
+        u.phone AS applicantPhone,
+        f.start_date AS startDate,
+        f.end_date AS endDate,
+        f.create_time AS createTime,
+        f.update_time AS updateTime,
+        f.review_time AS reviewTime,
+        f.review_note AS reviewNote,
+        f.status AS status,
+        p.pid AS "pet.pid",
+        p.`name` AS "pet.name",
+        sp.name AS "pet.species",
+        b.name AS "pet.breed",
+        p.age AS "pet.age",
+        p.gender AS "pet.gender",
+        p.status AS "pet.status",
+        p.img_url AS "pet.image",
+        s.sid AS "shelter.sid",
+        s.name AS "shelter.name",
+        s.location AS "shelter.location"
+        FROM `fosters` f
+        JOIN users u ON f.uid = u.id
+        JOIN pets p ON f.pid = p.pid
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        JOIN shelters s ON f.sid = s.sid
+        WHERE f.deleted = 0
+        <if test="status != null and status != ''">
+            AND f.status = #{status}
+        </if>
+        <if test="shelterId != null">
+            AND f.sid = #{shelterId}
+        </if>
+        ORDER BY f.create_time DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+</mapper>

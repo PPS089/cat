@@ -1,0 +1,197 @@
+:root {
+  --el-fill-color-blank: var(--app-surface-color);
+  --el-fill-color: var(--app-bg-color);
+  --el-text-color-regular: var(--app-text-color);
+  --el-border-color: var(--app-border-color);
+  --dialog-bg: var(--app-surface-color);
+  --dialog-text: var(--app-text-color);
+  --dropdown-bg: var(--app-surface-color);
+  --button-bg: var(--app-surface-color);
+  --button-text: var(--app-text-color);
+  --button-border: var(--app-border-color);
+  --button-hover-bg: rgba(95, 111, 255, 0.12);
+}
+
+:root.dark {
+  --el-fill-color-blank: #1f2937;
+  --el-fill-color: #0f172a;
+  --dialog-bg: #1f2937;
+  --dialog-text: #f1f5f9;
+  --dropdown-bg: #1f2937;
+  --button-bg: #1f2937;
+  --button-text: #f1f5f9;
+  --button-border: rgba(148, 163, 184, 0.35);
+  --button-hover-bg: rgba(95, 111, 255, 0.25);
+}
+
+:root.warm {
+  --el-fill-color-blank: #fffdf9;
+  --el-fill-color: #fff8f1;
+  --dialog-bg: rgba(255, 255, 255, 0.95);
+  --dialog-text: #2b1409;
+  --dropdown-bg: rgba(255, 255, 255, 0.95);
+  --button-bg: rgba(255, 255, 255, 0.9);
+  --button-text: #8d5e3c;
+  --button-border: rgba(216, 166, 132, 0.5);
+  --button-hover-bg: rgba(245, 159, 90, 0.15);
+}
+
+.el-input__wrapper,
+.el-select .el-input__wrapper,
+.el-date-editor .el-input__wrapper {
+  background: var(--app-bg-color);
+  border-color: var(--app-border-color);
+  color: var(--app-text-color);
+}
+
+:where(.el-dialog) {
+  background: var(--dialog-bg);
+  color: var(--dialog-text);
+  border: 1px solid var(--app-border-color);
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-shadow-card);
+}
+
+.el-dialog__header,
+.el-dialog__body,
+.el-dialog__footer {
+  background: inherit;
+  color: inherit;
+}
+
+:where(.el-message-box) {
+  background: var(--dialog-bg);
+  color: var(--dialog-text);
+  border: 1px solid var(--app-border-color);
+  box-shadow: var(--app-shadow-card);
+}
+
+.el-message-box__headerbtn .el-icon,
+.el-message-box__title,
+.el-message-box__content {
+  color: inherit;
+}
+
+.el-message-box__btns {
+  background: inherit;
+}
+
+:where(
+    .el-popper,
+    .el-select-dropdown,
+    .el-dropdown__popper,
+    .el-picker-panel
+  ) {
+  background: var(--dropdown-bg);
+  color: var(--dialog-text);
+  border: 1px solid var(--app-border-color);
+  box-shadow: var(--app-shadow-card);
+}
+
+:where(
+    .el-dropdown-menu__item:hover,
+    .el-select-dropdown__item.hover,
+    .el-select-dropdown__item.selected
+  ) {
+  background: rgba(95, 111, 255, 0.12);
+  color: var(--app-primary);
+}
+
+:where(.el-button--default, .el-button--info) {
+  background: var(--button-bg);
+  color: var(--button-text);
+  border-color: var(--button-border);
+}
+
+:where(.el-button--default:hover, .el-button--info:hover) {
+  background: var(--button-hover-bg);
+  border-color: var(--app-primary);
+  color: var(--app-primary);
+}
+
+:where(.el-button.is-text, .el-button.is-text:focus) {
+  background: transparent;
+  color: var(--app-text-secondary);
+}
+
+:where(.el-button.is-text:hover) {
+  color: var(--app-primary);
+}
+
+:where(.el-button--primary) {
+  background: var(--app-primary);
+  border-color: var(--app-primary);
+  color: #fff;
+}
+
+:where(.el-button--primary:hover) {
+  background: var(--app-primary-hover);
+  border-color: var(--app-primary-hover);
+}
+
+:where(.el-message, .el-notification) {
+  background: var(--app-surface-color);
+  color: var(--app-text-color);
+  border: 1px solid var(--app-border-color);
+  box-shadow: var(--app-shadow-card);
+}
+
+.el-notification__title,
+.el-notification__content,
+.el-message__content {
+  color: inherit;
+}
+
+/* Pagination custom theme */
+:where(.el-pagination) {
+  --pager-bg: rgba(95, 111, 255, 0.08);
+  --pager-active-bg: #fff8b3;
+  --pager-text: var(--app-text-color);
+  --pager-muted: var(--app-text-secondary);
+  --pager-border: var(--app-border-color);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+:where(.el-pagination__total, .el-pagination__sizes, .el-pagination__jump) {
+  color: var(--pager-muted);
+  font-weight: 600;
+}
+
+:where(.el-pagination .btn-prev, .el-pagination .btn-next) {
+  background: var(--pager-bg);
+  border: 1px solid var(--pager-border);
+  color: var(--pager-text);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+:where(.el-pagination .btn-prev:hover, .el-pagination .btn-next:hover) {
+  border-color: var(--app-primary);
+  color: var(--app-primary);
+}
+
+:where(.el-pagination .el-pager li) {
+  min-width: 34px;
+  height: 34px;
+  line-height: 34px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  color: var(--pager-text);
+  transition: all 0.2s ease;
+}
+
+:where(.el-pagination .el-pager li.active) {
+  background: var(--pager-active-bg);
+  color: #0f172a;
+  font-weight: 700;
+  border-color: rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+:where(.el-pagination .el-pager li:hover:not(.active)) {
+  color: var(--app-primary);
+  border-color: var(--app-primary);
+  background: rgba(95, 111, 255, 0.08);
+}

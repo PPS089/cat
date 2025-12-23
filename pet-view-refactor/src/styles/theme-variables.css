@@ -1,0 +1,158 @@
+/* 主题变量样式文件 */
+:root {
+  /* 浅色主题变量 */
+  --el-bg-color-page: #f5f7fa;
+  --el-bg-color: #ffffff;
+  --el-bg-color-overlay: #ffffff;
+  --el-text-color-primary: #303133;
+  --el-text-color-regular: #606266;
+  --el-text-color-secondary: #909399;
+  --el-text-color-placeholder: #a8abb2;
+  --el-border-color: #dcdfe6;
+  --el-border-color-light: #e4e7ed;
+  --el-border-color-lighter: #ebeef5;
+  --el-border-color-extra-light: #f2f6fc;
+  --el-color-primary: var(--app-primary, #5f6fff);
+  --el-color-primary-light-3: #8994ff;
+  --el-color-primary-light-5: #aab2ff;
+  --el-color-primary-light-7: #cbd0ff;
+  --el-color-primary-light-8: #dce0ff;
+  --el-color-primary-light-9: #eceefe;
+  --el-color-primary-dark-2: #4c58cc;
+  --el-color-success: #67c23a;
+  --el-color-warning: #e6a23c;
+  --el-color-danger: #f56c6c;
+  --el-color-error: #f56c6c;
+  --el-color-info: #909399;
+  
+  /* 自定义侧边栏颜色 */
+  --sidebar-bg-color: #ffffff;
+  --sidebar-text-color: #303133;
+  --sidebar-hover-bg: rgba(64, 158, 255, 0.1);
+  --sidebar-active-bg: rgba(64, 158, 255, 0.2);
+  --sidebar-border-color: #909399;
+  
+  /* 自定义头部颜色 */
+  --header-bg-color: #ffffff;
+  --header-text-color: #303133;
+  --header-hover-bg: rgba(64, 158, 255, 0.1);
+  --header-border-color: #c0c4cc;
+}
+
+/* 深色主题变量 */
+html.dark {
+  --el-bg-color-page: #0a0a0a;
+  --el-bg-color: #141414;
+  --el-bg-color-overlay: #1d1d1d;
+  --el-text-color-primary: #e5eaf3;
+  --el-text-color-regular: #cfd3dc;
+  --el-text-color-secondary: #a3a6ad;
+  --el-text-color-placeholder: #8d9095;
+  --el-border-color: #4c4d4f;
+  --el-border-color-light: #414243;
+  --el-border-color-lighter: #363637;
+  --el-border-color-extra-light: #2b2b2c;
+  --el-color-primary: var(--app-primary, #8da2ff);
+  --el-color-primary-light-3: #a7b6ff;
+  --el-color-primary-light-5: #c0c9ff;
+  --el-color-primary-light-7: #d4dcff;
+  --el-color-primary-light-8: #e0e5ff;
+  --el-color-primary-light-9: #e8edff;
+  --el-color-primary-dark-2: #7c8fff;
+  --el-color-success: #67c23a;
+  --el-color-warning: #e6a23c;
+  --el-color-danger: #f56c6c;
+  --el-color-error: #f56c6c;
+  --el-color-info: #909399;
+  
+  /* 自定义深色侧边栏颜色 */
+  --sidebar-bg-color: #141414;
+  --sidebar-text-color: #e5eaf3;
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
+  --sidebar-active-bg: rgba(255, 255, 255, 0.1);
+  --sidebar-border-color: #a3a6ad;
+  
+  /* 自定义深色头部颜色 */
+  --header-bg-color: #141414;
+  --header-text-color: #e5eaf3;
+  --header-hover-bg: rgba(255, 255, 255, 0.05);
+  --header-border-color: #606266;
+}
+
+html.warm {
+  --el-bg-color-page: #fff8f3;
+  --el-bg-color: rgba(255, 255, 255, 0.94);
+  --el-bg-color-overlay: rgba(255, 255, 255, 0.98);
+  --el-text-color-primary: #2b1409;
+  --el-text-color-regular: #8d5e3c;
+  --el-text-color-secondary: #b9855d;
+  --el-text-color-placeholder: #cfa98c;
+  --el-border-color: rgba(191, 144, 109, 0.45);
+  --el-border-color-light: rgba(206, 170, 139, 0.4);
+  --el-border-color-lighter: rgba(221, 197, 176, 0.35);
+  --el-border-color-extra-light: rgba(232, 214, 199, 0.25);
+  --el-color-primary: var(--app-primary, #f59f5a);
+  --el-color-primary-light-3: #f7b67f;
+  --el-color-primary-light-5: #f9cda4;
+  --el-color-primary-light-7: #fbe2c9;
+  --el-color-primary-light-8: #fceddc;
+  --el-color-primary-light-9: #fef6ed;
+  --el-color-primary-dark-2: #e18645;
+  --sidebar-bg-color: rgba(255, 255, 255, 0.92);
+  --sidebar-text-color: #6c3d24;
+  --sidebar-hover-bg: rgba(245, 159, 90, 0.16);
+  --sidebar-active-bg: rgba(245, 159, 90, 0.28);
+  --sidebar-border-color: rgba(191, 144, 109, 0.5);
+  --header-bg-color: rgba(255, 255, 255, 0.92);
+  --header-text-color: #6c3d24;
+  --header-hover-bg: rgba(245, 159, 90, 0.15);
+  --header-border-color: rgba(191, 144, 109, 0.4);
+}
+
+/* 管理员专属主题（锁定） */
+html.admin-theme {
+  --app-primary: #f6c78d;
+  --el-bg-color-page: #0b111a;
+  --el-bg-color: #0f1924;
+  --el-bg-color-overlay: #101a25;
+  --el-text-color-primary: #eaf0f6;
+  --el-text-color-regular: #cbd5e1;
+  --el-text-color-secondary: #94a3b8;
+  --el-text-color-placeholder: #6b7280;
+  --el-border-color: rgba(255, 255, 255, 0.16);
+  --el-border-color-light: rgba(255, 255, 255, 0.12);
+  --el-border-color-lighter: rgba(255, 255, 255, 0.08);
+  --el-border-color-extra-light: rgba(255, 255, 255, 0.06);
+  --el-color-primary: #f6c78d;
+  --el-color-primary-light-3: #f7d4a9;
+  --el-color-primary-light-5: #f9e1c5;
+  --el-color-primary-light-7: #fbeedd;
+  --el-color-primary-light-8: #fcf3e8;
+  --el-color-primary-light-9: #fef9f2;
+  --el-color-primary-dark-2: #e3b06e;
+  --el-color-success: #8ad6b5;
+  --el-color-warning: #f7c66c;
+  --el-color-danger: #f88c8c;
+  --el-color-error: #f76f6f;
+  --el-color-info: #9fb3c8;
+
+  --sidebar-bg-color: rgba(12, 22, 31, 0.92);
+  --sidebar-text-color: #eaf0f6;
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
+  --sidebar-active-bg: rgba(246, 199, 141, 0.12);
+  --sidebar-border-color: rgba(255, 255, 255, 0.12);
+
+  --header-bg-color: rgba(16, 26, 37, 0.9);
+  --header-text-color: #eaf0f6;
+  --header-hover-bg: rgba(255, 255, 255, 0.06);
+  --header-border-color: rgba(255, 255, 255, 0.14);
+
+  --app-surface-color: rgba(16, 26, 37, 0.92);
+  --app-border-color: rgba(255, 255, 255, 0.12);
+  --app-text-color: #eaf0f6;
+  --app-text-secondary: #cbd5e1;
+  --button-bg: rgba(255, 255, 255, 0.06);
+  --button-hover-bg: rgba(246, 199, 141, 0.16);
+  --button-text: #eaf0f6;
+  --button-border: rgba(255, 255, 255, 0.16);
+}

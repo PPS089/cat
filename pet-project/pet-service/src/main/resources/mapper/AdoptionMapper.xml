@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.petservice.mapper.AdoptionsMapper">
+    <select id="getAdoptionsInfo" resultType="com.example.petpojo.vo.AdoptionsVo">
+        SELECT
+        a.aid AS aid,  -- 直接对应 VO 的 aid
+        p.pid AS pid,  -- 对应 VO 的 pid（宠物ID）
+        a.adopt_date AS adoptionDate,  -- 数据库 adopt_date → VO adoptionDate（驼峰对应）
+        p.name AS name,  -- 宠物名 → VO name（无冲突，直接对应）
+        sp.name AS species,  -- 物种名称（联表）
+        b.name AS breed,  -- 品种名称（联表）
+        p.age AS age,  -- 宠物年龄 → VO age
+        p.gender AS gender,  -- 宠物性别 → VO gender
+        p.img_url AS image,  -- 数据库 img_url → VO image（名称不一致，用 AS 映射）
+        s.sid AS sid,  -- 收容所ID → VO sid
+        s.name AS sname,  -- 收容所名 → VO sname（解决与宠物名的冲突）
+        s.location AS location,  -- 收容所地址 → VO location
+        a.review_time AS reviewTime,
+        a.review_note AS reviewNote,
+        CASE 
+            WHEN p.status = 'FOSTERING' THEN 1 
+            ELSE 0 
+        END AS isFostering,  -- 根据宠物状态判断是否寄养
+        (SELECT f.fid FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterId,
+        (SELECT UPPER(f.status) FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterStatus,
+        p.status AS status,  -- 宠物状态
+        a.status AS adoptionStatus
+        FROM adoptions a
+        JOIN pets p ON a.pid = p.pid
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        JOIN shelters s ON p.shelter_id = s.sid
+        WHERE a.uid = #{uid}
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="getUserAdoptions" resultType="com.example.petpojo.vo.AdoptionsVo">
+        SELECT
+        a.aid AS aid,
+        p.pid AS pid,
+        a.adopt_date AS adoptionDate,
+        p.name AS name,
+        sp.name AS species,
+        b.name AS breed,
+        p.age AS age,
+        p.gender AS gender,
+        p.img_url AS image,
+        s.sid AS sid,
+        s.name AS sname,
+        s.location AS location,
+        a.review_time AS reviewTime,
+        a.review_note AS reviewNote,
+        CASE 
+            WHEN p.status = 'FOSTERING' THEN 1 
+            ELSE 0 
+        END AS isFostering,  -- 根据宠物状态判断是否寄养
+        (SELECT f.fid FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterId,
+        (SELECT UPPER(f.status) FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterStatus,
+        p.status AS status,  -- 宠物状态
+        a.status AS adoptionStatus
+        FROM adoptions a
+        JOIN pets p ON a.pid = p.pid
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        JOIN shelters s ON p.shelter_id = s.sid
+        WHERE a.uid = #{userId}
+        ORDER BY a.adopt_date DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 仅查询已通过（APPROVED）的用户领养记录，供“已领养宠物”场景使用 -->
+    <select id="getUserApprovedAdoptions" resultType="com.example.petpojo.vo.AdoptionsVo">
+        SELECT
+        a.aid AS aid,
+        p.pid AS pid,
+        a.adopt_date AS adoptionDate,
+        p.name AS name,
+        sp.name AS species,
+        b.name AS breed,
+        p.age AS age,
+        p.gender AS gender,
+        p.img_url AS image,
+        s.sid AS sid,
+        s.name AS sname,
+        s.location AS location,
+        a.review_time AS reviewTime,
+        a.review_note AS reviewNote,
+        CASE
+            WHEN p.status = 'FOSTERING' THEN 1
+            ELSE 0
+        END AS isFostering,
+        (SELECT f.fid FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterId,
+        (SELECT UPPER(f.status) FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterStatus,
+        p.status AS status,
+        a.status AS adoptionStatus
+        FROM adoptions a
+        JOIN pets p ON a.pid = p.pid
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        JOIN shelters s ON p.shelter_id = s.sid
+        WHERE a.uid = #{userId}
+        AND a.status = 'APPROVED'
+        ORDER BY a.adopt_date DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 简化版的领养记录查询，只关注领养本身 -->
+    <select id="getUserAdoptionsSimple" resultType="com.example.petpojo.vo.AdoptionsVo">
+        SELECT
+        a.aid AS aid,
+        p.pid AS pid,
+        a.adopt_date AS adoptionDate,
+        p.name AS name,
+        sp.name AS species,
+        b.name AS breed,
+        p.age AS age,
+        p.gender AS gender,
+        p.img_url AS image,
+        s.sid AS sid,
+        s.name AS sname,
+        s.location AS location,
+        a.review_time AS reviewTime,
+        a.review_note AS reviewNote,
+        CASE 
+            WHEN p.status = 'FOSTERING' THEN 1 
+            ELSE 0 
+        END AS isFostering,
+        (SELECT f.fid FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterId,
+        (SELECT UPPER(f.status) FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterStatus,
+        p.status AS status,
+        a.status AS adoptionStatus
+        FROM adoptions a
+        JOIN pets p ON a.pid = p.pid
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        JOIN shelters s ON p.shelter_id = s.sid
+        WHERE a.uid = #{userId}
+        ORDER BY a.adopt_date DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 管理员查看全部领养记录（可按状态过滤） -->
+    <select id="getAdminAdoptions" resultType="com.example.petpojo.vo.AdoptionsVo">
+        SELECT
+        a.aid AS aid,
+        a.uid AS applicantId,
+        u.username AS applicantName,
+        u.phone AS applicantPhone,
+        p.pid AS pid,
+        a.adopt_date AS adoptionDate,
+        p.name AS name,
+        sp.name AS species,
+        b.name AS breed,
+        p.age AS age,
+        p.gender AS gender,
+        p.img_url AS image,
+        s.sid AS sid,
+        s.name AS sname,
+        s.location AS location,
+        a.review_time AS reviewTime,
+        a.review_note AS reviewNote,
+        CASE
+            WHEN p.status = 'FOSTERING' THEN 1
+            ELSE 0
+        END AS isFostering,
+        (SELECT f.fid FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterId,
+        (SELECT UPPER(f.status) FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterStatus,
+        p.status AS status,
+        a.status AS adoptionStatus
+        FROM adoptions a
+        JOIN users u ON a.uid = u.id
+        JOIN pets p ON a.pid = p.pid
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        JOIN shelters s ON p.shelter_id = s.sid
+        <where>
+            <if test="status != null and status != ''">
+                a.status = #{status}
+            </if>
+            <if test="shelterId != null">
+                AND s.sid = #{shelterId}
+            </if>
+        </where>
+        ORDER BY a.create_time DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 管理员统计领养记录总数（与 getAdminAdoptions 过滤条件一致） -->
+    <select id="countAdminAdoptions" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM adoptions a
+        JOIN pets p ON a.pid = p.pid
+        JOIN shelters s ON p.shelter_id = s.sid
+        <where>
+            <if test="status != null and status != ''">
+                a.status = #{status}
+            </if>
+            <if test="shelterId != null">
+                AND s.sid = #{shelterId}
+            </if>
+        </where>
+    </select>
+
+    <!-- MyBatis Plus分页查询用户领养记录 -->
+    <select id="selectUserAdoptionsWithPage" resultType="com.example.petpojo.vo.AdoptionsVo">
+        SELECT
+        a.aid AS aid,
+        p.pid AS pid,
+        a.adopt_date AS adoptionDate,
+        p.name AS name,
+        sp.name AS species,
+        b.name AS breed,
+        p.age AS age,
+        p.gender AS gender,
+        p.img_url AS image,
+        s.sid AS sid,
+        s.name AS sname,
+        s.location AS location,
+        a.review_time AS reviewTime,
+        a.review_note AS reviewNote,
+        CASE 
+            WHEN p.status = 'FOSTERING' THEN 1 
+            ELSE 0 
+        END AS isFostering,
+        (SELECT f.fid FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterId,
+        (SELECT UPPER(f.status) FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterStatus,
+        p.status AS status,
+        a.status AS adoptionStatus
+        FROM adoptions a
+        JOIN pets p ON a.pid = p.pid
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        JOIN shelters s ON p.shelter_id = s.sid
+        WHERE a.uid = #{userId}
+        ORDER BY a.adopt_date DESC
+    </select>
+
+    <!-- MyBatis Plus分页查询用户已通过的领养记录 -->
+    <select id="selectUserApprovedAdoptionsWithPage" resultType="com.example.petpojo.vo.AdoptionsVo">
+        SELECT
+        a.aid AS aid,
+        p.pid AS pid,
+        a.adopt_date AS adoptionDate,
+        p.name AS name,
+        sp.name AS species,
+        b.name AS breed,
+        p.age AS age,
+        p.gender AS gender,
+        p.img_url AS image,
+        s.sid AS sid,
+        s.name AS sname,
+        s.location AS location,
+        a.review_time AS reviewTime,
+        a.review_note AS reviewNote,
+        CASE
+            WHEN p.status = 'FOSTERING' THEN 1
+            ELSE 0
+        END AS isFostering,
+        (SELECT f.fid FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterId,
+        (SELECT UPPER(f.status) FROM fosters f WHERE f.pid = p.pid AND f.uid = a.uid AND f.deleted = 0 ORDER BY f.start_date DESC LIMIT 1) AS fosterStatus,
+        p.status AS status,
+        a.status AS adoptionStatus
+        FROM adoptions a
+        JOIN pets p ON a.pid = p.pid
+        LEFT JOIN species sp ON p.species_id = sp.id
+        LEFT JOIN breed b ON p.breed_id = b.id
+        JOIN shelters s ON p.shelter_id = s.sid
+        WHERE a.uid = #{userId}
+        AND a.status = 'APPROVED'
+        ORDER BY a.adopt_date DESC
+    </select>
+</mapper>
