@@ -1,1 +1,0 @@
-const a=e=>({male:"公",female:"母"})[e],t=e=>({公:"male",母:"female"})[e],c=(e,n,r)=>n===r?e:n==="frontend"&&r==="backend"?e==="male"||e==="female"?a(e):"公":n==="backend"&&r==="frontend"?e==="公"||e==="母"?t(e):"male":r==="backend"?"公":"male",f=e=>e==="male"||e==="female"?e:e==="公"?"male":e==="母"?"female":"unknown";export{f as a,t as c,c as s};
